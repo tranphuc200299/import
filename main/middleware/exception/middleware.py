@@ -16,11 +16,10 @@ class ExceptionHandleMiddleware(object):
 
     def process_exception(self, request, exception):
         if isinstance(exception, RuntimeException):
-            self.__write_logging(request, exception)
             request.context["lblMsg"] = exception.get_message()
         else:
-            self.__write_logging(request, exception)
             request.context["lblMsg"] = f"Server error: {str(exception)}"
+        self.__write_logging(request, exception)
         url_name = request.resolver_match.url_name
         return render(request, f"{url_name}.html", request.context)
 
