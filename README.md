@@ -1,9 +1,6 @@
 # Import System
 
-## Setting
-
-C1: Run development server
-
+## Setup code
 ```bash
 $ git clone https://git.ntq.solutions/BJM/import.git
 $ cd import
@@ -11,7 +8,7 @@ $ python3 -m venv venv
 $ source venv/bin/activate
 $ pip install -r requirements.txt
 $ cd import
-$ touch .envs/.dev
+$ touch .dev
 $ python manage.py runserver
 ```
 
@@ -25,3 +22,5 @@ DB_PASSWORD=password@12345
 DB_HOST=10.0.64.93
 DB_PORT=5432
 ```
+
+Access in url: **http://127.0.0.1:8000**
