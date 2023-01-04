@@ -1,0 +1,9 @@
+__pycache__/
+*.sqlite3
+venv/
+media/
+migrations/
+bin/
+.DS_Store
+.ideas/
+.envs/
