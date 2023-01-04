@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>title</title>
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'plugins/jquery.dataTables.min.css' %}"/>
+    <link rel="stylesheet" href="{% static 'plugins/jquery-ui.css' %}">
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    {% block css %}{% endblock css %}
+</head>
+<body>
+<h1 class="haha">hello</h1>
+</body>
+<script src="{% static 'plugins/jquery-3.3.1.min.js' %}"></script>
+<script src="{% static 'plugins/htmx-1.8.0.min.js' %}"></script>
+<script src="{% static 'js/app.js' %}"></script>
+<script src="{% static 'plugins/jquery.dataTables.min.js' %}"></script>
+<script src="{% static 'plugins/javascript-number-formatter.min.js' %}"></script>
+<script src="{% static 'plugins/jquery-ui.js' %}"></script>
+{% block js %}{% endblock js %}
+{% block javascript %}{% endblock javascript %}
+</html>

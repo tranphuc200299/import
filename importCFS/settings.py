@@ -9,7 +9,8 @@ https://docs.djangoproject.com/en/4.0/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.0/ref/settings/
 """
-
+import os
+import socket
 from pathlib import Path
 from decouple import Config, Csv, RepositoryEnv
 
@@ -41,6 +42,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    "main.middleware.exception.middleware.ExceptionHandleMiddleware"
 ]
 
 ROOT_URLCONF = 'importCFS.urls'
@@ -68,7 +70,7 @@ WSGI_APPLICATION = 'importCFS.wsgi.application'
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
 
 
-DOTENV_FILE = Path(BASE_DIR).joinpath(".envs/.dev")  # noqa
+DOTENV_FILE = Path(BASE_DIR).joinpath(".env")  # noqa
 
 env_config = Config(RepositoryEnv(DOTENV_FILE))
 
@@ -76,7 +78,7 @@ SECRET_KEY = env_config("SECRET_KEY", default="abc")
 
 DEBUG = env_config("DEBUG", default=True, cast=bool)
 
-ALLOWED_HOSTS = env_config("ALLOWED_HOSTS", default="127.0.0.1,localhost", cast=Csv())
+ALLOWED_HOSTS = env_config("ALLOWED_HOSTS", default="127.0.0.1,localhost,0.0.0.0", cast=Csv())
 
 # ==============================================================================
 # DATABASE
@@ -91,6 +93,58 @@ DATABASES = {
         "HOST": env_config("DB_HOST"),
         "PORT": env_config("DB_PORT"),
     }
+}
+
+
+# ==============================================================================
+# LOGGING
+# ==============================================================================
+
+LOG_PATH = Path(BASE_DIR).joinpath("logs")
+SERVER_NAME = socket.gethostname()
+SERVER_IP = socket.gethostbyname(socket.gethostname())
+FILE_NAME_LOG_INFO = SERVER_IP + '_import.log'
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'common': {
+            'format': '{asctime} {levelname} {name} {module} {lineno} {message}',
+            'style': '{',
+        },
+    },
+    'handlers': {
+        'info_common': {
+            'class': 'logging.handlers.TimedRotatingFileHandler',
+            'filename': os.path.join(LOG_PATH, FILE_NAME_LOG_INFO),
+            'when': 'midnight',
+            'interval': 1,
+            'formatter': 'common',
+            'backupCount': 30
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['info_common'],
+            'level': 'INFO',
+            'propagate': True,
+        },
+        'django.request': {
+            'handlers': ['info_common'],
+            'level': 'INFO',
+            'propagate': False,
+        },
+        'main': {
+            'handlers': ['info_common'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+        'middleware': {
+            'handlers': ['info_common'],
+            'level': 'INFO',
+            'propagate': True,
+        },
+    },
 }
 
 # Password validation
