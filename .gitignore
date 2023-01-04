@@ -1,9 +1,10 @@
 __pycache__/
 *.sqlite3
 venv/
+env/
 media/
 migrations/
 bin/
 .DS_Store
 .ideas/
-.envs/
+.env
