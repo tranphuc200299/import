@@ -190,3 +190,4 @@ csNACIOCD_MHA02 = "SAL0171"    # (SAL0170)見本持出許可貨物情報
 
 csNACIOCD_CHJ01 = "SAC1850"    # (SAC1850)貨物情報仕分け情報
 
+TRACK_VANNO = "BY "
