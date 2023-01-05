@@ -16,13 +16,12 @@ class ExceptionHandleMiddleware(object):
 
     def process_exception(self, request, exception):
         if isinstance(exception, RuntimeException):
-            self.__write_logging(request, exception)
             request.context["lblMsg"] = exception.get_message()
-            return self.__response(request)
         else:
-            self.__write_logging(request, exception)
             request.context["lblMsg"] = f"Server error: {str(exception)}"
-            return self.__response(request)
+        self.__write_logging(request, exception)
+        url_name = request.resolver_match.url_name
+        return render(request, f"{url_name}.html", request.context)
 
     def __write_logging(self, request, exception):
         logger.error((
@@ -36,9 +35,3 @@ class ExceptionHandleMiddleware(object):
             str(exception),
             traceback.format_exc(),
         ))
-
-    def __response(self, request):
-        url_name = request.resolver_match.url_name
-        if url_name[:3] == "pop":
-            return render(request, "popup/popCommon.html", request.context)
-        return render(request, f"{url_name}.html", request.context)
