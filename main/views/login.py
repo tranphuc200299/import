@@ -9,3 +9,7 @@ from main.middleware.exception.message import E00001
 def login(request):
     raise RuntimeException(error_code=E00001, message="失敗しました。システム管理者に連絡してください")
     return render(request, "login.html")
+
+@update_context()
+def home(request):
+    return render(request, "home.html", request.context)
