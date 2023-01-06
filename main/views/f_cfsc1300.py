@@ -33,7 +33,7 @@ def f_cfsc1300(request):
     #         if request.GET.get('mode', False):
         Form_Load(request)
     #             Set_Screen(request, "carTOpeCarFind")
-    return render(request, "core/carTOpeCarFind.html", request.context)
+    return render(request, "f_cfsc1300.html", request.context)
 
 def Form_Load(request):
     global intDbLock
