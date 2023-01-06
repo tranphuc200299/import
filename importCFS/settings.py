@@ -115,12 +115,12 @@ LOGGING = {
     },
     'handlers': {
         'info_common': {
-            'class': 'logging.handlers.TimedRotatingFileHandler',
-            'filename': os.path.join(LOG_PATH, FILE_NAME_LOG_INFO),
-            'when': 'midnight',
-            'interval': 1,
-            'formatter': 'common',
-            'backupCount': 30
+            'class': 'logging.StreamHandler',
+            # 'filename': os.path.join(LOG_PATH, FILE_NAME_LOG_INFO),
+            # 'when': 'midnight',
+            # 'interval': 1,
+            # 'formatter': 'common',
+            # 'backupCount': 30
         },
     },
     'loggers': {
