@@ -2,11 +2,12 @@ import logging
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
 from main.common.function import SqlExecute
-from django.db import IntegrityError
+from django.db import IntegrityError, transaction
 from main.common.function.Const import DB_FATAL_ERR, DB_TBFREETM_NOT_FIND, DB_TBCALENDER_NOT_FIND, csFKISANKBN_1, csFCALC_1, \
     csFCALC_3, csDAYKBN_3, TRACK_VANNO, NOMAL_OK, FATAL_ERR, DB_TBOPE_NOT_FIND, DB_NOMAL_OK, csDEMUCKBN_A, csDEMUCKBN_C, \
     DB_TBDEMURG_NOT_FIND, csSTANKAKBN_2, csSTANKAKBN_3, csMTONTKBN_1, csMTONTKBN_2, csMTONTKBN_3, csDCALC_1, csDAYKBN_1, \
-    csDAYKBN_2, csDCALC_3, csDAYKBN_9, csDAYKBN_4, csLOCK_ON, DB_NOT_FIND, DB_LOCK
+    csDAYKBN_2, csDCALC_3, csDAYKBN_9, csDAYKBN_4, csLOCK_ON, DB_NOT_FIND, DB_LOCK, csSTANKAKBN_1, csSTANKAKBN_2, csSTANKAKBN_3, \
+    csSTANKAKBN_4, csSTANKAKBN_5
 from main.middleware.exception.exceptions import RuntimeException
 from middleware.exception.message import E00001
 from time import sleep
@@ -632,7 +633,7 @@ def GetDemurg2(GDemurg, strSelTbl):
         return DB_FATAL_ERR
 
 
-def GetSeikyuNo(ProgramId, SystemData, SeikyuNo, iniUpdCd, iniUpdTbl):
+def GetSeikyuNo(ProgramId, SystemData, SeikyuNo, iniUpdCd, iniUpdTbl, iniWsNo):
     try:
         NowDate = ""
         GetFlg = 0
@@ -652,14 +653,21 @@ def GetSeikyuNo(ProgramId, SystemData, SeikyuNo, iniUpdCd, iniUpdTbl):
             return DB_LOCK
         SeikyuHead = SystemData.SEIKYUHNO[:6]
         if SeikyuHead == NowDate[:6]:
-            SeikyuSeq = round(SystemData.SEIKYUHNO[6:11]) + 1
+            SeikyuSeq = round(float(SystemData.SEIKYUHNO[6:11])) + 1
         else:
             SeikyuHead = NowDate[:6]
             SeikyuSeq = 1
-        SystemData.SEIKYUHNO = Format(SeikyuHead, "@@@@@@") + Format(SeikyuSeq, "0000")
+        SystemData.SEIKYUHNO = f"{SeikyuHead:@6}" + f"{SeikyuSeq:04}"
         SeikyuNo = SystemData.SEIKYUHNO
-
-
+        with transaction.atomic():
+            SqlStr = "UPDATE TBCFSSYS{strSelTbl} SET "
+            SqlStr += f"SEIKYUHNO = {dbField(SystemData.SEIKYUHNO)}, "
+            SqlStr += "UDATE = SYSDATE, "
+            SqlStr += f"UPROGID = {dbField(ProgramId)}, "
+            SqlStr += f"UWSID = {dbField(iniWsNo)}"
+            SqlStr += f" WHERE HOZEICD = {dbField(SystemData.HOZEICD)}"
+            SqlExecute(SqlStr).execute()
+        return DB_NOMAL_OK
     except:
         # Call OraErrorH("CFSシステムテーブル", SqlStr)
         return DB_FATAL_ERR
@@ -773,3 +781,123 @@ def DbDataChange(DbStr):
     if not DbStr or DbStr == chr(0):
         return ""
     return DbStr
+
+
+def GetRevenue(OpeCd, KGWeight, M3Measur, RynDataCnt, RynData, strSelTbl):
+    try:
+        WkSTankaKbn = ""
+        if RynDataCnt == 0:
+            RynData = []
+        else:
+            for i in range(len(RynData)):
+                if RynData[i].OpeCd == OpeCd:
+                    WkSTankaKbn = RynData(i).STANKAKBN
+                    MinTon = RynData[i].MinTon
+        if WkSTankaKbn == "":
+            SqlStr = "SELECT "
+            SqlStr += "A.MINTON AS MINTON, "
+            SqlStr += "B.STANKAKBN "
+            SqlStr += "FROM "
+            SqlStr += f"TBOPE{strSelTbl} A, "
+            SqlStr += f"TBDEMURG{strSelTbl} B "
+            SqlStr += "WHERE "
+            SqlStr += f"A.OPECD = {dbField(OpeCd)}"
+            SqlStr += " AND B.OPECD = A.OPECD"
+            RsDb = SqlExecute(SqlStr).all()
+            if not RsDb.Rows:
+                return DB_NOT_FIND, None, None
+            RynDataCnt = RynDataCnt + 1
+            RynData[- 1].OpeCd = OpeCd
+            RynData[- 1].STANKAKBN = DbDataChange(RsDb.Rows[0]["STANKAKBN"])
+            RynData[- 1].MinTon = int(DbDataChange(RsDb.Rows[0]["MinTon"]))
+            WkSTankaKbn = DbDataChange(RsDb.Rows[0]["STANKAKBN"])
+            MinTon = int(DbDataChange(RsDb.Rows[0]["MinTon"]))
+
+        if WkSTankaKbn == csSTANKAKBN_1:
+            if (KGWeight / 1000) > M3Measur:
+                RynTon = KGWeight / 1000
+            else:
+                RynTon = M3Measur
+        elif WkSTankaKbn == csSTANKAKBN_2:
+            RynTon = M3Measur
+        elif WkSTankaKbn == csSTANKAKBN_3:
+            RynTon = KGWeight / 1000
+        elif WkSTankaKbn == csSTANKAKBN_4:
+            if (KGWeight / 1000) > CompRynTon(f"{M3Measur :,.3f}"):
+                RynTon = KGWeight / 1000
+            else:
+                RynTon = CompRynTon(f"{M3Measur :,.3f}")
+        elif WkSTankaKbn == csSTANKAKBN_5:
+            RynTon = CompRynTon(f"{M3Measur :,.3f}")
+        return DB_NOMAL_OK, RynTon, MinTon,
+    except:
+        # Call OraError(WkErrTbl, SqlStr)
+        return DB_FATAL_ERR, None, None
+
+
+def GetDemurgKDate(OpeCd, FreeTime, strSelTbl, WkDCalc):
+    try:
+        WkDateY = CmfDateFmt(
+            (datetime.strptime(FreeTime, "%Y/%m/%d") + relativedelta(days=1)).strftime("%Y/%m/%d"), "%Y")
+        WkDateM = CmfDateFmt(
+            (datetime.strptime(FreeTime, "%Y/%m/%d") + relativedelta(days=1)).strftime("%Y/%m/%d"), "%m")
+        WkDateD = CmfDateFmt(
+            (datetime.strptime(FreeTime, "%Y/%m/%d") + relativedelta(days=1)).strftime("%Y/%m/%d"), "%d")
+        WkDate = WkDateY + "/" + WkDateM + "/" + WkDateD
+        WkErrTbl = "カレンダーテーブル"
+        SqlStr = "SELECT YMDATE, DAYKBN FROM TBCALENDER{strSelTbl} WHERE "
+        SqlStr += f"YMDATE >= {dbField(WkDateY + '/' + WkDateM)}"
+        SqlStr += " ORDER BY YMDATE"
+        RsCalen = SqlExecute(SqlStr).all()
+        if not RsCalen.Rows:
+            return DB_TBDEMURG_NOT_FIND
+
+        tbcalen = []
+        for i in range(len(RsCalen.Rows)):
+            tbcalen[i]["YMDATE"] = RsCalen.Rows[0]["YMDATE"]
+            tbcalen[i]["YMDATEY"] = int(RsCalen.Rows[0]["YMDATE"][:4])
+            tbcalen[i]["YMDATEM"] = int(RsCalen.Rows[0]["YMDATE"][6:8])
+            tbcalen[i]["DAYKBN"] = RsCalen.Rows[0]["DAYKBN"]
+        WkErrTbl = "デマレージテーブル"
+        SqlStr = "SELECT "
+        SqlStr += "DCALC "
+        SqlStr += "FROM "
+        SqlStr += f"TBDEMURG{strSelTbl}"
+        SqlStr += " WHERE "
+        SqlStr += f"OPECD = {dbField(OpeCd)}"
+        RsDemu = SqlExecute(SqlStr).all()
+        if not RsDemu.Rows:
+            return DB_TBDEMURG_NOT_FIND
+        for i in range(len(RsDemu.Rows)):
+            if WkEndFlg == 9:
+                break
+            day_kbn = tbcalen[i]["DAYKBN"][int(WkDateD)]
+            if day_kbn == csDAYKBN_2:
+                if WkDCalc in [csDCALC_1, csDCALC_3]:
+                    GetDemurgKDate = tbcalen[i]["YMDATE"] + "/" + WkDateD
+                    WkEndFlg = 9
+                    continue
+            elif day_kbn in [csDAYKBN_3, csDAYKBN_4]:
+                if WkDCalc == csDCALC_3:
+                    GetDemurgKDate = tbcalen[i]["YMDATE"] + "/" + WkDateD
+                    WkEndFlg = 9
+                    continue
+            elif day_kbn == csDAYKBN_9:
+                pass
+            else:
+                GetDemurgKDate = tbcalen[i]["YMDATE"] + "/" + WkDateD
+                WkEndFlg = 9
+            WkDateD = f"{int(WkDateD) + 1 :02}"
+            if WkDateD == "32" or tbcalen[i]["DAYKBN"][int(WkDateD) - 2] == csDAYKBN_9:
+                WkDate = WkDateY + "/" + WkDateM + "/01"
+                WkDateY = CmfDateFmt((datetime.strptime(WkDate, "%Y/%m/%d") + relativedelta(months=1)).strftime("%Y/%m/%d"),
+                                     "%Y")
+                WkDateM = CmfDateFmt((datetime.strptime(WkDate, "%Y/%m/%d") + relativedelta(months=1)).strftime("%Y/%m/%d"),
+                                     "%m")
+                WkDateD = CmfDateFmt((datetime.strptime(WkDate, "%Y/%m/%d") + relativedelta(months=1)).strftime("%Y/%m/%d"),
+                                     "%d")
+                WkDate = ""
+        return GetDemurgKDate
+
+    except:
+        return DB_FATAL_ERR
