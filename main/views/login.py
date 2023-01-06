@@ -12,4 +12,4 @@ def login(request):
 
 @update_context()
 def home(request):
-    return render(request, "home.html", request.context)
+    return render(request, "f_cfsc3100.html", request.context)
