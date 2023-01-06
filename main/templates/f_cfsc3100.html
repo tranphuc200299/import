@@ -1,10 +1,54 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends 'base.html' %}
+{% load static %}
 
-</body>
-</html>
+{% block title %}倉庫内蔵置場所コード登録{% endblock title %}
+
+{% block main %}
+<div class="title_content">
+    <ul>
+        <li><a href="#">ホーム</a></li>
+        <div class="space_title"></div>
+        <li><a href="#">コードテーブル登録系</a></li>
+        <div class="space_title"></div>
+        <li><a href="#">倉庫内蔵置場所コード登録</a></li>
+    </ul>
+    <div class="content_header">
+        <span>倉庫内蔵置場所コード登録</span>
+    </div>
+    <div class="search_about">
+        <div class="search_item">
+            <div class="item_search_title">
+                <h3>倉庫内蔵置場所コード <span style="color:red">* </span></h3>
+            </div>
+            <div class="search_input">
+                <input type="text" class="form-control" aria-label="Text input with segmented dropdown button">
+            </div>
+            <div class="content_button">
+                <img src="{% static 'images/search.svg' %}" alt="">
+                <button type="button" class="btn-search">検索</button>
+            </div>
+        </div>
+    </div>
+    <div class="content_control">
+        <div class="content_control_about">
+            <div class="control_title">
+                <h3>倉庫内蔵置場所名称 <span style="color:red">* </span></h3>
+            </div>
+            <div class="search_input">
+                <input type="text" class="form-control" aria-label="Text input with segmented dropdown button">
+            </div>
+        </div>
+        <div class="control_button">
+             <button type="button" class="btn-register active">登録</button>
+             <button type="button" class="btn-register">変更</button>
+             <button type="button" class="btn-register">削除</button>
+             <button type="button" class="btn-register">取消</button>
+        </div>
+
+    </div>
+</div>
+{% endblock main %}
+
+{% block js %}
+
+{% endblock js %}
