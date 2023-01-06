@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>
+        {% block title %}{% endblock title %}
+    </title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="all,follow">
+    <link rel="stylesheet" href="{%static 'vendor/bootstrap/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'plugins/jquery.dataTables.min.css' %}"/>
+    <link rel="stylesheet" href="{% static 'plugins/jquery-ui.css' %}">
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <!-- Favicon-->
+    <!-- <link rel="shortcut icon" href="img/favicon.png' %}"> -->
+    {% block css %}{% endblock css %}
+</head>
+
+<body>
+{% spaceless %}
+    {% include "partials/header.html" %}
+<!--navbar section start-->
+<section class="content" id="content">
+    <div class="row">
+        {% include "partials/siderBar.html" %}
+        <div class="col-xl-10 col-lg-10 col-sm-6">
+            <div class="content-items">
+                 {% block main %}{% endblock main %}
+            </div>
+        </div>
+    </div>
+</section>
+
+<!--navbar section end-->
+{% endspaceless %}
+<!-- JavaScript files-->
+<script src="{% static 'plugins/jquery-3.3.1.min.js' %}"></script>
+<script src="{% static 'plugins/htmx-1.8.0.min.js' %}"></script>
+<script src="{% static 'js/app.js' %}"></script>
+<script src="{% static 'plugins/jquery.dataTables.min.js' %}"></script>
+<script src="{% static 'plugins/javascript-number-formatter.min.js' %}"></script>
+<script src="{% static 'plugins/jquery-ui.js' %}"></script>
+{% block js %}{% endblock js %}
+{% block javascript %}{% endblock javascript %}
+</body>
+
+</html>
