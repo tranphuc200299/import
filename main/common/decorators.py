@@ -4,6 +4,7 @@ import socket
 from collections import defaultdict
 from functools import wraps
 from pathlib import Path
+from main.common.function import Common
 
 
 def update_context_fields():
@@ -112,18 +113,25 @@ def load_cfs_ini(cfs_menu):
                 iniDispNam.append(cut_string(user_section["DspName"]))
                 iniDispCd.append(cut_string(user_section["DspCode"]))
                 iniDispTbl.append(cut_string(user_section["DspTbl"]))
-            request.cfs_ini["iniUpdNam"] = iniUpdNam
-            request.cfs_ini["iniUpdCd"] = iniUpdCd
-            request.cfs_ini["iniUpdTbl"] = iniUpdTbl
-            request.cfs_ini["iniDispNam"] = iniDispNam
-            request.cfs_ini["iniDispCd"] = iniDispCd
-            request.cfs_ini["iniDispTbl"] = iniDispTbl
+            if not Common.pfncDataSessionGet(request, "bond_area_name"):
+                Common.pfncDataSessionSet(request, "bond_area_name", "K-DIC事務所")
+            for index, value in enumerate(iniUpdNam):
+                if value == Common.pfncDataSessionGet(request, "bond_area_name"):
+                    index_bond_area = index
+                    break
+            request.cfs_ini["iniUpdNam"] = iniUpdNam[index_bond_area]
+            request.cfs_ini["iniUpdCd"] = iniUpdCd[index_bond_area]
+            request.cfs_ini["iniUpdTbl"] = iniUpdTbl[index_bond_area]
+            request.cfs_ini["iniDispNam"] = iniDispNam[index_bond_area]
+            request.cfs_ini["iniDispCd"] = iniDispCd[index_bond_area]
+            request.cfs_ini["iniDispTbl"] = iniDispTbl[index_bond_area]
             return f(request, *args, **kwargs)
 
         def cut_string(string: str):
             strings = string.split("/*")
             output = strings[0].strip()
             return output
+
         return wrap
 
     return inner_func

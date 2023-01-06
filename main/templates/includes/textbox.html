@@ -1,0 +1,19 @@
+{% load core_tags %}
+<input
+    type="text"
+    {% if gSetField == id %}autofocus{% endif %}
+    name="{{ id }}"
+    id="{{ id }}"
+    value="{{ id|id2contextvalue:request }}"
+    maxlength="{{ MaxLength }}"
+    class="{{ CssClass }}"
+    {% if ReadOnly == "True" %}
+    readonly="{{ ReadOnly }}"
+    {% endif %}
+    {% if disabled %}
+    disabled="True"
+    {% endif %}
+    {% if TextChange == "True" %}
+    onchange=handle_text_change(["{{ id }}",{% if ParamsExtendsTextChange %}{{ ParamsExtendsTextChange }}{% endif %}])
+    {% endif %}
+>

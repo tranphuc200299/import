@@ -247,7 +247,7 @@ color: #7A7A85!important;
     height : 100%;
 }
 .navbar-about {
-    height100%;
+    height: 100%;
 }
 .title_content {
   padding: 20px 25px;
@@ -383,7 +383,7 @@ color: #7A7A85!important;
     font-weight: 500;
 }
 
-.active {
+.inactive {
     background: #BBBBC3;
 }
 

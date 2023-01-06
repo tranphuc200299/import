@@ -3,7 +3,8 @@ from datetime import datetime
 from dateutil.relativedelta import relativedelta
 from main.common.function import SqlExecute
 from django.db import IntegrityError
-from main.common.function.Const import DB_NOT_FIND, DB_NOMAL_OK, DB_FATAL_ERR, DB_TBFREETM_NOT_FIND, DB_TBCALENDER_NOT_FIND, \
+from main.common.function.Const import DB_NOT_FIND, DB_NOMAL_OK, DB_FATAL_ERR, DB_TBFREETM_NOT_FIND, \
+    DB_TBCALENDER_NOT_FIND, \
     csFKISANKBN_1, csFCALC_1, csFCALC_3, csDAYKBN_2, csDAYKBN_3, csDAYKBN_4, csDAYKBN_9
 
 _logger = logging.getLogger(__name__)
@@ -190,9 +191,12 @@ def GetFreeTime(OpeCd, AreaCd, KDate, strSelTbl):
         if WkFKISANKBN == csFKISANKBN_1:
             WkKDate = KDate
         else:
-            WkKDateY = CmfDateFmt((datetime.strptime(KDate, "%Y/%m/%d") + relativedelta(days=1)).strftime("%Y/%m/%d"), "%Y")
-            WkKDateM = CmfDateFmt((datetime.strptime(KDate, "%Y/%m/%d") + relativedelta(days=1)).strftime("%Y/%m/%d"), "%m")
-            WkKDateD = CmfDateFmt((datetime.strptime(KDate, "%Y/%m/%d") + relativedelta(days=1)).strftime("%Y/%m/%d"), "%d")
+            WkKDateY = CmfDateFmt((datetime.strptime(KDate, "%Y/%m/%d") + relativedelta(days=1)).strftime("%Y/%m/%d"),
+                                  "%Y")
+            WkKDateM = CmfDateFmt((datetime.strptime(KDate, "%Y/%m/%d") + relativedelta(days=1)).strftime("%Y/%m/%d"),
+                                  "%m")
+            WkKDateD = CmfDateFmt((datetime.strptime(KDate, "%Y/%m/%d") + relativedelta(days=1)).strftime("%Y/%m/%d"),
+                                  "%d")
             WkFreeTime = ""
             if WkFCALC == csFCALC_3:
                 WkKDate = WkKDateY + "/" + WkKDateM + "/" + WkKDateD
@@ -213,9 +217,15 @@ def GetFreeTime(OpeCd, AreaCd, KDate, strSelTbl):
                             WkKDate = WkKDateY + "/" + WkKDateM + "/" + WkKDateD
                         if WkKDateD == "32" or tbcalen[i]["DAYKBN"][int(WkKDateD) - 1] == csDAYKBN_9:
                             WkKDate = WkKDateY + "/" + WkKDateM + "/01"
-                            WkKDateY = CmfDateFmt((datetime.strptime(WkKDate, "%Y/%m/%d") + relativedelta(days=1)).strftime("%Y/%m/%d"), "%Y")
-                            WkKDateM = CmfDateFmt((datetime.strptime(WkKDate, "%Y/%m/%d") + relativedelta(days=1)).strftime("%Y/%m/%d"), "%m")
-                            WkKDateD = CmfDateFmt((datetime.strptime(WkKDate, "%Y/%m/%d") + relativedelta(days=1)).strftime("%Y/%m/%d"), "%d")
+                            WkKDateY = CmfDateFmt(
+                                (datetime.strptime(WkKDate, "%Y/%m/%d") + relativedelta(days=1)).strftime("%Y/%m/%d"),
+                                "%Y")
+                            WkKDateM = CmfDateFmt(
+                                (datetime.strptime(WkKDate, "%Y/%m/%d") + relativedelta(days=1)).strftime("%Y/%m/%d"),
+                                "%m")
+                            WkKDateD = CmfDateFmt(
+                                (datetime.strptime(WkKDate, "%Y/%m/%d") + relativedelta(days=1)).strftime("%Y/%m/%d"),
+                                "%d")
                             WkKDate = ""
                     if not WkKDate == "":
                         break
@@ -228,3 +238,25 @@ def GetFreeTime(OpeCd, AreaCd, KDate, strSelTbl):
     except IntegrityError as ie:
         _logger.error(ie)
         return DB_FATAL_ERR
+
+
+def pfncDataSessionGet(request, strSessionNM: str):
+    try:
+        return request.session.get(strSessionNM, None)
+    except Exception as e:
+        _logger.error(e)
+
+
+def pfncDataSessionSet(request, strSessionNM: str, objData):
+    try:
+        request.session[strSessionNM] = objData
+    except Exception as e:
+        _logger.error(e)
+
+
+def pfncDataSessionRelease(request, strSessionNM: str):
+    try:
+        del request.session[strSessionNM]
+        request.session.modified = True
+    except Exception as e:
+        _logger.error(e)
