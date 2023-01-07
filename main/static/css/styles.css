@@ -93,7 +93,7 @@ h1 {
 }
 
 .menu-header ul {
-    width: 140px;
+    width: 148px;
 }
 
 .space {
@@ -417,7 +417,7 @@ h1 {
     justify-content: space-between;
 }
 .form_row {
-    width: 600px;
+    width: 650px;
     margin: 5px 0px;
 }
 .form_row  .form-control {
@@ -434,4 +434,58 @@ h1 {
     font-size: 14px;
     line-height: 20px;
     color: #29293D;
+}
+.form-select option{
+    color: black;
+}
+.form-select {
+   background: #2D68EA;
+}
+.form-select .select_item{
+   font-size: 14px;
+   padding:10px 20px;
+}
+
+.menu-header .menu-out {
+    display: flex;
+    justify-content: end;
+}
+.select_about{
+    background:white;
+}
+
+.btn_test {
+  width: 100px;
+  padding: 23px 20px;
+}
+
+.demo1{
+background:white;
+width:100px;
+}
+
+.select_group{
+    background: #2D68EA;
+    margin: 5px -8px;
+    width:78px;
+}
+
+.select_header{
+    font-weight: 700;
+    font-size:14px;
+    background-color: #2D68EA;
+    transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+    box-shadow: none;
+    border:none;
+    color: white;
+}
+.select_header:focus {
+    width:78px;
+    background: #2D68EA;
+    font-weight: 700;
+    font-size:14px;
+    border: none;
+    box-shadow: none;
+    color: white;
+    outline:none;
 }
