@@ -36,7 +36,7 @@ def f_cfsc3100(request):
             cmd_cancel_Click(request)
     else:
         Form_Load(request)
-    return render(request, "f_cfsc3100.html", request.context)
+    return render(request, "menu4/f_cfsc3100.html", request.context)
 
 
 def Form_Load(request):
@@ -66,7 +66,7 @@ def cmd_search_Click(request):
         if inpdatachk1(request) != NOMAL_OK:
             return
         sql = "SELECT * "
-        # sql += " FROM TBSZOUCHI" + request.cfs_ini["iniUpdTbl"]
+        sql += " FROM TBSZOUCHI" + request.cfs_ini["iniUpdTbl"]
         sql += " WHERE SZOUCHICD = " + sqlStringConvert(request.context["txt_aszouchicd"])
         sql += " FOR UPDATE NOWAIT"
         RsTbSZouchi = SqlExecute(sql).all()

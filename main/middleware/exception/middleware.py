@@ -21,7 +21,7 @@ class ExceptionHandleMiddleware(object):
             request.context["lblMsg"] = exception.get_message()
         elif isinstance(exception, BondAreaNameException):
             self.__write_logging(request, exception)
-            return render(request, "blank.html", request.context)
+            return render(request, "home.html", request.context)
         else:
             request.context["lblMsg"] = f"Server error: {str(exception)}"
         self.__write_logging(request, exception)
