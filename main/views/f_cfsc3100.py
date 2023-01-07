@@ -46,7 +46,6 @@ def Form_Load(request):
         request.context["cmd_entry_enable"] = False
         request.context["cmd_change_enable"] = False
         request.context["cmd_delete_enable"] = False
-        request.context["lbl_aSelHozNam"] = request.cfs_ini["iniUpdNam"]
     except Exception as e:
         __logger.error(e)
         # TODO
