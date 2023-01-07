@@ -5,6 +5,7 @@ from django.shortcuts import render
 
 from main.common.decorators import update_context, load_cfs_ini
 from main.common.function import SqlExecute
+from main.common.function.Common import sqlStringConvert
 from main.common.function.Const import FATAL_ERR, NOMAL_OK
 from main.common.utils import Response
 
@@ -65,8 +66,8 @@ def cmd_search_Click(request):
         if inpdatachk1(request) != NOMAL_OK:
             return
         sql = "SELECT * "
-        sql += " FROM TBSZOUCHI" + request.cfs_ini["iniUpdTbl"]
-        sql += " WHERE SZOUCHICD = " + "'" + request.context["txt_aszouchicd"] + "'"
+        # sql += " FROM TBSZOUCHI" + request.cfs_ini["iniUpdTbl"]
+        sql += " WHERE SZOUCHICD = " + sqlStringConvert(request.context["txt_aszouchicd"])
         sql += " FOR UPDATE NOWAIT"
         RsTbSZouchi = SqlExecute(sql).all()
         if not RsTbSZouchi.Rows:
@@ -88,14 +89,13 @@ def cmd_entry_Click(request):
         if inpdatachk1(request) != NOMAL_OK:
             return
         with transaction.atomic():
-            sql = "INSERT INTO TBSZOUCHI" & request.cfs_ini["iniUpdTbl"] & " "
+            sql = "INSERT INTO TBSZOUCHI" + request.cfs_ini["iniUpdTbl"] + " "
             sql += "(SZOUCHICD,SZOUCHINM,UDATE,UWSID) "
             sql += "VALUES("
-            sql += request.context["txt_aszouchicd"] + ","
-            sql += request.context["txt_aszouchinm"] + ","
+            sql += sqlStringConvert(request.context["txt_aszouchicd"]) + ","
+            sql += sqlStringConvert(request.context["txt_aszouchinm"]) + ","
             sql += "CURRENT_TIMESTAMP" + ","
-            # TODO
-            sql += "iniWsNo" + ")"
+            sql += sqlStringConvert(request.cfs_ini["iniWsNo"]) + ")"
             SqlExecute(sql).execute()
         init_form(request, CFSC31_MODE0)
         request.context["gSetField"] = "txt_aszouchicd"
@@ -112,10 +112,10 @@ def cmd_change_Click(request):
             return
         with transaction.atomic():
             sql = "UPDATE TBSZOUCHI" + request.cfs_ini["iniUpdTbl"] + " "
-            sql += "SET SZOUCHINM = " + request.context["txt_aszouchinm"] + ","
+            sql += "SET SZOUCHINM = " + sqlStringConvert(request.context["txt_aszouchinm"]) + ","
             sql += "UDATE = CURRENT_TIMESTAMP" + ","
-            sql += "UWSID = iniWsNo" + " "
-            sql += "WHERE SZOUCHICD = " + request.context["txt_aszouchicd"]
+            sql += "UWSID = " + sqlStringConvert(request.cfs_ini["iniWsNo"]) + " "
+            sql += "WHERE SZOUCHICD = " + sqlStringConvert(request.context["txt_aszouchicd"])
             SqlExecute(sql).execute()
         init_form(request, CFSC31_MODE0)
         request.context["gSetField"] = "txt_aszouchicd"
@@ -131,7 +131,7 @@ def cmd_delete_Click(request):
     try:
         with transaction.atomic():
             sql = "DELETE FROM TBSZOUCHI" + request.cfs_ini["iniUpdTbl"] + " "
-            sql += sql + "WHERE SZOUCHICD = " + request.context["txt_aszouchicd"]
+            sql += "WHERE SZOUCHICD = " + sqlStringConvert(request.context["txt_aszouchicd"])
             SqlExecute(sql).execute()
         init_form(request, CFSC31_MODE0)
         request.context["gSetField"] = "txt_aszouchicd"

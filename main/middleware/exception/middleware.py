@@ -1,8 +1,10 @@
 import logging
 import traceback
 from django.shortcuts import render
-from main.middleware.exception.exceptions import RuntimeException
-from django.urls import reverse_lazy
+from main.middleware.exception.exceptions import (
+    RuntimeException,
+    BondAreaNameException
+)
 
 logger = logging.getLogger(__name__)
 
@@ -17,6 +19,9 @@ class ExceptionHandleMiddleware(object):
     def process_exception(self, request, exception):
         if isinstance(exception, RuntimeException):
             request.context["lblMsg"] = exception.get_message()
+        elif isinstance(exception, BondAreaNameException):
+            self.__write_logging(request, exception)
+            return render(request, "blank.html", request.context)
         else:
             request.context["lblMsg"] = f"Server error: {str(exception)}"
         self.__write_logging(request, exception)

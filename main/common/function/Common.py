@@ -260,3 +260,11 @@ def pfncDataSessionRelease(request, strSessionNM: str):
         request.session.modified = True
     except Exception as e:
         _logger.error(e)
+
+
+def sqlStringConvert(strSQL):
+    if not strSQL:
+        strSQL = ""
+    if not strSQL.strip():
+        return "NULL"
+    return f"'{strSQL}'"
