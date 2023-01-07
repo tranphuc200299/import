@@ -15,3 +15,12 @@ class RuntimeException(Exception):
 
     def __str__(self):
         return f'ERROR_CODE = {self.error_code}, MESSAGE = {self.get_message()}'
+
+
+class BondAreaNameException(Exception):
+
+    def __init__(self, message):
+        self.message = message
+
+    def __str__(self):
+        return f"[BOND_AREA_NAME_ERROR]: {self.message}"
