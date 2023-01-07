@@ -5,7 +5,7 @@ from main.common.function import SqlExecute
 from django.db import IntegrityError, transaction
 from main.common.function.Const import DB_FATAL_ERR, DB_TBFREETM_NOT_FIND, DB_TBCALENDER_NOT_FIND, csFKISANKBN_1, csFCALC_1, \
     csFCALC_3, csDAYKBN_3, TRACK_VANNO, NOMAL_OK, FATAL_ERR, DB_TBOPE_NOT_FIND, DB_NOMAL_OK, csDEMUCKBN_A, csDEMUCKBN_C, \
-    DB_TBDEMURG_NOT_FIND, csSTANKAKBN_2, csSTANKAKBN_3, csMTONTKBN_1, csMTONTKBN_2, csMTONTKBN_3, csDCALC_1, csDAYKBN_1, \
+    DB_TBDEMURG_NOT_FIND, csMTONTKBN_1, csMTONTKBN_2, csMTONTKBN_3, csDCALC_1, csDAYKBN_1, \
     csDAYKBN_2, csDCALC_3, csDAYKBN_9, csDAYKBN_4, csLOCK_ON, DB_NOT_FIND, DB_LOCK, csSTANKAKBN_1, csSTANKAKBN_2, csSTANKAKBN_3, \
     csSTANKAKBN_4, csSTANKAKBN_5
 from main.middleware.exception.exceptions import RuntimeException
