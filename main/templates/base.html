@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+{% load core_tags %}
 {% load static %}
 <html lang="en">
 <head>
@@ -19,9 +20,9 @@
     {% block css %}{% endblock css %}
 </head>
 
-<body>
+<body id="body">
 {% spaceless %}
-    {% include "partials/header.html" %}
+    {% header request %}
     <input type="hidden" id="gSetField" value="{{ gSetField }}">
 <!--navbar section start-->
 <section class="content" id="content">

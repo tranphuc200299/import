@@ -1,6 +1,6 @@
 import logging
 import traceback
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from main.middleware.exception.exceptions import (
     RuntimeException,
     BondAreaNameException
@@ -21,7 +21,7 @@ class ExceptionHandleMiddleware(object):
             request.context["lblMsg"] = exception.get_message()
         elif isinstance(exception, BondAreaNameException):
             self.__write_logging(request, exception)
-            return render(request, "home.html", request.context)
+            return redirect("/")
         else:
             request.context["lblMsg"] = f"Server error: {str(exception)}"
         self.__write_logging(request, exception)

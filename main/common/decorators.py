@@ -49,7 +49,7 @@ def update_context():
     return inner_func
 
 
-def load_cfs_ini(cfs_menu):
+def load_cfs_ini(cfs_menu=''):
     """
     Load Cfs ini
     @load_cfs_ini
