@@ -28,7 +28,10 @@
         {% include "partials/siderBar.html" %}
         <div class="col-xl-10 col-lg-10 col-sm-6">
             <div class="content-items">
+                <div class="content-right">
+                 {% include "partials/content-header.html" %}
                  {% block main %}{% endblock main %}
+                </div>
             </div>
         </div>
     </div>
@@ -41,6 +44,7 @@
 <script src="{% static 'plugins/htmx-1.8.0.min.js' %}"></script>
 <script src="{% static 'js/app.js' %}"></script>
 <script src="{% static 'plugins/jquery.dataTables.min.js' %}"></script>
+<script src="{% static 'vendor/bootstrap/js/bootstrap.min.js' %}"></script>
 <script src="{% static 'plugins/javascript-number-formatter.min.js' %}"></script>
 <script src="{% static 'plugins/jquery-ui.js' %}"></script>
 {% block js %}{% endblock js %}
