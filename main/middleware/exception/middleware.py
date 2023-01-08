@@ -17,14 +17,14 @@ class ExceptionHandleMiddleware(object):
         return self.get_response(request)
 
     def process_exception(self, request, exception):
+        self.__write_logging(request, exception)
         if isinstance(exception, RuntimeException):
             request.context["lblMsg"] = exception.get_message()
         elif isinstance(exception, BondAreaNameException):
-            self.__write_logging(request, exception)
-            return redirect("/")
+            request.context["lblMsg"] = str(exception).replace("(0)", request.path[1:-1])
+            return render(request, "home.html", request.context)
         else:
             request.context["lblMsg"] = f"Server error: {str(exception)}"
-        self.__write_logging(request, exception)
         url_name = request.resolver_match.url_name
         return render(request, f"{url_name}.html", request.context)
 
@@ -37,6 +37,6 @@ class ExceptionHandleMiddleware(object):
             request.method,
             request.content_type,
             request.path,
-            str(exception),
+            str(exception).replace("(0)", request.path[1:-1]),
             traceback.format_exc(),
         ))
