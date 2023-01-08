@@ -1,12 +1,11 @@
 import logging
-
 from django.db import transaction
 from django.shortcuts import render
-
 from main.common.decorators import update_context, load_cfs_ini
 from main.common.function import SqlExecute
 from main.common.function.Common import sqlStringConvert
 from main.common.function.Const import NOMAL_OK, FATAL_ERR
+from main.common.utils import Response
 
 __logger = logging.getLogger(__name__)
 
@@ -30,6 +29,9 @@ def f_cfsc1300(request):
             cmd_cancel_Click(request)
         elif action == "cmd_delete":
             cmd_delete_Click(request)
+        elif action == "txt_afwdcd_Change":
+            id_show_data = txt_afwdcd_Change(request)
+            return Response(request).json_response_textchange(id_show_data)
     else:
         Form_Load(request)
     return render(request, "menu4/f_cfsc1300.html", request.context)
@@ -48,6 +50,7 @@ def txt_afwdcd_Change(request):
     request.context["cmd_entry_enable"] = False
     request.context["cmd_change_enable"] = False
     request.context["cmd_delete_enable"] = False
+    return ["txt_afwdcd", "cmd_entry_enable", "cmd_change_enable", "cmd_delete_enable"]
 
 
 def cmd_search_Click(request):
