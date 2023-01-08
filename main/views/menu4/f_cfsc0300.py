@@ -42,7 +42,7 @@ def f_cfsc0300(request):
                 return Response(request).json_response_textchange(id_show_data)
     else:
         Form_Load(request)
-    return render(request, "menu4/f_cfsc0300.html", request.context)
+    return render(request, "menu/menu4/f_cfsc0300.html", request.context)
 
 
 def Form_Load(request):

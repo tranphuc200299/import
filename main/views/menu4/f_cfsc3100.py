@@ -36,7 +36,7 @@ def f_cfsc3100(request):
             cmd_cancel_Click(request)
     else:
         Form_Load(request)
-    return render(request, "menu4/f_cfsc3100.html", request.context)
+    return render(request, "menu/menu4/f_cfsc3100.html", request.context)
 
 
 def Form_Load(request):
@@ -79,6 +79,7 @@ def cmd_search_Click(request):
         request.context["gSetField"] = "txt_aszouchinm"
     except Exception as e:
         __logger.error(e)
+        raise Exception(e)
         # TODO
         # OraError("TBSZOUCHI" + strProcTbl, "sql")
 

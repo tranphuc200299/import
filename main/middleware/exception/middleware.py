@@ -1,6 +1,7 @@
 import logging
 import traceback
-from django.shortcuts import render, redirect
+from django.shortcuts import render
+from main.common.utils import FileDirUtil
 from main.middleware.exception.exceptions import (
     RuntimeException,
     BondAreaNameException
@@ -26,7 +27,7 @@ class ExceptionHandleMiddleware(object):
         else:
             request.context["lblMsg"] = f"Server error: {str(exception)}"
         url_name = request.resolver_match.url_name
-        return render(request, f"{url_name}.html", request.context)
+        return render(request, FileDirUtil.get_html_dir_by_url_name(url_name), request.context)
 
     def __write_logging(self, request, exception):
         logger.error((

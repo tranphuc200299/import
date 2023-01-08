@@ -151,3 +151,17 @@ class ConfigIni(object):
         strings = string.split("/*")
         output = strings[0].strip()
         return output
+
+
+class FileDirUtil:
+
+    @staticmethod
+    def get_html_dir_by_url_name(url_name):
+        base_dir = Path(__file__).resolve().parent.parent
+        html_dir = os.path.join(base_dir, "templates", "menu")
+        menu_folders = os.listdir(html_dir)
+        for menu_folder in menu_folders:
+            menu_files = os.listdir(os.path.join(base_dir, "templates", "menu", menu_folder))
+            if f"{url_name}.html" in menu_files:
+                return f"menu/{menu_folder}/{url_name}.html"
+        return "home.html"
