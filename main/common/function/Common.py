@@ -268,3 +268,11 @@ def sqlStringConvert(strSQL):
     if not strSQL.strip():
         return "NULL"
     return f"'{strSQL}'"
+
+
+def IsNumeric(obj):
+    try:
+        float(obj)
+        return True
+    except Exception:
+        return False

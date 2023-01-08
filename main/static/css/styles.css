@@ -489,3 +489,10 @@ width:100px;
     color: white;
     outline:none;
 }
+
+.mainErrLabel {
+    width: 100%;
+    color: Red;
+    font-weight: bold;
+    font-size: 20px;
+}

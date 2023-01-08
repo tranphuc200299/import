@@ -34,7 +34,7 @@ def f_cfsc1300(request):
             return Response(request).json_response_textchange(id_show_data)
     else:
         Form_Load(request)
-    return render(request, "menu4/f_cfsc1300.html", request.context)
+    return render(request, "menu/menu4/f_cfsc1300.html", request.context)
 
 
 def Form_Load(request):

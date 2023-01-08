@@ -86,6 +86,18 @@ class ConfigIni(object):
                 iniDispNam.append(self.__cut_string(user_section["DspName"]))
                 iniDispCd.append(self.__cut_string(user_section["DspCode"]))
                 iniDispTbl.append(self.__cut_string(user_section["DspTbl"]))
+            index_bond_area = None
+            for index, value in enumerate(iniUpdNam):
+                if value == Common.pfncDataSessionGet(request, "bond_area_name"):
+                    index_bond_area = index
+                    break
+            if index_bond_area is not None:
+                request.cfs_ini["iniUpdNam"] = iniUpdNam[index_bond_area]
+                request.cfs_ini["iniUpdCd"] = iniUpdCd[index_bond_area]
+                request.cfs_ini["iniUpdTbl"] = iniUpdTbl[index_bond_area]
+                request.cfs_ini["iniDispNam"] = iniDispNam[index_bond_area]
+                request.cfs_ini["iniDispCd"] = iniDispCd[index_bond_area]
+                request.cfs_ini["iniDispTbl"] = iniDispTbl[index_bond_area]
         bond_area_name_select = request.GET.get('bond_area_name_select', None)
         if bond_area_name_select is None:
             bond_area_name_select = Common.pfncDataSessionGet(request, "bond_area_name")
@@ -96,18 +108,7 @@ class ConfigIni(object):
         for menu in list_menu:
             request.context[menu] = "Display"
         if cfs_menu not in list_menu:
-            raise BondAreaNameException("This screen doesn't exists in bond area name: {}".format(
-                Common.pfncDataSessionGet(request, "bond_area_name")))
-        for index, value in enumerate(iniUpdNam):
-            if value == Common.pfncDataSessionGet(request, "bond_area_name"):
-                index_bond_area = index
-                break
-        request.cfs_ini["iniUpdNam"] = iniUpdNam[index_bond_area]
-        request.cfs_ini["iniUpdCd"] = iniUpdCd[index_bond_area]
-        request.cfs_ini["iniUpdTbl"] = iniUpdTbl[index_bond_area]
-        request.cfs_ini["iniDispNam"] = iniDispNam[index_bond_area]
-        request.cfs_ini["iniDispCd"] = iniDispCd[index_bond_area]
-        request.cfs_ini["iniDispTbl"] = iniDispTbl[index_bond_area]
+            raise BondAreaNameException(Common.pfncDataSessionGet(request, "bond_area_name"))
 
     def get_default_area_name(self):
         name = env_config("DEFAULT_BOND_AREA_NAME")
@@ -121,14 +122,13 @@ class ConfigIni(object):
     def get_all_area_name(self):
         config = configparser.ConfigParser()
         file_names = os.listdir(self.config_ini_dir)
-        names = list()
+        names = set()
         for filename in file_names:
             config.read(os.path.join(self.config_ini_dir, filename), encoding="SJIS")
             sections = [section for section in config.sections() if section.startswith("USER")]
             for section in sections:
                 user_section = config[section]
-                if self.__cut_string(user_section["DspName"]) not in names:
-                    names.append(self.__cut_string(user_section["DspName"]))
+                names.add(self.__cut_string(user_section["DspName"]))
         return names
 
     def get_list_menu_by_area_name(self, area_name):
@@ -151,3 +151,17 @@ class ConfigIni(object):
         strings = string.split("/*")
         output = strings[0].strip()
         return output
+
+
+class FileDirUtil:
+
+    @staticmethod
+    def get_html_dir_by_url_name(url_name):
+        base_dir = Path(__file__).resolve().parent.parent
+        html_dir = os.path.join(base_dir, "templates", "menu")
+        menu_folders = os.listdir(html_dir)
+        for menu_folder in menu_folders:
+            menu_files = os.listdir(os.path.join(base_dir, "templates", "menu", menu_folder))
+            if f"{url_name}.html" in menu_files:
+                return f"menu/{menu_folder}/{url_name}.html"
+        return "home.html"
