@@ -21,7 +21,7 @@ class ExceptionHandleMiddleware(object):
         if isinstance(exception, RuntimeException):
             request.context["lblMsg"] = exception.get_message()
         elif isinstance(exception, BondAreaNameException):
-            request.context["lblMsg"] = str(exception).replace("(0)", request.path[1:-1])
+            request.context["lblMsg"] = str(exception)
             return render(request, "home.html", request.context)
         else:
             request.context["lblMsg"] = f"Server error: {str(exception)}"
@@ -37,6 +37,6 @@ class ExceptionHandleMiddleware(object):
             request.method,
             request.content_type,
             request.path,
-            str(exception).replace("(0)", request.path[1:-1]),
+            str(exception),
             traceback.format_exc(),
         ))

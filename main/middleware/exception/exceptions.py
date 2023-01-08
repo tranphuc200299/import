@@ -23,4 +23,4 @@ class BondAreaNameException(Exception):
         self.bond_area_name = bond_area_name
 
     def __str__(self):
-        return f"The screen (0) doesn't exists in bond area name: {format(self.bond_area_name)}"
+        return f"Request screen doesn't exists in bond area name: {format(self.bond_area_name)}"

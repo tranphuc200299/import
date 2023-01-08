@@ -24,7 +24,7 @@ def header(request):
     config_ini = ConfigIni()
     names = config_ini.get_all_area_name()
     bond_area_name = Common.pfncDataSessionGet(request, "bond_area_name")
-    path_url = request.resolver_match.route
+    path_url = request.resolver_match.url_name
     if path_url == "":
         path_url = "home"
     response = {
