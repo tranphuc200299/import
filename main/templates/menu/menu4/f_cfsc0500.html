@@ -4,7 +4,71 @@
 {% block title %}倉庫内蔵置場所コード登録{% endblock title %}
 
 {% block main %}
-    <h1>ok</h1>
+
+    <form id="f_cfsc0500" method="post">
+        {% csrf_token %}
+        <div class="search_about" style="flex-direction: row !important; height: 113px;">
+            <div class="vung1" style="margin-top: -1rem">
+                <div class="item_search_title title_register">
+                    <h3>オペレータコード <span style="color:red">* </span></h3>
+                </div>
+                <div class="search_input input_small input_register">
+                    {% include "includes/textbox.html" with id="txt_aopecd" CssClass="form-control" MaxLength=8 TextChange="True" %}
+                </div>
+            </div>
+            <div class="vung2" style="margin-top: -1rem">
+                <div class="item_search_title title_register">
+                    <h3>エリアコード</h3>
+                </div>
+                <div class="search_input input_small input_register">
+                    {% include "includes/textbox.html" with id="txt_afreekbn" CssClass="form-control" MaxLength=8 %}
+                </div>
+            </div>
+            <div class="content_button button_register">
+                <div class="vung3">
+                    <div class="item_search_title title_register">
+
+                    </div>
+                    <div class="search_input input_small input_register" style="margin-top: 3.5rem">
+                        <img src="{% static 'images/search.svg' %}" alt="">
+                        {% include "includes/button.html" with name="action" id="cmd_search" CssClass="btn-search" Text="検索" %}
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+        <div class="form-container">
+            <div class="form_about" >
+                <div class="form_row" style="width: 600px">
+                    <label class="form_label">海貨業者名称 <span style="color:red">* </span> </label>
+                    <select class="custom-select custom-select-lg mb-3">
+                        <option selected>搬入日翌日起算</option>
+
+                    </select>
+                </div>
+                <div class="form_row" style="width: 150px" >
+                    <label class="form_label">海貨業者担当者名称 </label>
+                    {% include "includes/textbox.html" with id="txt_afwdtannm" CssClass="form-control" MaxLength=10 %}
+                </div>
+
+                <div class="form_row" style="width: 600px">
+                    <label class="form_label">海貨業者電話番号 </label>
+                    <select class="custom-select custom-select-lg mb-3">
+                        <option selected>搬入日翌日起算</option>
+
+                    </select>
+                </div>
+
+                <div class="control_button">
+                    {% include "includes/button.html" with name="action" id="cmd_entry" CssClass="btn-register" Text="登録" IsEnable=cmd_entry_enable %}
+                    {% include "includes/button.html" with name="action" id="cmd_change" CssClass="btn-register" Text="変更" IsEnable=cmd_change_enable %}
+                    {% include "includes/button.html" with name="action" id="cmd_delete" CssClass="btn-register" Text="削除" IsEnable=cmd_delete_enable %}
+                    {% include "includes/button.html" with name="action" id="cmd_cancel" CssClass="btn-register" Text="取消" %}
+                </div>
+            </div>
+        </div>
+    </form>
 {% endblock main %}
 
 {% block js %}

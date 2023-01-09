@@ -565,3 +565,20 @@ width:100px;
 .item_search_title {
     margin-right: 15px;
 }
+
+/*QuocNV*/
+.register_code {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 20px 16px;
+    gap: 10px;
+
+
+    background: #FFFFFF;
+    border-radius: 12px;
+}
+
+txt_aopecd_content h3{
+
+}
