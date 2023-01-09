@@ -7,6 +7,7 @@ from main.common.decorators import update_context
 from main.common.function import SqlExecute, Common
 from main.common.function.Const import \
     FATAL_ERR, NOMAL_OK, csFKISANKBN_1, csFKISANKBN_2, csFCALC_1, csFCALC_2, csFCALC_3
+from main.common.utils import Response
 
 __logger = logging.getLogger(__name__)
 
@@ -27,7 +28,13 @@ CFSC05_FDAYS_MAX = 999
 def f_cfsc0500(request):
     if request.method == "POST":
         action = request.POST.get("action", None)
-        if action == "cmd_search":
+        if action == "txt_aszouchicd_Change":
+            id_show_data = txt_aopecd_Change(request)
+            return Response(request).json_response_textchange(id_show_data)
+        elif action == "txt_afreekbn_Change":
+            id_show_data = txt_afreekbn_Change(request)
+            return Response(request).json_response_textchange(id_show_data)
+        elif action == "cmd_search":
             cmd_search_Click(request)
         elif action == "cmd_entry_Click":
             cmd_entry_Click(request)
@@ -37,7 +44,7 @@ def f_cfsc0500(request):
             cmd_cancel_Click(request)
     else:
         Form_Load(request)
-        return render(request, "f_cfsc0500.html", request.context)
+        return render(request, "menu/menu4/f_cfsc0500.html", request.context)
 
 
 def Form_Load(request):
