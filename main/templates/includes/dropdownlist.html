@@ -1,0 +1,16 @@
+{% if id == "cmb_afksankbn" %}
+    <select tabindex="{{ tabIndex }}" class="{{ CssClass }}" name="cmb_afksankbn" id="cmb_afksankbn"
+            {% if gSetField == "cmb_afksankbn" %}autofocus{% endif %}>
+        <option value="" {% if not cmb_afksankbn %}selected{% endif %}></option>
+        <option value="0" {% if cmb_afksankbn == "0" %}selected{% endif %}>搬入日起算</option>
+        <option value="1" {% if cmb_afksankbn == "1" %}selected{% endif %}>搬入日翌日起算</option>
+    </select>
+{% elif id == "cmb_afcalc" %}
+    <select tabindex="{{ tabIndex }}" class="{{ CssClass }}" name="cmb_afcalc" id="cmb_afcalc"
+            {% if gSetField == "cmb_afcalc" %}autofocus{% endif %}>
+        <option value="" {% if not cmb_afcalc %}selected{% endif %}></option>
+        <option value="0" {% if cmb_afcalc == "0" %}selected{% endif %}>日祝除く</option>
+        <option value="1" {% if cmb_afcalc == "1" %}selected{% endif %}>土日祝除く</option>
+        <option value="2" {% if cmb_afcalc == "2" %}selected{% endif %}>全て含む</option>
+    </select>
+{% endif %}

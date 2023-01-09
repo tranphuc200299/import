@@ -39,25 +39,28 @@
             </div>
         </div>
         <div class="form-container">
-            <div class="form_about" >
+            <div class="form_about" style="color: black">
                 <div class="form_row" style="width: 600px">
                     <label class="form_label">海貨業者名称 <span style="color:red">* </span> </label>
-                    <select class="custom-select custom-select-lg mb-3">
-                        <option selected>搬入日翌日起算</option>
+                    <div style="color: black">
+                    {% include "includes/dropdownlist.html" with id="cmb_afksankbn"  nothing="True" tabIndex="1" CssClass="mainListData" %}
 
-                    </select>
+                    </div>
+
+
                 </div>
-                <div class="form_row" style="width: 150px" >
+                <div class="form_row" style="width: 150px">
                     <label class="form_label">海貨業者担当者名称 </label>
-                    {% include "includes/textbox.html" with id="txt_afwdtannm" CssClass="form-control" MaxLength=10 %}
+                    {% include "includes/textbox.html" with id="txt_ifdays" CssClass="form-control" MaxLength=10 %}
                 </div>
 
                 <div class="form_row" style="width: 600px">
                     <label class="form_label">海貨業者電話番号 </label>
-                    <select class="custom-select custom-select-lg mb-3">
-                        <option selected>搬入日翌日起算</option>
+                    <div style="color: black">
+                    {% include "includes/dropdownlist.html" with id="cmb_afcalc" tabIndex="1" CssClass="mainListData" %}
 
-                    </select>
+                    </div>
+
                 </div>
 
                 <div class="control_button">

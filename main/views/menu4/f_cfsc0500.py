@@ -32,10 +32,10 @@ def f_cfsc0500(request):
         action = request.POST.get("action", None)
         if action == "txt_aopecd_Change":
             id_show_data = txt_aopecd_Change(request)
-            return Response(request).json_response_textchange(id_show_data)
+            return Response(request).json_response_event_js_html(id_show_data)
         elif action == "txt_afreekbn_Change":
             id_show_data = txt_afreekbn_Change(request)
-            return Response(request).json_response_textchange(id_show_data)
+            return Response(request).json_response_event_js_html(id_show_data)
         elif action == "cmd_search":
             cmd_search_Click(request)
         elif action == "cmd_entry":
@@ -101,20 +101,20 @@ def cmd_search_Click(request):
             request.context["cmd_entry_enable"] = True
         else:
             if csFKISANKBN_1 == DbDataChange(RsTbFreeTm.Rows[0]["fkisankbn"]):
-                request.context["cmb_afksankbn"] = "imquoc1"
+                request.context["cmb_afksankbn"] = "cmb_afksankbn"
             elif csFKISANKBN_2 == DbDataChange(RsTbFreeTm.Rows[0]["fkisankbn"]):
-                request.context["cmb_afksankbn"] = request.context["cmb_afksankbn"][1]
-
+                request.context["cmb_afksankbn"] = "cmb_afksankbn"
+            request.context["txt_ifdays"] = DbDataChange(RsTbFreeTm.Rows[0]["fdays"])
             if DbDataChange(RsTbFreeTm.Rows[0]["fkisankbn"]) == csFCALC_1:
-                request.context["cmb_afcalc"] = request.context["cmb_afcalc"][0]
+                request.context["cmb_afcalc"] = "cmb_afcalc"
             if DbDataChange(RsTbFreeTm.Rows[0]["fkisankbn"]) == csFCALC_2:
-                request.context["cmb_afcalc"] = request.context["cmb_afcalc"][1]
+                request.context["cmb_afcalc"] = "cmb_afcalc"
             if DbDataChange(RsTbFreeTm.Rows[0]["fkisankbn"]) == csFCALC_3:
-                request.context["cmb_afcalc"] = request.context["cmb_afcalc"][2]
+                request.context["cmb_afcalc"] = "cmb_afcalc"
             request.context["cmd_change"] = True
             request.context["cmd_delete"] = True
-            request.context["txt_ifdays"] = DbDataChange(RsTbFreeTm[0]["FDAYS"])
-        request.context["gSetField"] = "txt_aszouchinm"
+
+        request.context["gSetField"] = "cmb_afksankbn"
 
 
 
@@ -129,7 +129,7 @@ def inpdatachk2(request):
         request.context["lblMsg"] = "必須入力エラー", "フリータイム日数を入力して下さい。"
         request.context["gSetField"] = "txt_ifdays"
         return FATAL_ERR
-    if Common.IsNumeric(request.context["txt_ifdays"]):
+    if not Common.IsNumeric(request.context["txt_ifdays"]):
         request.context["lblMsg"] = "入力整合性エラー", "フリータイム日数は整数(ZZ9形式)で入力して下さい。"
         request.context["gSetField"] = "txt_ifdays"
         return FATAL_ERR
@@ -189,30 +189,32 @@ def cmd_entry_Click(request):
         if inpdatachk2(request) != NOMAL_OK:
             return
         with transaction.atomic():
-            sql = "INSERT INTO TBFREETM" + request.cfs_ini["iniUpdTbl"]
-            sql += sql + "(OPECD,FREEKBN,FKISANKBN,FDAYS,FCALC,UDATE,UWSID)"
-            sql += sql + "VALUES("
-            sql += sql + sqlStringConvert(request.context["txt_aopecd"]) + ","
-            sql += sql + sqlStringConvert(request.context["txt_afreekbn"]) + ","
-            if request.context["cmb_afksankbn"] == CFSC05_FKISANKBN_TYPE1:
-                sql += sql + csFKISANKBN_1 + ","
-            if request.context["cmb_afksankbn"] == CFSC05_FKISANKBN_TYPE2:
-                sql += sql + csFKISANKBN_2 + ","
-            sql += sql + sqlStringConvert(request.context['txt_ifdays']) + ","
-            if request.context["cmb_afcalc"] == CFSC05_FCALC_TYPE1:
-                sql += sql + csFCALC_1 + ","
-            if request.context["cmb_afcalc"] == CFSC05_FCALC_TYPE2:
-                sql += sql + csFCALC_2 + ","
-            if request.context["cmb_afcalc"] == CFSC05_FCALC_TYPE3:
-                sql += sql + csFCALC_3 + ","
-            sql += sql + "CURRENT_TIMESTAMP" + ","
-            sql += "iniWsNo" + ")"
+            sql = "INSERT INTO TBFREETM" + request.cfs_ini["iniUpdTbl"] + ""
+            sql += " (OPECD,FREEKBN,FKISANKBN,FDAYS,FCALC,UDATE,UWSID) "
+            sql += " VALUES ("
+            sql += sqlStringConvert(request.context["txt_aopecd"]) + ","
+            sql += sqlStringConvert(request.context["txt_afreekbn"]) + ","
+            if str(request.context["cmb_afksankbn"]) == "1":
+                sql += "1" + ","
+            if str(request.context["cmb_afksankbn"]) == "2":
+                sql += "2" + ","
+            sql += sqlStringConvert(request.context['txt_ifdays']) + ","
+            if request.context["cmb_afcalc"] == "1":
+                sql += "1" + ","
+            if request.context["cmb_afcalc"] == "2":
+                sql += "2" + ","
+            if request.context["cmb_afcalc"] == "3":
+                sql += "3" + ","
+            sql += "CURRENT_TIMESTAMP" + ","
+
+            sql += sqlStringConvert(request.cfs_ini["iniWsNo"]) + ")"
             SqlExecute(sql).execute()
-        init_form(request, CFSC05_MODE0)
-        request.context["gSetField"] = "txt_aopecd"
+            init_form(request, CFSC05_MODE0)
+            request.context["gSetField"] = "txt_aopecd"
 
     except Exception as a:
         __logger.error(a)
+        request.context["cmd_entry_enable"] = False
 
 
 def cmd_cancel_Click(request):
