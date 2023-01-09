@@ -1,25 +1,37 @@
 {% load static %}
+{% load core_tags %}
 <header>
     <div class="container-full">
-      <div class="row">
-        <div class="col-xl-4 col-lg-4 col-sm-6">
-          <div class="logo">
-            <a href="#" class="logo">LOGO</a>
-          </div>
+        <div class="row">
+            <div class="col-xl-4 col-lg-4 col-sm-6">
+                <div class="logo">
+                    <a href="#" class="logo">LOGO</a>
+                </div>
+            </div>
+            <div class="col-xl-8 col-lg-8 col-sm-6">
+                <nav class="menu-header">
+                    <ul>
+                        <li><a href="#"><img src="{% static 'images/Vector.png' %}" alt=""></a></li>
+                        <li>
+                            <div class="form-group select_group">
+                                <select name="bond_area_name_select" class="form-control select_header" hx-target="#body" hx-get="{{ path_url|name2url }}">
+                                    {% for name in bond_area_names %}
+                                        <option {% if bond_area_name_selected == name %} selected {% endif %} value="{{name}}">
+                                            {{name}}
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </li>
+
+                    </ul>
+                    <div class="space"></div>
+                    <ul class="menu-out">
+                        <li><a href="#">NameUSER</a></li>
+                        <li><a href="#"><img src="{% static 'images/back.png' %}" alt=""></a></li>
+                    </ul>
+                </nav>
+            </div>
         </div>
-        <div class="col-xl-8 col-lg-8 col-sm-6">
-          <nav class="menu-header">
-            <ul>
-              <li><a href="#"><img src="{% static 'images/Vector.png' %}" alt=""></a></li>
-              <li><a href="#">大井</a></li>
-            </ul>
-            <div class="space"></div>
-            <ul class="menu-out">
-              <li><a href="#">NameUSER</a></li>
-              <li><a href="#"><img src="{% static 'images/back.png' %}" alt=""></a></li>
-            </ul>
-          </nav>
-        </div>
-      </div>
     </div>
-  </header>
+</header>

@@ -3,8 +3,9 @@ import logging
 from django.db import transaction
 from django.shortcuts import render
 
-from main.common.decorators import update_context
+from main.common.decorators import update_context, load_cfs_ini
 from main.common.function import SqlExecute
+from main.common.function.Common import sqlStringConvert
 from main.common.function.Const import FATAL_ERR, NOMAL_OK
 from main.common.utils import Response
 
@@ -16,6 +17,7 @@ CFSC31_MODE1 = 1
 
 
 @update_context()
+@load_cfs_ini("menu4")
 def f_cfsc3100(request):
     if request.method == "POST":
         action = request.POST.get("action", None)
@@ -34,7 +36,7 @@ def f_cfsc3100(request):
             cmd_cancel_Click(request)
     else:
         Form_Load(request)
-    return render(request, "f_cfsc3100.html", request.context)
+    return render(request, "menu/menu4/f_cfsc3100.html", request.context)
 
 
 def Form_Load(request):
@@ -44,12 +46,6 @@ def Form_Load(request):
         request.context["cmd_entry_enable"] = False
         request.context["cmd_change_enable"] = False
         request.context["cmd_delete_enable"] = False
-        request.context["lbl_aSelHozNam"] = request.GET["strSelHozNam"]
-
-        global strProcHozCd, strProcHozNam, strProcTbl
-        strProcHozCd = request.GET["strSelHozCd"]
-        strProcHozNam = request.GET["strSelHozNam"]
-        strProcTbl = request.GET["strSelTbl"]
     except Exception as e:
         __logger.error(e)
         # TODO
@@ -65,24 +61,25 @@ def txt_aszouchicd_Change(request):
 
 def cmd_search_Click(request):
     try:
-        init_form(CFSC31_MODE1)
+        init_form(request, CFSC31_MODE1)
         if inpdatachk1(request) != NOMAL_OK:
             return
         sql = "SELECT * "
-        sql += " FROM TBSZOUCHI" + strProcTbl
-        sql += " WHERE SZOUCHICD = " + request.context["txt_aszouchicd"]
+        sql += " FROM TBSZOUCHI" + request.cfs_ini["iniUpdTbl"]
+        sql += " WHERE SZOUCHICD = " + sqlStringConvert(request.context["txt_aszouchicd"])
         sql += " FOR UPDATE NOWAIT"
         RsTbSZouchi = SqlExecute(sql).all()
         if not RsTbSZouchi.Rows:
             request.context["cmd_entry_enable"] = True
         else:
             # TODO
-            request.context["txt_aszouchinm"] = "DbDataChange(RsTbSZouchi.Rows[0], 'SZOUCHINM')"
+            request.context["txt_aszouchinm"] = RsTbSZouchi.Rows[0]['szouchinm']
             request.context["cmd_change_enable"] = True
             request.context["cmd_delete_enable"] = True
         request.context["gSetField"] = "txt_aszouchinm"
     except Exception as e:
         __logger.error(e)
+        raise Exception(e)
         # TODO
         # OraError("TBSZOUCHI" + strProcTbl, "sql")
 
@@ -92,16 +89,15 @@ def cmd_entry_Click(request):
         if inpdatachk1(request) != NOMAL_OK:
             return
         with transaction.atomic():
-            sql = "INSERT INTO TBSZOUCHI" & strProcTbl & " "
+            sql = "INSERT INTO TBSZOUCHI" + request.cfs_ini["iniUpdTbl"] + " "
             sql += "(SZOUCHICD,SZOUCHINM,UDATE,UWSID) "
             sql += "VALUES("
-            sql += request.context["txt_aszouchicd"] + ","
-            sql += request.context["txt_aszouchinm"] + ","
+            sql += sqlStringConvert(request.context["txt_aszouchicd"]) + ","
+            sql += sqlStringConvert(request.context["txt_aszouchinm"]) + ","
             sql += "CURRENT_TIMESTAMP" + ","
-            # TODO
-            sql += "iniWsNo" + ")"
+            sql += sqlStringConvert(request.cfs_ini["iniWsNo"]) + ")"
             SqlExecute(sql).execute()
-        init_form(CFSC31_MODE0)
+        init_form(request, CFSC31_MODE0)
         request.context["gSetField"] = "txt_aszouchicd"
     except Exception as e:
         __logger.error(e)
@@ -115,13 +111,13 @@ def cmd_change_Click(request):
         if inpdatachk2(request) != NOMAL_OK:
             return
         with transaction.atomic():
-            sql = "UPDATE TBSZOUCHI" + strProcTbl + " "
-            sql += "SET SZOUCHINM = " + request.context["txt_aszouchinm"] + ","
+            sql = "UPDATE TBSZOUCHI" + request.cfs_ini["iniUpdTbl"] + " "
+            sql += "SET SZOUCHINM = " + sqlStringConvert(request.context["txt_aszouchinm"]) + ","
             sql += "UDATE = CURRENT_TIMESTAMP" + ","
-            sql += "UWSID = iniWsNo" + " "
-            sql += "WHERE SZOUCHICD = " + request.context["txt_aszouchicd"]
+            sql += "UWSID = " + sqlStringConvert(request.cfs_ini["iniWsNo"]) + " "
+            sql += "WHERE SZOUCHICD = " + sqlStringConvert(request.context["txt_aszouchicd"])
             SqlExecute(sql).execute()
-        init_form(CFSC31_MODE0)
+        init_form(request, CFSC31_MODE0)
         request.context["gSetField"] = "txt_aszouchicd"
     except Exception as e:
         __logger.error(e)
@@ -134,10 +130,10 @@ def cmd_change_Click(request):
 def cmd_delete_Click(request):
     try:
         with transaction.atomic():
-            sql = "DELETE FROM TBSZOUCHI" + strProcTbl + " "
-            sql += sql + "WHERE SZOUCHICD = " + request.context["txt_aszouchicd"]
+            sql = "DELETE FROM TBSZOUCHI" + request.cfs_ini["iniUpdTbl"] + " "
+            sql += "WHERE SZOUCHICD = " + sqlStringConvert(request.context["txt_aszouchicd"])
             SqlExecute(sql).execute()
-        init_form(CFSC31_MODE0)
+        init_form(request, CFSC31_MODE0)
         request.context["gSetField"] = "txt_aszouchicd"
     except Exception as e:
         __logger.error(e)
@@ -152,7 +148,7 @@ def cmd_cancel_Click(request):
     request.context["cmd_change_enable"] = False
     request.context["cmd_delete_enable"] = False
 
-    init_form(CFSC31_MODE0)
+    init_form(request, CFSC31_MODE0)
     request.context["gSetField"] = "txt_aszouchicd"
 
 
