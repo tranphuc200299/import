@@ -205,3 +205,8 @@ FTPBATFILE = "ftpput.bat"
 FTPFNDFILE = "ftpput.fnd"
 FTPENDFILE = "ftpput.end"
 FTPCMPMSG = "226 Transfer complete."
+
+rtnProcOK = 0                  #正常
+rtnProcNG = 1                  #異常
+rtnProcNF = 2                  #該当データなし
+rtnProcDP = 3                  #該当データあり

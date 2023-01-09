@@ -1,10 +1,10 @@
+import os
 from time import sleep
 from datetime import datetime, timedelta
 from django.db import transaction
 from main.common.function.Const import FATAL_ERR, csLOCK_ON, DB_NOMAL_OK, DB_LOCK, NOMAL_OK, csGWSKBN_9, FILENM_SND, FILENM_TMP, \
-    FTPFILE, FTPLOGFILE, FTPBATFILE, FTPFNDFILE, FTPENDFILE
+    FTPFILE, FTPLOGFILE, FTPBATFILE, FTPFNDFILE, FTPENDFILE, FTPCMPMSG
 from main.common.function.Common import TbCfsSysSELECT, dbField
-import os
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
 
@@ -45,7 +45,7 @@ def NacUniqGet(strUProGId, SystemData, strUnqFileNm, strIoJNo, iniUpdCd, iniUpdT
 
         return NOMAL_OK
     except:
-        # OraErrorH "TBCFSSYS" & strSelTbl, sql
+        # OraErrorH "TBCFSSYS" +strSelTbl, sql
         return FATAL_ERR
 
 
@@ -74,11 +74,90 @@ def NacFtpPut(SystemData, strSndFilePath, strSndFileNm):
     try:
         if SystemData.GWSKBN == csGWSKBN_9:
             return NOMAL_OK
-        strSndFile_Snd = strSndFileNm & FILENM_SND
-        strSndFile_Tmp = strSndFileNm & FILENM_TMP
+        strSndFile_Snd = strSndFileNm + FILENM_SND
+        strSndFile_Tmp = strSndFileNm + FILENM_TMP
         strCurrentFolder = dir_path
         for file in [FTPFILE, FTPLOGFILE, FTPBATFILE, FTPFNDFILE, FTPENDFILE]:
             if os.path.exists(file):
                 os.remove(file)
+        SetDataLength(strSndFilePath + "\strSndFileNm")
+        strSndFileSnd = open(os.path.join(strSndFilePath, strSndFile_Snd), "w")
+        strSndFileTmp = open(os.path.join(strSndFilePath, strSndFile_Tmp), "w")
+        objFile = open(os.path.join(strSndFilePath, FTPFILE), "w")
+
+        if SystemData.GWSKBN == 1:
+            objFile.writelines(SystemData.GW1USERID)
+            objFile.writelines(SystemData.GW1PASSWD)
+            objFile.writelines("prompt")
+            objFile.writelines("put " + strSndFile_Snd + " " + SystemData.GW1SDIR + strSndFile_Snd)
+            objFile.writelines("put " + strSndFile_Tmp + " " + SystemData.GW1SDIR + strSndFile_Tmp)
+        elif SystemData.GWSKBN == 2:
+            objFile.writelines(SystemData.GW2USERID)
+            objFile.writelines(SystemData.GW2PASSWD)
+            objFile.writelines("prompt")
+            objFile.writelines("put " + strSndFile_Snd + " " + SystemData.GW2SDIR + strSndFile_Snd)
+            objFile.writelines("put " + strSndFile_Tmp + " " + SystemData.GW2SDIR + strSndFile_Tmp)
+        else:
+            return FATAL_ERR
+        objFile.writelines("quit")
+        objFile.close()
+        objFile = open(os.path.join(strSndFilePath, FTPBATFILE), "w")
+        objFile.writelines("echo " + datetime.now().strftime("%Y/%m/%d %H:%M:%S") + " > " + FTPLOGFILE)
+        objFile.writelines("echo ------------------- >> " + FTPLOGFILE)
+        if SystemData.GWSKBN == 1:
+            objFile.writelines("ftp -s:" + FTPFILE + " " + SystemData.GW1IP + " >> " + FTPLOGFILE)
+        elif SystemData.GWSKBN == 1:
+            objFile.writelines("ftp -s:" + FTPFILE + " " + SystemData.GW2IP + " >> " + FTPLOGFILE)
+        else:
+            return FATAL_ERR
+        objFile.writelines("echo ------------------- >> " + FTPLOGFILE)
+        strCmpMsg = '"' + FTPCMPMSG + '"'
+        objFile.writelines("find " + strCmpMsg + " < " + FTPLOGFILE + " > " + FTPFNDFILE)
+        objFile.writelines("echo > " + FTPENDFILE)
+        objFile.close()
+        sngMaxTime = datetime.now() + timedelta(seconds=30)
+        sngPauseTime = 0.5
+        intCmpMsgCnt = 0
+        sleep(1000)
+        sngRetry = datetime.now()
+        while sngMaxTime > datetime.now():
+            if datetime.now() > sngRetry + timedelta(seconds=sngPauseTime):
+                sngRetry = datetime.now()
+            if os.path.exists(FTPENDFILE):
+                objFile = open(FTPENDFILE, "r")
+                objLineFile = objFile.readline()
+                while objLineFile:
+                    if FTPCMPMSG == objLineFile:
+                        intCmpMsgCnt = intCmpMsgCnt + 1
+                    objLineFile = objFile.readline()
+        if intCmpMsgCnt != 2:
+            return FATAL_ERR
+
+        for file in [FTPFILE, FTPLOGFILE, FTPBATFILE, FTPFNDFILE, FTPENDFILE, strSndFile_Tmp]:
+            if os.path.exists(file):
+                os.remove(file)
+        return NOMAL_OK
     except:
         return FATAL_ERR
+
+
+def NacDataChange(strData, intDataLen):
+    intLen = len(strData)
+    nacDataChange = ""
+    for intCnt in range(intDataLen):
+        if intCnt <= intLen:
+            if strData[intCnt] in ["\n", "\r"]:
+                nacDataChange += " "
+            else:
+                nacDataChange += strData[intCnt]
+        else:
+            nacDataChange += " "
+
+
+def SetDataLength(strFullPathFileName):
+    ans = f"{os.path.getsize(strFullPathFileName): 06}"
+    file = open(strFullPathFileName, "r").read()
+    for i in range(6):
+        strSetNum = int(ans[i]) + 48
+        file = file[:393 + i] + strSetNum + file[393 + i:]
+    open(strFullPathFileName, "w").write(file)
