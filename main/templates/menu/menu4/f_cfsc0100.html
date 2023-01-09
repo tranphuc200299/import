@@ -1,12 +1,103 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}倉庫内蔵置場所コード登録{% endblock title %}
+{% block title %}本船コード登録{% endblock title %}
 
 {% block main %}
 <form id="f_cfsc0100" method="post">
     {% csrf_token %}
-    <h1>hiiiiiiiiiiiii</h1>
+    <div class="title_content">
+        <div class="search_about">
+            <div class="search_item">
+                <div class="item_search_title">
+                    <h3>本船コード <span style="color:red">* </span></h3>
+                </div>
+                <div class="search_input">
+                    {% include "includes/textbox.html" with id="txt_avesselcd" CssClass="width-100" MaxLength=5 Title="必須入力・Vessel Code" Change="True" %}
+                </div>
+                <div class="content_button">
+                    <img src="{% static 'images/search.svg' %}" alt="">
+                    {% include "includes/button.html" with name="action" id="cmd_search" CssClass="btn-search" Text="検索" %}
+                </div>
+            </div>
+        </div>
+        <div class="content_control">
+            <div class="content_control_about">
+                <div class="content_control_inline">
+                    <div class="control_title">
+                        <h3>本船名称 <span style="color:red">* </span></h3>
+                    </div>
+                    <div class="search_input">
+                        {% include "includes/textbox.html" with id="txt_avesselnm" CssClass="display-inline width-446" MaxLength=25 Title="必須入力" %}
+                    </div>
+                </div>
+
+                <div class="content_control_inline">
+                    <div class="control_title">
+                        <h3>Callsign <span style="color:red">* </span></h3>
+                    </div>
+                    <div class="search_input">
+                        {% include "includes/textbox.html" with id="txt_acallsign" CssClass="display-inline width-160" MaxLength=9 Title="必須入力" %}
+                    </div>
+                </div>
+            </div>
+            <div class="content_control_about">
+                <div class="content_control_inline">
+                    <div class="control_title">
+                        <h3>オペレータコード <span style="color:red">* </span></h3>
+                    </div>
+                    <div class="content_control_flex">
+                        <div class="search_input">
+                            {% include "includes/textbox.html" with id="txt_aopecd" CssClass="display-inline width-100" MaxLength=4 Title="必須入力・Operator Code" Change="True" LostFocus="True" %}
+                        </div>
+                        <div class="search_input">
+                            {% include "includes/textbox.html" with id="lbl_aopenm" CssClass="display-inline width-460 background-readonly" MaxLength=20 ReadOnly="True" %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="content_control_about">
+                <div class="content_control_inline">
+                    <div class="control_title">
+                        <h3>着岸港コード <span style="color:red">* </span></h3>
+                    </div>
+                    <div class="content_control_flex">
+                        <div class="search_input">
+                            {% include "includes/textbox.html" with id="txt_alportcd" CssClass="display-inline width-100" MaxLength=5 Title="必須入力・Port Code" Change="True" LostFocus="True" %}
+                        </div>
+                        <div class="search_input">
+                            {% include "includes/textbox.html" with id="lbl_aportnm" CssClass="display-inline width-460 background-readonly" MaxLength=20 ReadOnly="True" %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="content_control_about">
+                <div class="content_control_inline">
+                    <div class="control_title">
+                        <h3>着岸バース名称 <span style="color:red">* </span></h3>
+                    </div>
+                    <div class="search_input">
+                        {% include "includes/textbox.html" with id="txt_aberthnm" CssClass="display-inline width-446" MaxLength=25 Title="必須入力" %}
+                    </div>
+                </div>
+
+                <div class="content_control_inline">
+                    <div class="control_title">
+                        <h3>Line</h3>
+                    </div>
+                    <div class="search_input">
+                        {% include "includes/textbox.html" with id="txt_aline" CssClass="display-inline width-80" MaxLength=3 %}
+                    </div>
+                </div>
+            </div>
+            <div class="control_button">
+                {% include "includes/button.html" with name="action" id="cmd_entry" CssClass="btn-register" Text="登録" IsEnable=cmd_entry_enable %}
+                {% include "includes/button.html" with name="action" id="cmd_change" CssClass="btn-register" Text="変更" IsEnable=cmd_change_enable %}
+                {% include "includes/button.html" with name="action" id="cmd_delete" CssClass="btn-register" Text="削除" IsEnable=cmd_delete_enable  %}
+                {% include "includes/button.html" with name="action" id="cmd_cancel" CssClass="btn-register" Text="取消" %}
+            </div>
+        </div>
+    </div>
 </form>
 {% endblock main %}
 

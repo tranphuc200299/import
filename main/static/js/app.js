@@ -5,7 +5,7 @@ Last change:    03/01/2023
 Author: phuong.c
 -------------------------------------------------------------------*/
 
-let handle_text_change;
+let handle_event;
 $(function () {
     "use strict";
 
@@ -62,11 +62,11 @@ $(function () {
     /*--------------------------------------------------------
      * Change text
     ----------------------------------------------------------*/
-    handle_text_change = function (input_ids) {
+    handle_event = function (input_ids, event_type) {
         const csrf_token = $("input[name=csrfmiddlewaretoken]").val();
         const data = {
             'csrfmiddlewaretoken': csrf_token,
-            'action': `${input_ids[0]}_Change`
+            'action': `${input_ids[0]}_` + event_type
         };
         for (let i = 0; i < input_ids.length; i++) {
             const value = $(`#${input_ids[i]}`).val();
