@@ -204,9 +204,12 @@ def GetFreeTime(OpeCd, AreaCd, KDate, strSelTbl):
         if WkFKISANKBN == csFKISANKBN_1:
             WkKDate = KDate
         else:
-            WkKDateY = CmfDateFmt((datetime.strptime(KDate, "%Y/%m/%d") + relativedelta(days=1)).strftime("%Y/%m/%d"), "%Y")
-            WkKDateM = CmfDateFmt((datetime.strptime(KDate, "%Y/%m/%d") + relativedelta(days=1)).strftime("%Y/%m/%d"), "%m")
-            WkKDateD = CmfDateFmt((datetime.strptime(KDate, "%Y/%m/%d") + relativedelta(days=1)).strftime("%Y/%m/%d"), "%d")
+            WkKDateY = CmfDateFmt((datetime.strptime(KDate, "%Y/%m/%d") + relativedelta(days=1)).strftime("%Y/%m/%d"),
+                                  "%Y")
+            WkKDateM = CmfDateFmt((datetime.strptime(KDate, "%Y/%m/%d") + relativedelta(days=1)).strftime("%Y/%m/%d"),
+                                  "%m")
+            WkKDateD = CmfDateFmt((datetime.strptime(KDate, "%Y/%m/%d") + relativedelta(days=1)).strftime("%Y/%m/%d"),
+                                  "%d")
             WkFreeTime = ""
             if WkFCALC == csFCALC_3:
                 WkKDate = WkKDateY + "/" + WkKDateM + "/" + WkKDateD

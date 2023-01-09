@@ -5,7 +5,7 @@ Last change:    03/01/2023
 Author: phuong.c
 -------------------------------------------------------------------*/
 
-
+let handle_text_change;
 $(function () {
     "use strict";
 
@@ -58,4 +58,41 @@ $(function () {
         showButtonPanel: true,
         yearRange: "1970:2100"
     });
+
+    /*--------------------------------------------------------
+     * Change text
+    ----------------------------------------------------------*/
+    handle_text_change = function (input_ids) {
+        const csrf_token = $("input[name=csrfmiddlewaretoken]").val();
+        const data = {
+            'csrfmiddlewaretoken': csrf_token,
+            'action': `${input_ids[0]}_Change`
+        };
+        for (let i = 0; i < input_ids.length; i++) {
+            const value = $(`#${input_ids[i]}`).val();
+            data[input_ids[i]] = value
+        }
+        $.ajax({
+            url: "",
+            data: data,
+            type: 'post'
+        }).done(function (responseData) {
+            $('#' + input_ids[0]).val($('#' + input_ids[0]).val().toUpperCase())
+            const keys = Object.keys(responseData)
+            for (const index in keys) {
+                const key = keys[index];
+                let value;
+                if (key == "gSetField") {
+                    value = responseData.gSetField
+                    $(`#${'gSetField'}`).focus()
+                    $(`#${'gSetField'}`).val(value)
+                } else {
+                    value = responseData[key]
+                    $(`#${key}`).val(value)
+                }
+            }
+        }).fail(function () {
+            console.log('Get data failed');
+        });
+    }
 })

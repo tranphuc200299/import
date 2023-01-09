@@ -1,0 +1,9 @@
+<button
+  id="{{ id }}"
+  class="{{ CssClass }} {% if IsEnable == False %} inactive {% endif %}"
+  value="{{ id }}"
+  name="{{ name }}"
+  {% if IsEnable == False %}  disabled {% endif %}
+  >
+  {{ Text }}
+</button>

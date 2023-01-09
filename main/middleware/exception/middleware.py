@@ -1,8 +1,11 @@
 import logging
 import traceback
 from django.shortcuts import render
-from main.middleware.exception.exceptions import RuntimeException
-from django.urls import reverse_lazy
+from main.common.utils import FileDirUtil
+from main.middleware.exception.exceptions import (
+    RuntimeException,
+    BondAreaNameException
+)
 
 logger = logging.getLogger(__name__)
 
@@ -15,14 +18,16 @@ class ExceptionHandleMiddleware(object):
         return self.get_response(request)
 
     def process_exception(self, request, exception):
+        self.__write_logging(request, exception)
         if isinstance(exception, RuntimeException):
-            self.__write_logging(request, exception)
             request.context["lblMsg"] = exception.get_message()
-            return self.__response(request)
+        elif isinstance(exception, BondAreaNameException):
+            request.context["lblMsg"] = str(exception)
+            return render(request, "home.html", request.context)
         else:
-            self.__write_logging(request, exception)
             request.context["lblMsg"] = f"Server error: {str(exception)}"
-            return self.__response(request)
+        url_name = request.resolver_match.url_name
+        return render(request, FileDirUtil.get_html_dir_by_url_name(url_name), request.context)
 
     def __write_logging(self, request, exception):
         logger.error((
@@ -36,9 +41,3 @@ class ExceptionHandleMiddleware(object):
             str(exception),
             traceback.format_exc(),
         ))
-
-    def __response(self, request):
-        url_name = request.resolver_match.url_name
-        if url_name[:3] == "pop":
-            return render(request, "popup/popCommon.html", request.context)
-        return render(request, f"{url_name}.html", request.context)
