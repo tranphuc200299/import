@@ -7,13 +7,19 @@
     value="{{ id|id2contextvalue:request }}"
     maxlength="{{ MaxLength }}"
     class="{{ CssClass }}"
-    {% if ReadOnly == "True" %}
+    {% if ReadOnly %}
     readonly="{{ ReadOnly }}"
+    {% endif %}
+    {% if Title %}
+    title="{{ Title }}"
     {% endif %}
     {% if disabled %}
     disabled="True"
     {% endif %}
-    {% if TextChange == "True" %}
-    onchange=handle_text_change(["{{ id }}",{% if ParamsExtendsTextChange %}{{ ParamsExtendsTextChange }}{% endif %}])
+    {% if Change %}
+    onkeyup=handle_event(["{{ id }}"],"Change")
+    {% endif %}
+    {% if LostFocus %}
+    onchange=handle_event(["{{ id }}"],"LostFocus")
     {% endif %}
 >
