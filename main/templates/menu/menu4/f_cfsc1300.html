@@ -22,7 +22,7 @@
             </div>
         </div>
         <!--form layout-->
-        <div class="content_control">
+       <div class="form-container">
             <div class="form_about">
                 <div class="form_row">
                     <label class="form_label">海貨業者名称 <span style="color:red">* </span> </label>
@@ -41,7 +41,7 @@
                     <label class="form_label">海貨業者FAX番号 </label>
                     {% include "includes/textbox.html" with id="txt_afwdfax" CssClass="form-control" MaxLength=14 %}
                 </div>
-                <div class="control_button mt-4">
+                <div class="control_button">
                     {% include "includes/button.html" with name="action" id="cmd_entry" CssClass="btn-register" Text="登録" IsEnable=cmd_entry_enable %}
                     {% include "includes/button.html" with name="action" id="cmd_change" CssClass="btn-register" Text="変更" IsEnable=cmd_change_enable %}
                     {% include "includes/button.html" with name="action" id="cmd_delete" CssClass="btn-register" Text="削除" IsEnable=cmd_delete_enable %}
