@@ -28,7 +28,7 @@ def TbOpe_TableCheck(strOpeCd, strSelTbl):
         sql += f"FROM TBOPE{strSelTbl} "
         sql += f"WHERE OPECD = {Common.dbField(strOpeCd)}"
         RsTbOpe = SqlExecute(sql).all()
-        if RsTbOpe.Rows[0]["DCNT"] == 0:
+        if RsTbOpe.Rows[0]["dcnt"] == 0:
             return DB_NOT_FIND
         else:
             return DB_NOMAL_OK
@@ -43,7 +43,7 @@ def TbPort_TableCheck(strOpeCd, strSelTbl):
         sql += f"FROM TBPORT{strSelTbl} "
         sql += f"WHERE PORTCD = {Common.dbField(strOpeCd)}"
         RsTbPort = SqlExecute(sql).all()
-        if RsTbPort.Rows[0]["DCNT"] == 0:
+        if RsTbPort.Rows[0]["dcnt"] == 0:
             return DB_NOT_FIND
         else:
             return DB_NOMAL_OK
@@ -58,7 +58,7 @@ def TbPackg_TableCheck(strOpeCd, strSelTbl):
         sql += f"FROM TBPACKG{strSelTbl} "
         sql += f"WHERE PACKCD = {Common.dbField(strOpeCd)}"
         RsTbPackg = SqlExecute(sql).all()
-        if RsTbPackg.Rows[0]["DCNT"] == 0:
+        if RsTbPackg.Rows[0]["dcnt"] == 0:
             return DB_NOT_FIND
         else:
             return DB_NOMAL_OK
@@ -74,7 +74,7 @@ def TbSTani_TableCheck(strOpeCd, strSyubtKbn, strSelTbl):
         sql += f"WHERE STANICD = {Common.dbField(strOpeCd)}"
         sql += f" AND SYUBTKBN = {Common.dbField(strSyubtKbn)}"
         RsTbSTani = SqlExecute(sql).all()
-        if RsTbSTani.Rows[0]["DCNT"] == 0:
+        if RsTbSTani.Rows[0]["dcnt"] == 0:
             return DB_NOT_FIND
         else:
             return DB_NOMAL_OK
@@ -89,7 +89,7 @@ def TbZWork_TableCheck(strZWorkCd, strSelTbl):
         sql += f"FROM TBZWORK{strSelTbl} "
         sql += f"WHERE ZWORKCD = {Common.dbField(strZWorkCd)}"
         RsTbZWork = SqlExecute(sql).all()
-        if RsTbZWork.Rows[0]["DCNT"] == 0:
+        if RsTbZWork.Rows[0]["dcnt"] == 0:
             return DB_NOT_FIND
         else:
             return DB_NOMAL_OK
@@ -104,7 +104,7 @@ def TbForward_TableCheck(strFwdCd, strSelTbl):
         sql += f"FROM TBFORWARD{strSelTbl} "
         sql += f"WHERE FWDCD = {Common.dbField(strFwdCd)}"
         RsTbForward = SqlExecute(sql).all()
-        if RsTbForward.Rows[0]["DCNT"] == 0:
+        if RsTbForward.Rows[0]["dcnt"] == 0:
             return DB_NOT_FIND
         else:
             return DB_NOMAL_OK
@@ -119,7 +119,7 @@ def TbInland_TableCheck(strInlandCd, strSelTbl):
         sql += f"FROM TBINLAND{strSelTbl} "
         sql += f"WHERE INLANDCD = {Common.dbField(strInlandCd)}"
         RsTbInland = SqlExecute(sql).all()
-        if RsTbInland.Rows[0]["DCNT"] == 0:
+        if RsTbInland.Rows[0]["dcnt"] == 0:
             return DB_NOT_FIND
         else:
             return DB_NOMAL_OK
