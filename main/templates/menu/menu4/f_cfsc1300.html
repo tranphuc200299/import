@@ -4,7 +4,7 @@
 {% block title %}海貨業者コード登録{% endblock title %}
 
 {% block main %}
-<form id="f_cfsc1300" method="post">
+<form id="f_cfsc1300" method="post" action="">
     {% csrf_token %}
     <div class="title_content">
         <div class="search_about">
@@ -13,11 +13,11 @@
                     <h3>海貨業者コード <span style="color:red">* </span></h3>
                 </div>
                 <div class="search_input input_small input_register">
-                    {% include "includes/textbox.html" with id="txt_afwdcd" CssClass="form-control" MaxLength=8 TextChange="True" %}
+                    {% include "includes/textbox.html" with id="txt_afwdcd" class="form-control" MaxLength=8 TextChange="True" %}
                 </div>
                 <div class="content_button button_register">
                     <img src="{% static 'images/search.svg' %}" alt="">
-                    {% include "includes/button.html" with name="action" id="cmd_search" CssClass="btn-search" Text="検索" %}
+                    {% include "includes/button.html" with name="action" id="cmd_search" class="btn-search" Text="検索" %}
                 </div>
             </div>
         </div>
@@ -26,26 +26,26 @@
             <div class="form_about">
                 <div class="form_row">
                     <label class="form_label">海貨業者名称 <span style="color:red">* </span> </label>
-                    {% include "includes/textbox.html" with id="txt_afwdnm" CssClass="form-control" MaxLength=60 %}
+                    {% include "includes/textbox.html" with id="txt_afwdnm" class="form-control" MaxLength=60 %}
                 </div>
                 <div class="form_row">
                     <label class="form_label">海貨業者担当者名称 </label>
-                    {% include "includes/textbox.html" with id="txt_afwdtannm" CssClass="form-control" MaxLength=10 %}
+                    {% include "includes/textbox.html" with id="txt_afwdtannm" class="form-control" MaxLength=10 %}
                 </div>
 
                 <div class="form_row">
                     <label class="form_label">海貨業者電話番号 </label>
-                    {% include "includes/textbox.html" with id="txt_afwdtel" CssClass="form-control" MaxLength=14 %}
+                    {% include "includes/textbox.html" with id="txt_afwdtel" class="form-control" MaxLength=14 %}
                 </div>
                 <div class="form_row">
                     <label class="form_label">海貨業者FAX番号 </label>
-                    {% include "includes/textbox.html" with id="txt_afwdfax" CssClass="form-control" MaxLength=14 %}
+                    {% include "includes/textbox.html" with id="txt_afwdfax" class="form-control" MaxLength=14 %}
                 </div>
                 <div class="control_button">
-                    {% include "includes/button.html" with name="action" id="cmd_entry" CssClass="btn-register" Text="登録" IsEnable=cmd_entry_enable %}
-                    {% include "includes/button.html" with name="action" id="cmd_change" CssClass="btn-register" Text="変更" IsEnable=cmd_change_enable %}
-                    {% include "includes/button.html" with name="action" id="cmd_delete" CssClass="btn-register" Text="削除" IsEnable=cmd_delete_enable %}
-                    {% include "includes/button.html" with name="action" id="cmd_cancel" CssClass="btn-register" Text="取消" %}
+                    {% include "includes/button.html" with name="action" id="cmd_entry" class="btn-register" Text="登録" IsEnable=cmd_entry_enable %}
+                    {% include "includes/button.html" with name="action" id="cmd_change" class="btn-register" Text="変更" IsEnable=cmd_change_enable %}
+                    {% include "includes/button.html" with name="action" id="cmd_delete" class="btn-register" Text="削除" IsEnable=cmd_delete_enable %}
+                    {% include "includes/button.html" with name="action" id="cmd_cancel" class="btn-register" Text="取消" %}
                 </div>
             </div>
         </div>

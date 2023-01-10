@@ -59,7 +59,7 @@ def txt_adelchr_LostFocus(request, index):
         request.context[f"txt_adellen{index}"] = ""
     else:
         request.context[f"txt_adellen{index}"] = intLen
-    return request.context[f"txt_adellen{index}"]
+    return f"txt_adellen{index}"
 
 
 def txt_aopecd_Change(request):
