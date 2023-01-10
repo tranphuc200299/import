@@ -19,8 +19,8 @@ class RuntimeException(Exception):
 
 class BondAreaNameException(Exception):
 
-    def __init__(self, message):
-        self.message = message
+    def __init__(self, bond_area_name):
+        self.bond_area_name = bond_area_name
 
     def __str__(self):
-        return f"[BOND_AREA_NAME_ERROR]: {self.message}"
+        return f"Request screen doesn't exists in bond area name: {format(self.bond_area_name)}"

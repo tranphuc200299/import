@@ -240,6 +240,12 @@ def GetFreeTime(OpeCd, AreaCd, KDate, strSelTbl):
         return DB_FATAL_ERR
 
 
+def DbDataChange(DbStr):
+    if not DbStr or DbStr == chr(0):
+        return ""
+    return DbStr
+
+
 def pfncDataSessionGet(request, strSessionNM: str):
     try:
         return request.session.get(strSessionNM, None)
@@ -265,6 +271,12 @@ def pfncDataSessionRelease(request, strSessionNM: str):
 def sqlStringConvert(strSQL):
     if not strSQL:
         strSQL = ""
-    if not strSQL.strip():
-        return "NULL"
     return f"'{strSQL}'"
+
+
+def IsNumeric(obj):
+    try:
+        float(obj)
+        return True
+    except Exception:
+        return False

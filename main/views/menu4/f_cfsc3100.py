@@ -23,7 +23,7 @@ def f_cfsc3100(request):
         action = request.POST.get("action", None)
         if action == "txt_aszouchicd_Change":
             id_show_data = txt_aszouchicd_Change(request)
-            return Response(request).json_response_textchange(id_show_data)
+            return Response(request).json_response_event_js_html(id_show_data)
         elif action == "cmd_search":
             cmd_search_Click(request)
         elif action == "cmd_entry":
@@ -36,7 +36,7 @@ def f_cfsc3100(request):
             cmd_cancel_Click(request)
     else:
         Form_Load(request)
-    return render(request, "f_cfsc3100.html", request.context)
+    return render(request, "menu/menu4/f_cfsc3100.html", request.context)
 
 
 def Form_Load(request):
@@ -46,7 +46,6 @@ def Form_Load(request):
         request.context["cmd_entry_enable"] = False
         request.context["cmd_change_enable"] = False
         request.context["cmd_delete_enable"] = False
-        request.context["lbl_aSelHozNam"] = request.cfs_ini["iniUpdNam"]
     except Exception as e:
         __logger.error(e)
         # TODO
@@ -66,7 +65,7 @@ def cmd_search_Click(request):
         if inpdatachk1(request) != NOMAL_OK:
             return
         sql = "SELECT * "
-        # sql += " FROM TBSZOUCHI" + request.cfs_ini["iniUpdTbl"]
+        sql += " FROM TBSZOUCHI" + request.cfs_ini["iniUpdTbl"]
         sql += " WHERE SZOUCHICD = " + sqlStringConvert(request.context["txt_aszouchicd"])
         sql += " FOR UPDATE NOWAIT"
         RsTbSZouchi = SqlExecute(sql).all()
@@ -80,6 +79,7 @@ def cmd_search_Click(request):
         request.context["gSetField"] = "txt_aszouchinm"
     except Exception as e:
         __logger.error(e)
+        raise Exception(e)
         # TODO
         # OraError("TBSZOUCHI" + strProcTbl, "sql")
 
