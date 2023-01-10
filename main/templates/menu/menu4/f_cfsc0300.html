@@ -11,7 +11,7 @@
                 <div class="form-inline">
                     <div class="col-12 d-flex">
                         <div class="form-group form-group-seach">
-                            <label for="email col-4" class="mr-3">オペレータコード <span class="required">*</span></label>
+                            <label for="txt_aopecd" class="mr-3">オペレータコード <span class="required">*</span></label>
                             {% include "includes/textbox.html" with class="form-control" id="txt_aopecd" name="txt_aopecd" width="80" MaxLength=4 Change="True" %}
                         </div>
                         {% include "includes/button.html" with name="action" id="cmd_search" class="btn btn-primary btn-search" Text="検索" %}
@@ -25,7 +25,7 @@
             <div class="card-block">
                 <div class="form-horizontal">
                     <div class="form-group">
-                        <label class="control-label col-sm-2" for="email">オペレータ名称 <span class="required">*</span></label>
+                        <label class="control-label col-sm-2" for="txt_aopenm">オペレータ名称 <span class="required">*</span></label>
                         <div class="col-12">
                             {% include "includes/textbox.html" with class="form-control" id="txt_aopenm" name="txt_aopenm" MaxLength=25 %}
                         </div>
@@ -33,7 +33,7 @@
                     <div class="row">
                         <div class="col-5">
                             <div class="form-group">
-                                <label class="control-label col-sm-5" for="email">ＮＡＣＣＳ送信識別 <span class="required">*</span></label>
+                                <label class="control-label col-sm-5" for="cmb_ansendflg">ＮＡＣＣＳ送信識別 <span class="required">*</span></label>
                                 <div class="col-12">
                                     {% include 'includes/dropdownlist.html' with id="cmb_ansendflg" class="form-control" tabIndex=14 %}
                                 </div>
@@ -41,7 +41,7 @@
                         </div>
                         <div class="col-2">
                             <div class="form-group">
-                                <label class="control-label col-sm-12" for="email">ＳＣＡＣコード</label>
+                                <label class="control-label col-sm-12" for="txt_ascaccd">ＳＣＡＣコード</label>
                                 <div class="col-12">
                                     {% include "includes/textbox.html" with class="form-control" id="txt_ascaccd" name="txt_ascaccd" MaxLength=4 %}
                                 </div>
@@ -49,7 +49,7 @@
                         </div>
                         <div class="col-5">
                             <div class="form-group">
-                                <label class="control-label col-sm-12" for="email">貨物管理番号編集識別 <span class="required">*</span></label>
+                                <label class="control-label col-sm-12" for="cmb_anscacflg">貨物管理番号編集識別 <span class="required">*</span></label>
                                 <div class="col-12">
                                     {% include 'includes/dropdownlist.html' with id="cmb_anscacflg" class="form-control" tabIndex=14 %}
                                 </div>
@@ -59,7 +59,7 @@
                     <div class="row">
                         <div class="col-12">
                             <div class="form-group">
-                                <label class="control-label col-sm-12" for="email">削除文字／桁数</label>
+                                <label class="control-label col-sm-12" for="txt_adelchr0">削除文字／桁数</label>
                                 <div class="col-9 row">
                                     <div class="col-4 d-flex">
                                         {% include "includes/textbox.html" with class="form-control col-9 mr-2" id="txt_adelchr0" name="txt_adelchr0" MaxLength=6 LostFocus="True" %}
@@ -80,7 +80,7 @@
                     <div class="row">
                         <div class="col-5">
                             <div class="form-group">
-                                <label class="control-label col-sm-5" for="email">オペレータ区分 <span class="required">*</span></label>
+                                <label class="control-label col-sm-5" for="cmb_aopekbn">オペレータ区分 <span class="required">*</span></label>
                                 <div class="col-12">
                                     {% include 'includes/dropdownlist.html' with id="cmb_aopekbn" class="form-control" tabIndex=23 %}
                                 </div>
@@ -88,7 +88,7 @@
                         </div>
                         <div class="col-2">
                             <div class="form-group">
-                                <label class="control-label col-sm-12" for="email">ミニマム屯数 <span class="required">*</span></label>
+                                <label class="control-label col-sm-12" for="txt_iminton">ミニマム屯数 <span class="required">*</span></label>
                                 <div class="col-12">
                                     {% include "includes/textbox.html" with class="form-control" id="txt_iminton" name="txt_iminton" MaxLength=3%}
                                 </div>
@@ -96,7 +96,7 @@
                         </div>
                         <div class="col-5">
                             <div class="form-group">
-                                <label class="control-label col-sm-12" for="email">エリアコード利用区分 <span class="required">*</span></label>
+                                <label class="control-label col-sm-12" for="cmb_aarearkbn">エリアコード利用区分 <span class="required">*</span></label>
                                 <div class="col-12">
                                     {% include 'includes/dropdownlist.html' with id="cmb_aarearkbn" class="form-control" tabIndex=27 %}
                                 </div>
