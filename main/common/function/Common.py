@@ -24,6 +24,13 @@ def CmfDateFmt(rstrDate: str, input_format="%Y/%m/%d", output_format="%Y/%m/%d")
         _logger.error(e)
         return ""
 
+def pfncDataSessionGet(request, strSessionNM: str):
+    try:
+        return request.session.get(strSessionNM, None)
+    except Exception as e:
+        _logger.error(e)
+
+
 
 def ValidChr(strIn: int) -> bool:
     strValid = "1234567890 ABCDEFGHIJKLMNOPQRSTUVWXYZ-/.()"
@@ -88,8 +95,8 @@ def IsNumeric(obj):
 
 
 def KijyunM3(objRsStani, strM3):
-    if objRsStani.Rows and strM3 != "" and objRsStani.Fields("SYUBTKBN") != "2":
-        if not objRsStani.Rows[0]("CONVERT"):
+    if objRsStani.Rows and strM3 != "" and objRsStani.Rows[0]["SYUBTKBN"] != "2":
+        if not objRsStani.Rows[0]["CONVERT"]:
             dblConv = 0
         else:
             dblConv = float(objRsStani.Rows[0]["CONVERT"].replace(",", ""))
@@ -99,7 +106,7 @@ def KijyunM3(objRsStani, strM3):
 
 
 def KijyunWt(objRsStani, strWeight):
-    if objRsStani.Rows and strWeight != "" and objRsStani.Fields("SYUBTKBN") != "1":
+    if objRsStani.Rows and strWeight != "" and objRsStani.Rows[0]["SYUBTKBN"] != "1":
         if not objRsStani.Rows[0]("CONVERT"):
             dblConv = 0
         else:
@@ -904,3 +911,7 @@ def GetDemurgKDate(OpeCd, FreeTime, strSelTbl, WkDCalc):
 
     except:
         return DB_FATAL_ERR
+
+
+def sqlStringConvert():
+    pass

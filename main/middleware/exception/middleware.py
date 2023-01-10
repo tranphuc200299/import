@@ -4,7 +4,8 @@ from django.shortcuts import render
 from main.common.utils import FileDirUtil
 from main.middleware.exception.exceptions import (
     RuntimeException,
-    BondAreaNameException
+    BondAreaNameException,
+    postgresException
 )
 
 logger = logging.getLogger(__name__)
@@ -20,6 +21,8 @@ class ExceptionHandleMiddleware(object):
     def process_exception(self, request, exception):
         self.__write_logging(request, exception)
         if isinstance(exception, RuntimeException):
+            request.context["lblMsg"] = exception.get_message()
+        elif isinstance(exception, postgresException):
             request.context["lblMsg"] = exception.get_message()
         elif isinstance(exception, BondAreaNameException):
             request.context["lblMsg"] = str(exception)
