@@ -1,0 +1,22 @@
+{% if id == "cmb_aopekbn" %}
+    <select tabindex="{{ tabIndex }}" class="{{ class }}" name="cmb_aopekbn" id="cmb_aopekbn" {% if gSetField == "cmb_aopekbn" %}autofocus{% endif %}>
+        <option value="0" {% if drpSeikyukbn == "0" %}selected{% endif %}>船社</option>
+        <option value="1" {% if drpSeikyukbn == "1" %}selected{% endif %}>混載業者</option>
+    </select>
+
+{% elif id == "cmb_anscacflg" %}
+    <select tabindex="{{ tabIndex }}" class="{{ class }}" name="cmb_anscacflg" id="cmb_anscacflg" {% if gSetField == "cmb_anscacflg" %}autofocus{% endif %}>
+        <option value="0" {% if drpOltflg == "0" %}selected{% endif %}>ＳＣＡＣコード付加</option>
+        <option value="1" {% if drpOltflg == "1" %}selected{% endif %}>ＳＣＡＣコード未付加</option>
+    </select>
+{% elif id == "cmb_aarearkbn" %}
+    <select tabindex="{{ tabIndex }}" class="{{ class }}" name="cmb_aarearkbn" id="cmb_aarearkbn" {% if gSetField == "cmb_aarearkbn" %}autofocus{% endif %}>
+        <option value="0" {% if drpOltflg == "0" %}selected{% endif %}>利用する</option>
+        <option value="1" {% if drpOltflg == "1" %}selected{% endif %}>利用しない</option>
+    </select>
+{% elif id == "cmb_ansendflg" %}
+    <select tabindex="{{ tabIndex }}" class="{{ class }}" name="cmb_ansendflg" id="cmb_ansendflg" {% if gSetField == "cmb_ansendflg" %}autofocus{% endif %}>
+        <option value="0" {% if drpOltflg == "0" %}selected{% endif %}>ＮＡＣＣＳ送信対象</option>
+        <option value="1" {% if drpOltflg == "1" %}selected{% endif %}>ＮＡＣＣＳ送信対象外</option>
+    </select>
+{% endif %}
