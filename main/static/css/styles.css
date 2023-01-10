@@ -594,6 +594,7 @@ width:100px;
 }
 .form-horizontal .btn,
 .form-inline .btn{
+    background: #2D68EA;
     display: flex;
     flex-direction: row;
     justify-content: center;
@@ -677,7 +678,7 @@ width:100px;
 }
 
 /* Darker background on mouse-over */
-.form-inline .btn:hover {
+form .btn:hover {
     background-color: RoyalBlue;
 }
 .form-group-seach {
