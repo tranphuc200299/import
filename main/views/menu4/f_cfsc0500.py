@@ -65,9 +65,9 @@ def init_form(request, intMode):
     if intMode == CFSC05_MODE0:
         request.context["txt_aopecd"] = ""
         request.context["txt_afreekbn"] = ""
-    request.context["cmb_afksankbn"] = request.context["cmb_afksankbn"]
+    request.context["cmb_afksankbn"] = "0"
     request.context["txt_ifdays"] = ""
-    request.context["cmb_afcalc"] = request.context["cmb_afcalc"]
+    request.context["cmb_afcalc"] = "0"
 
 
 def inpdatachk1(request):

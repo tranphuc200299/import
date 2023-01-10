@@ -7,58 +7,64 @@
 
     <form id="f_cfsc0500" method="post">
         {% csrf_token %}
-        <div class="search_about" style="flex-direction: row !important; height: 113px;">
-            <div class="vung1" style="margin-top: -1rem">
+        <div class="register_code">
+            <div class="item_search_about">
                 <div class="item_search_title title_register">
                     <h3>オペレータコード <span style="color:red">* </span></h3>
                 </div>
                 <div class="search_input input_small input_register">
-                    {% include "includes/textbox.html" with id="txt_aopecd" CssClass="form-control" MaxLength=8 TextChange="True" %}
+                    {% include "includes/textbox.html" with id="txt_aopecd" CssClass="form-control" MaxLength=4 TabIndex=4 TextChange="True" %}
                 </div>
             </div>
-            <div class="vung2" style="margin-top: -1rem">
+            <div class="item_search_about">
                 <div class="item_search_title title_register">
                     <h3>エリアコード</h3>
                 </div>
                 <div class="search_input input_small input_register">
-                    {% include "includes/textbox.html" with id="txt_afreekbn" CssClass="form-control" MaxLength=8 %}
+                    {% include "includes/textbox.html" with id="txt_afreekbn" CssClass="form-control" TabIndex=5 %}
                 </div>
             </div>
-            <div class="content_button button_register">
-                <div class="vung3">
-                    <div class="item_search_title title_register">
-
-                    </div>
-                    <div class="search_input input_small input_register" style="margin-top: 3.5rem">
-                        <img src="{% static 'images/search.svg' %}" alt="">
+            <div class="content_button button_register_other" style="margin-top: -1rem">
+                <div class="item_search_about">
+                    <div class="search_input input_small input_register_content">
+                        <img class="img_search" src="{% static 'images/search.svg' %}" alt="">
                         {% include "includes/button.html" with name="action" id="cmd_search" CssClass="btn-search" Text="検索" %}
                     </div>
-
                 </div>
-
             </div>
         </div>
         <div class="form-container">
-            <div class="form_about" style="color: black">
-                <div class="form_row" style="width: 600px">
+            <div class="form_about about_content">
+                <div class="form_row row_content">
                     <label class="form_label">海貨業者名称 <span style="color:red">* </span> </label>
-                    <div style="color: black">
-                    {% include "includes/dropdownlist.html" with id="cmb_afksankbn"  nothing="True" tabIndex="1" CssClass="mainListData" %}
-
+                    <div>
+                        <select tabindex="{{ tabIndex }}" class="form-control form-control-sm" name="cmb_afksankbn"
+                                id="cmb_afksankbn exampleFormControlSelect1"
+                                {% if gSetField == "cmb_afksankbn" %}autofocus{% endif %} style="color: black">
+                            <option value="" {% if not cmb_afksankbn %}selected{% endif %}></option>
+                            <option value="0" {% if cmb_afksankbn == "0" %}selected{% endif %}>搬入日起算</option>
+                            <option value="1" {% if cmb_afksankbn == "1" %}selected{% endif %}>搬入日翌日起算</option>
+                        </select>
                     </div>
 
 
                 </div>
-                <div class="form_row" style="width: 150px">
+                <div class="form_row about_content_other">
                     <label class="form_label">海貨業者担当者名称 </label>
                     {% include "includes/textbox.html" with id="txt_ifdays" CssClass="form-control" MaxLength=10 %}
                 </div>
 
-                <div class="form_row" style="width: 600px">
+                <div class="form_row row_content" style="width: 600px">
                     <label class="form_label">海貨業者電話番号 </label>
                     <div style="color: black">
-                    {% include "includes/dropdownlist.html" with id="cmb_afcalc" tabIndex="1" CssClass="mainListData" %}
-
+                        <select tabindex="{{ tabIndex }}" class="form-control form-control-sm" name="cmb_afcalc"
+                                id="cmb_afcalc exampleFormControlSelect1"
+                                {% if gSetField == "cmb_afcalc" %}autofocus{% endif %}>
+                            <option value="" {% if not cmb_afcalc %}selected{% endif %}></option>
+                            <option value="0" {% if cmb_afcalc == "0" %}selected{% endif %}>日祝除く</option>
+                            <option value="1" {% if cmb_afcalc == "1" %}selected{% endif %}>土日祝除く</option>
+                            <option value="2" {% if cmb_afcalc == "2" %}selected{% endif %}>全て含む</option>
+                        </select>
                     </div>
 
                 </div>
