@@ -5,9 +5,11 @@
     name="{{ id }}"
     id="{{ id }}"
     value="{{ id|id2contextvalue:request }}"
+    style="{{ style }};width: {{ width }}px"
+    tabindex="{{ tabIndex }}"
     maxlength="{{ MaxLength }}"
-    class="{{ CssClass }}"
-    {% if ReadOnly %}
+    class="{{ class }}"
+    {% if ReadOnly == "True" %}
     readonly="{{ ReadOnly }}"
     {% endif %}
     {% if Title %}
