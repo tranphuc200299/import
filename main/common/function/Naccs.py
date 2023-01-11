@@ -2,14 +2,17 @@ import os
 from time import sleep
 from datetime import datetime, timedelta
 from django.db import transaction
+import psycopg2
 from main.common.function.Const import FATAL_ERR, csLOCK_ON, DB_NOMAL_OK, DB_LOCK, NOMAL_OK, csGWSKBN_9, FILENM_SND, FILENM_TMP, \
     FTPFILE, FTPLOGFILE, FTPBATFILE, FTPFNDFILE, FTPENDFILE, FTPCMPMSG
 from main.common.function.Common import TbCfsSysSELECT, dbField
+from main.common.function import SqlExecute
+from main.middleware.exception.exceptions import postgresException
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
 
 
-def NacUniqGet(strUProGId, SystemData, strUnqFileNm, strIoJNo, iniUpdCd, iniUpdTbl, iniWsNo, strSelHozCd):
+def NacUniqGet(strUProGId, SystemData, strSelTbl, iniUpdCd, iniUpdTbl, iniWsNo, strSelHozCd):
     try:
         intDataGet = 0
         for intCnt in range(11):
@@ -35,18 +38,18 @@ def NacUniqGet(strUProGId, SystemData, strUnqFileNm, strIoJNo, iniUpdCd, iniUpdT
             lngIoJNo = SystemData.IOJNOMIN
         strIoJNo = SystemData.IOJNOHEAD + f"{lngIoJNo:08}"
         with transaction.atomic():
-            sql = "UPDATE TBCFSSYS{strSelTbl} "
+            sql = f"UPDATE TBCFSSYS{strSelTbl} "
             sql += f"SET IOJNONOW = {lngIoJNo},"
             sql += f"UNQFILENM = {dbField(strUnqFileNm)},"
             sql += f"UDATE = SYSDATE,"
             sql += f"UPROGID = {dbField(strUProGId)},"
             sql += f"UWSID = {dbField(iniWsNo)} "
             sql += f"WHERE HOZEICD = {dbField(strSelHozCd)}"
+            SqlExecute(sql).execute()
 
         return NOMAL_OK
-    except:
-        # OraErrorH "TBCFSSYS" +strSelTbl, sql
-        return FATAL_ERR
+    except psycopg2.OperationalError as e:
+        raise postgresException(Error=e, DbTbl="TBCFSSYS" + strSelTbl, SqlStr=sql)
 
 
 def NacHdrSet(strNacGymCd, strUserCd, strIdCd, strUserPswd, strIoJNo):

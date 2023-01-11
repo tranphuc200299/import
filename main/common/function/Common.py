@@ -1,5 +1,6 @@
 import logging
 from datetime import datetime
+import psycopg2
 from dateutil.relativedelta import relativedelta
 from main.common.function import SqlExecute
 from django.db import IntegrityError, transaction
@@ -8,7 +9,7 @@ from main.common.function.Const import DB_FATAL_ERR, DB_TBFREETM_NOT_FIND, DB_TB
     DB_TBDEMURG_NOT_FIND, csMTONTKBN_1, csMTONTKBN_2, csMTONTKBN_3, csDCALC_1, csDAYKBN_1, \
     csDAYKBN_2, csDCALC_3, csDAYKBN_9, csDAYKBN_4, csLOCK_ON, DB_NOT_FIND, DB_LOCK, csSTANKAKBN_1, csSTANKAKBN_2, csSTANKAKBN_3, \
     csSTANKAKBN_4, csSTANKAKBN_5
-from main.middleware.exception.exceptions import RuntimeException
+from main.middleware.exception.exceptions import RuntimeException, postgresException
 from middleware.exception.message import E00001
 from time import sleep
 
@@ -24,12 +25,12 @@ def CmfDateFmt(rstrDate: str, input_format="%Y/%m/%d", output_format="%Y/%m/%d")
         _logger.error(e)
         return ""
 
+
 def pfncDataSessionGet(request, strSessionNM: str):
     try:
         return request.session.get(strSessionNM, None)
     except Exception as e:
         _logger.error(e)
-
 
 
 def ValidChr(strIn: int) -> bool:
@@ -654,9 +655,6 @@ def GetSeikyuNo(ProgramId, SystemData, SeikyuNo, iniUpdCd, iniUpdTbl, iniWsNo):
                 break
             elif status == DB_LOCK:
                 GetFlg = 0
-            else:
-                # Call OraErrorH("CFSシステムテーブル", SqlStr)
-                return DB_FATAL_ERR
             sleep(1)
 
         if GetFlg == 0:
@@ -667,7 +665,7 @@ def GetSeikyuNo(ProgramId, SystemData, SeikyuNo, iniUpdCd, iniUpdTbl, iniWsNo):
         else:
             SeikyuHead = NowDate[:6]
             SeikyuSeq = 1
-        SystemData.SEIKYUHNO = f"{SeikyuHead:@6}" + f"{SeikyuSeq:04}"
+        SystemData.SEIKYUHNO = SeikyuHead + f"{SeikyuSeq:04}"
         SeikyuNo = SystemData.SEIKYUHNO
         with transaction.atomic():
             SqlStr = "UPDATE TBCFSSYS{strSelTbl} SET "
@@ -678,17 +676,17 @@ def GetSeikyuNo(ProgramId, SystemData, SeikyuNo, iniUpdCd, iniUpdTbl, iniWsNo):
             SqlStr += f" WHERE HOZEICD = {dbField(SystemData.HOZEICD)}"
             SqlExecute(SqlStr).execute()
         return DB_NOMAL_OK
-    except:
-        # Call OraErrorH("CFSシステムテーブル", SqlStr)
-        return DB_FATAL_ERR
+    except psycopg2.OperationalError as e:
+        raise postgresException(Error=e, DbTbl="CFSシステムテーブル", SqlStr=SqlStr)
 
 
 def TbCfsSysSELECT(SystemData, LockKbn, iniUpdCd, iniUpdTbl):
+    SqlStr = ""
     try:
         for i in range(len(iniUpdCd)):
-            if iniUpdCd(i) == SystemData.HOZEICD:
-                WkTblKbn = iniUpdTbl(i)
-        SqlStr = "SELECT "
+            if iniUpdCd[i] == SystemData.HOZEICD:
+                WkTblKbn = iniUpdCd[i]
+        SqlStr += "SELECT "
         SqlStr += "HOZEICD, "
         SqlStr += "COMPANYNM, "
         SqlStr += "BRANCHNM, "
@@ -777,14 +775,11 @@ def TbCfsSysSELECT(SystemData, LockKbn, iniUpdCd, iniUpdTbl):
         SystemData.SEIKYUHNO = DbDataChange(RsSys.Rows[0]["SEIKYUHNO"])
         NowDate = DbDataChange(RsSys.Rows[0]["NowDate"])
         return DB_NOMAL_OK, NowDate
-
-
-    except:
-        if OraDbH.LastServerErr == 54:
+    except psycopg2.OperationalError as e:
+        if e.pgcode == "55P03":
             return DB_LOCK, None
         else:
-            # Call OraErrorH("CFSシステムテーブル", SqlStr)
-            return DB_FATAL_ERR, None
+            raise postgresException(Error=e, DbTbl="CFSシステムテーブル", SqlStr=SqlStr)
 
 
 def DbDataChange(DbStr):
@@ -794,15 +789,16 @@ def DbDataChange(DbStr):
 
 
 def GetRevenue(OpeCd, KGWeight, M3Measur, RynDataCnt, RynData, strSelTbl):
+    SqlStr = ""
     try:
         WkSTankaKbn = ""
         if RynDataCnt == 0:
             RynData = []
         else:
             for i in range(len(RynData)):
-                if RynData[i].OpeCd == OpeCd:
-                    WkSTankaKbn = RynData(i).STANKAKBN
-                    MinTon = RynData[i].MinTon
+                if RynData[i]["OpeCd"] == OpeCd:
+                    WkSTankaKbn = RynData[i]["STANKAKBN"]
+                    MinTon = RynData[i]["MinTon"]
         if WkSTankaKbn == "":
             SqlStr = "SELECT "
             SqlStr += "A.MINTON AS MINTON, "
@@ -816,7 +812,7 @@ def GetRevenue(OpeCd, KGWeight, M3Measur, RynDataCnt, RynData, strSelTbl):
             RsDb = SqlExecute(SqlStr).all()
             if not RsDb.Rows:
                 return DB_NOT_FIND, None, None
-            RynDataCnt = RynDataCnt + 1
+            RynDataCnt += 1
             RynData[- 1].OpeCd = OpeCd
             RynData[- 1].STANKAKBN = DbDataChange(RsDb.Rows[0]["STANKAKBN"])
             RynData[- 1].MinTon = int(DbDataChange(RsDb.Rows[0]["MinTon"]))
@@ -840,13 +836,14 @@ def GetRevenue(OpeCd, KGWeight, M3Measur, RynDataCnt, RynData, strSelTbl):
         elif WkSTankaKbn == csSTANKAKBN_5:
             RynTon = CompRynTon(f"{M3Measur :,.3f}")
         return DB_NOMAL_OK, RynTon, MinTon,
-    except:
-        # Call OraError(WkErrTbl, SqlStr)
-        return DB_FATAL_ERR, None, None
+    except psycopg2.OperationalError as e:
+        raise postgresException(Error=e, DbTbl="", SqlStr=SqlStr)
 
 
 def GetDemurgKDate(OpeCd, FreeTime, strSelTbl, WkDCalc):
+    demurgKDate = ""
     try:
+        WkEndFlg = None
         WkDateY = CmfDateFmt(
             (datetime.strptime(FreeTime, "%Y/%m/%d") + relativedelta(days=1)).strftime("%Y/%m/%d"), "%Y")
         WkDateM = CmfDateFmt(
@@ -884,18 +881,18 @@ def GetDemurgKDate(OpeCd, FreeTime, strSelTbl, WkDCalc):
             day_kbn = tbcalen[i]["DAYKBN"][int(WkDateD)]
             if day_kbn == csDAYKBN_2:
                 if WkDCalc in [csDCALC_1, csDCALC_3]:
-                    GetDemurgKDate = tbcalen[i]["YMDATE"] + "/" + WkDateD
+                    demurgKDate = tbcalen[i]["YMDATE"] + "/" + WkDateD
                     WkEndFlg = 9
                     continue
             elif day_kbn in [csDAYKBN_3, csDAYKBN_4]:
                 if WkDCalc == csDCALC_3:
-                    GetDemurgKDate = tbcalen[i]["YMDATE"] + "/" + WkDateD
+                    demurgKDate = tbcalen[i]["YMDATE"] + "/" + WkDateD
                     WkEndFlg = 9
                     continue
             elif day_kbn == csDAYKBN_9:
                 pass
             else:
-                GetDemurgKDate = tbcalen[i]["YMDATE"] + "/" + WkDateD
+                demurgKDate = tbcalen[i]["YMDATE"] + "/" + WkDateD
                 WkEndFlg = 9
             WkDateD = f"{int(WkDateD) + 1 :02}"
             if WkDateD == "32" or tbcalen[i]["DAYKBN"][int(WkDateD) - 2] == csDAYKBN_9:
@@ -907,11 +904,8 @@ def GetDemurgKDate(OpeCd, FreeTime, strSelTbl, WkDCalc):
                 WkDateD = CmfDateFmt((datetime.strptime(WkDate, "%Y/%m/%d") + relativedelta(months=1)).strftime("%Y/%m/%d"),
                                      "%d")
                 WkDate = ""
-        return GetDemurgKDate
+        return demurgKDate
 
     except:
         return DB_FATAL_ERR
 
-
-def sqlStringConvert():
-    pass
