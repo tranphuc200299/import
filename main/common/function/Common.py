@@ -1,17 +1,14 @@
 import logging
-from datetime import datetime
 import psycopg2
+from datetime import datetime
+from time import sleep
+from django.db import IntegrityError, transaction
 from dateutil.relativedelta import relativedelta
 from main.common.function import SqlExecute
-from django.db import IntegrityError, transaction
-from main.common.function.Const import DB_FATAL_ERR, DB_TBFREETM_NOT_FIND, DB_TBCALENDER_NOT_FIND, csFKISANKBN_1, csFCALC_1, \
-    csFCALC_3, csDAYKBN_3, TRACK_VANNO, NOMAL_OK, FATAL_ERR, DB_TBOPE_NOT_FIND, DB_NOMAL_OK, csDEMUCKBN_A, csDEMUCKBN_C, \
-    DB_TBDEMURG_NOT_FIND, csMTONTKBN_1, csMTONTKBN_2, csMTONTKBN_3, csDCALC_1, csDAYKBN_1, \
-    csDAYKBN_2, csDCALC_3, csDAYKBN_9, csDAYKBN_4, csLOCK_ON, DB_NOT_FIND, DB_LOCK, csSTANKAKBN_1, csSTANKAKBN_2, csSTANKAKBN_3, \
-    csSTANKAKBN_4, csSTANKAKBN_5
+from main.common.function.Const import *
+from main.common.function.DspMessage import *
 from main.middleware.exception.exceptions import RuntimeException, postgresException
-from middleware.exception.message import E00001
-from time import sleep
+from main.middleware.exception.message import E00001
 
 _logger = logging.getLogger(__name__)
 
@@ -119,7 +116,7 @@ def KijyunWt(objRsStani, strWeight):
 
 def CompRynTon(strM3: str) -> float:
     if IsNumeric(strM3.lstrip()):
-        return dbsingle(strM3.lstrip())
+        return dbsingle(strM3.lstrip()) / 1.133
     return 0
 
 
@@ -301,8 +298,8 @@ def GetFreeTime(OpeCd, AreaCd, KDate, strSelTbl):
         else:
             return WkFreeTime
 
-    except IntegrityError as ie:
-        _logger.error(ie)
+    except Exception as e:
+        _logger.error(e)
         return DB_FATAL_ERR
 
 
@@ -339,6 +336,7 @@ def VanDigit_Check(strVanNo):
 
 
 def HomePortGet(strSelTbl, strSelHozCd):
+    sql = ""
     try:
         sql = "SELECT HPORTCD "
         sql += f"FROM TBCFSSYS{strSelTbl} "
@@ -348,9 +346,8 @@ def HomePortGet(strSelTbl, strSelHozCd):
             return ""
         else:
             return RsTbCfsSys.Rows[0]["HPORTCD"]
-    except IntegrityError as ie:
-        _logger.error(ie)
-        raise RuntimeException(error_code=E00001, message="TBCFSSYS" + strSelTbl)
+    except psycopg2.OperationalError as e:
+        raise postgresException(Error=e, DbTbl="TBCFSSYS" + strSelTbl, SqlStr=sql)
 
 
 def GetDemurg(GDemurg, strSelTbl):
@@ -644,12 +641,12 @@ def GetDemurg2(GDemurg, strSelTbl):
         return DB_FATAL_ERR
 
 
-def GetSeikyuNo(ProgramId, SystemData, SeikyuNo, iniUpdCd, iniUpdTbl, iniWsNo):
+def GetSeikyuNo(ProgramId, SystemData, iniUpdCd, iniWsNo):
     try:
         NowDate = ""
         GetFlg = 0
         for i in range(11):
-            status, NowDate = TbCfsSysSELECT(SystemData, csLOCK_ON, iniUpdCd, iniUpdTbl)
+            status, NowDate = TbCfsSysSELECT(SystemData, csLOCK_ON, iniUpdCd)
             if status == DB_NOMAL_OK:
                 GetFlg = 1
                 break
@@ -675,13 +672,14 @@ def GetSeikyuNo(ProgramId, SystemData, SeikyuNo, iniUpdCd, iniUpdTbl, iniWsNo):
             SqlStr += f"UWSID = {dbField(iniWsNo)}"
             SqlStr += f" WHERE HOZEICD = {dbField(SystemData.HOZEICD)}"
             SqlExecute(SqlStr).execute()
-        return DB_NOMAL_OK
+        return DB_NOMAL_OK, SeikyuNo
     except psycopg2.OperationalError as e:
         raise postgresException(Error=e, DbTbl="CFSシステムテーブル", SqlStr=SqlStr)
 
 
-def TbCfsSysSELECT(SystemData, LockKbn, iniUpdCd, iniUpdTbl):
+def TbCfsSysSELECT(SystemData, LockKbn, iniUpdCd):
     SqlStr = ""
+    WkTblKbn = ""
     try:
         for i in range(len(iniUpdCd)):
             if iniUpdCd[i] == SystemData.HOZEICD:
@@ -790,6 +788,8 @@ def DbDataChange(DbStr):
 
 def GetRevenue(OpeCd, KGWeight, M3Measur, RynDataCnt, RynData, strSelTbl):
     SqlStr = ""
+    RynTon = None
+    MinTon = None
     try:
         WkSTankaKbn = ""
         if RynDataCnt == 0:
@@ -835,14 +835,16 @@ def GetRevenue(OpeCd, KGWeight, M3Measur, RynDataCnt, RynData, strSelTbl):
                 RynTon = CompRynTon(f"{M3Measur :,.3f}")
         elif WkSTankaKbn == csSTANKAKBN_5:
             RynTon = CompRynTon(f"{M3Measur :,.3f}")
-        return DB_NOMAL_OK, RynTon, MinTon,
+        return DB_NOMAL_OK, RynTon, MinTon
     except psycopg2.OperationalError as e:
         raise postgresException(Error=e, DbTbl="", SqlStr=SqlStr)
+
 
 def sqlStringConvert(strSQL):
     if not strSQL:
         strSQL = ""
     return f"'{strSQL}'"
+
 
 def GetDemurgKDate(OpeCd, FreeTime, strSelTbl, WkDCalc):
     demurgKDate = ""
@@ -913,3 +915,111 @@ def GetDemurgKDate(OpeCd, FreeTime, strSelTbl, WkDCalc):
     except:
         return DB_FATAL_ERR
 
+
+def Cm_TbOpeChk(strProcTbl, strOpeCd):
+    sql = ""
+    try:
+        sql = "SELECT OPENM "
+        sql += f"FROM TBOPE{strProcTbl} "
+        sql += f"WHERE OPECD = {dbField(strOpeCd)}"
+        return SqlExecute(sql)
+    except psycopg2.OperationalError as e:
+        raise postgresException(Error=e, DbTbl="TBOPE" + strProcTbl, SqlStr=sql)
+
+
+def Cm_TbVesselChk(strProcTbl, strVesselCd):
+    sql = ""
+    try:
+        sql = "SELECT * "
+        sql += f"FROM TBVESSEL{strProcTbl} "
+        sql += f"WHERE VESSELCD = {dbField(strVesselCd)}"
+        return SqlExecute(sql)
+    except psycopg2.OperationalError as e:
+        raise postgresException(Error=e, DbTbl="TBVESSEL" + strProcTbl, SqlStr=sql)
+
+
+def Cm_TbDemurgChk(strProcTbl, strOpeCd):
+    sql = ""
+    try:
+        sql = "SELECT STANKAKBN "
+        sql += f"FROM TBDEMURG{strProcTbl} "
+        sql += f"WHERE OPECD = {dbField(strOpeCd)}"
+        return SqlExecute(sql)
+    except psycopg2.OperationalError as e:
+        raise postgresException(Error=e, DbTbl="TBDEMURG" + strProcTbl, SqlStr=sql)
+
+
+def Cm_TbForwardChk(strProcTbl, strFwdCd):
+    sql = ""
+    try:
+        sql = "SELECT FWDNM,FWDTANNM,FWDTEL,FWDFAX "
+        sql += f"FROM TBFORWARD{strProcTbl} "
+        sql += f"WHERE FWDCD = {dbField(strFwdCd)}"
+        return SqlExecute(sql)
+    except psycopg2.OperationalError as e:
+        raise postgresException(Error=e, DbTbl="TBFORWARD" + strProcTbl, SqlStr=sql)
+
+
+def Cm_TbZWorkChk(strProcTbl, strZWorkCd):
+    sql = ""
+    try:
+        sql = "SELECT ZWORKNM "
+        sql += f"FROM TBZWORK{strProcTbl} "
+        sql += f"WHERE ZWORKCD = {dbField(strZWorkCd)}"
+        return SqlExecute(sql)
+    except psycopg2.OperationalError as e:
+        raise postgresException(Error=e, DbTbl="TBZWORK" + strProcTbl, SqlStr=sql)
+
+
+def TxtOutSkCd_CodeCheck(request, TbInlandData, strProcTbl):
+    outInlandData = {}
+    WkDFlg = 0
+    SqlStr = ""
+    try:
+        for i in range(len(TbInlandData)):
+            if TbInlandData[i]["InlandCd"] == request.context["TxtOutSkCd"]:
+                outInlandData["InlandCd"] = request.context["TxtOutSkCd"]
+                outInlandData["InlandNm"] = TbInlandData[i]["InlandNm"]
+                WkDFlg = 1
+                break
+        if WkDFlg == 0:
+            SqlStr = "SELECT INLANDNM "
+            SqlStr += f"FROM TBINLAND{strProcTbl} WHERE "
+            SqlStr += f"INLANDCD = {dbField(request.context['TxtOutSkCd'])}"
+            RsInland = SqlExecute(SqlStr).all()
+            if not RsInland.Rows:
+                MsgDspWarning(request, "搬入出先テーブル", "搬入出先テーブルに該当データがありませんでした。")
+                request.context["gSetField"] = "TxtOutSkCd"
+                return False
+            WkCnt = len(TbInlandData)
+            TbInlandData[WkCnt]["InlandCd"] = request.context["TxtFwdCd"]
+            TbInlandData[WkCnt]["InlandNm"] = DbDataChange(RsInland.Rows[0]["InlandNm"])
+            outInlandData["InlandCd"] = request.context["TxtOutSkCd"]
+            outInlandData["InlandNm"] = DbDataChange(RsInland.Rows[0]["InlandNm"])
+        return True
+    except psycopg2.OperationalError as e:
+        raise postgresException(Error=e, DbTbl="搬入出先テーブル", SqlStr=SqlStr)
+
+
+def Cm_TbShipSchChk(strProcTbl, strVesselCd, strVoyNo):
+    sql = ""
+    try:
+        sql = "SELECT VESSELNM,ATA "
+        sql += f"FROM TBSHIPSCH{strProcTbl} "
+        sql += f"WHERE VESSELCD = {dbField(strVesselCd)}"
+        sql += f" AND VOYNO = {dbField(strVoyNo)}"
+        return SqlExecute(sql)
+    except psycopg2.OperationalError as e:
+        raise postgresException(Error=e, DbTbl="TBSHIPSCH" + strProcTbl, SqlStr=sql)
+
+
+def inpdatechk(strDate, format="%Y/%m/%d"):
+    res = False
+    try:
+        if strDate:
+            res = bool(datetime.strptime(strDate, format).date())
+    except ValueError:
+        pass
+    if res:
+        return NOMAL_OK
+    return FATAL_ERR

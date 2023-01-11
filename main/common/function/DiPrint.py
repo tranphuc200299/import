@@ -1,8 +1,9 @@
 from main.common.function.Const import DI_MARK_PPR, DI_SAGYO_PPR, DI_KYOKA_PPR, DI_SAGYO_KSP, DI_MARK_KSP, DI_KYOKA_KSP
 from main.common.function.Common import dbField
+from main.common.function.DspMessage import *
 
 
-def DiPrtCntl(PrtMode, CtDat, NaDat, KyokaDat, ChgDat, MinTonDat):
+def DiPrtCntl(request, PrtMode, CtDat, NaDat, KyokaDat, ChgDat, MinTonDat):
     try:
         NaCNT = len(NaDat)
         KyoCnt = len(KyokaDat)
@@ -16,12 +17,12 @@ def DiPrtCntl(PrtMode, CtDat, NaDat, KyokaDat, ChgDat, MinTonDat):
             MaxSagyo = DI_SAGYO_KSP
             MaxKyoka = DI_KYOKA_KSP
         else:
-            # request.context["lblMsg"] = "パラメータ(プリンタ種別)エラーです。", vbApplicationModal + vbOKOnly + vbCritical, "D/I Make process internal error"
+            MsgDspError(request, "パラメータ(プリンタ種別)エラーです。", "D/I Make process internal error")
             return ""
         MarkCnt, HinmokuCnt, TempRemark, TempMark, TempHinmoku, page_data_clr = MultiLineControl(CtDat, NaDat, MinTonDat)
         LastPage = PageComp(MarkCnt, HinmokuCnt, MaxMark, MaxSagyo, ChgCnt, KyoCnt, MaxKyoka, NaCNT)
         page_data_clr = ChgFree(ChgDat, page_data_clr)
-        dataDiPrtCntl = MakeDI(CtDat, NaDat, KyokaDat, ChgDat, LastPage, MaxMark, MarkCnt, TempMark, HinmokuCnt, TempHinmoku,
+        dataDiPrtCntl = MakeDI(request, CtDat, NaDat, KyokaDat, ChgDat, LastPage, MaxMark, MarkCnt, TempMark, HinmokuCnt, TempHinmoku,
                                TempRemark, MaxSagyo, ChgCnt, MaxKyoka, KyoCnt, page_data_clr)
         if not dataDiPrtCntl:
             return "", dataDiPrtCntl
@@ -30,9 +31,8 @@ def DiPrtCntl(PrtMode, CtDat, NaDat, KyokaDat, ChgDat, MinTonDat):
         else:
             return "\DiPrtKSP.rpt", dataDiPrtCntl
 
-    except:
-        # MsgBox "Visual Basic Error:" + Err + " " + Error(Err), vbApplicationModal + vbOKOnly + vbCritical, "D/I Make Process Internal Error"
-        return ""
+    except Exception as Err:
+        MsgDspError(request, "Visual Basic Error:" + str(Err), "D/I Make process internal error")
 
 
 def MultiLineControl(CtDat, NaDat, MinTonDat):
@@ -123,7 +123,7 @@ def ChgFree(ChDat, page_data_clr):
     return page_data_clr
 
 
-def MakeDI(CtDat, NaDat, KyokaDat, ChDat, LastPage, MaxMark, MarkCnt, TempMark, HinmokuCnt, TempHinmoku, TempRemark,
+def MakeDI(request, CtDat, NaDat, KyokaDat, ChDat, LastPage, MaxMark, MarkCnt, TempMark, HinmokuCnt, TempHinmoku, TempRemark,
            MaxSagyo, ChgCnt, MaxKyoka, KyoCnt, page_data_clr):
     dataDiPrtCntl = []
     count = 1
@@ -170,7 +170,7 @@ def MakeDI(CtDat, NaDat, KyokaDat, ChDat, LastPage, MaxMark, MarkCnt, TempMark, 
         if page_data_clr["PrtMotoKosu"] == 0:
             page_data_clr["PrtMotoKosu"] = page_data_clr["PrtKosu"]
             page_data_clr["PrtMotoKpackg"] = page_data_clr["PrtKPackg"]
-        result = InsDI(CtDat, page_data_clr, count)
+        result = InsDI(request, CtDat, page_data_clr, count)
         if not result:
             return False
         count += 1
@@ -179,7 +179,7 @@ def MakeDI(CtDat, NaDat, KyokaDat, ChDat, LastPage, MaxMark, MarkCnt, TempMark, 
     return dataDiPrtCntl
 
 
-def InsDI(CtDat, page_data_clr, count):
+def InsDI(request, CtDat, page_data_clr, count):
     try:
         result = {
             "sVesselNm": CtDat.VesselNm,
@@ -224,9 +224,8 @@ def InsDI(CtDat, page_data_clr, count):
             "nKinTotal": page_data_clr["PrtTotal"]
         }
         return result
-    except:
-        # MsgDspError "Local D/B Insert Error", "SQL =" + sql + Chr$(13) + Chr$(13)
-        # "Visual Basic Error:" + Err + " " + Error(Err)
+    except Exception as Err:
+        MsgDspError(request, "Local D/B Insert Error", "Visual Basic Error:" + str(Err))
         return False
 
 

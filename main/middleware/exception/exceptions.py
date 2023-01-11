@@ -41,3 +41,19 @@ class postgresException(Exception):
 
     def __str__(self):
         return f'ERROR_CODE = {self.Error.pgcode}, MESSAGE = {self.get_message()}'
+
+
+class dataErrException(Exception):
+    def __init__(self, *args, **kwargs):
+        self.ErrData = kwargs.pop('ErrData', '')
+        self.ErrCd = kwargs.pop('ErrCd', '')
+        self.EPlace = kwargs.pop('EPlace ', '')
+
+    def add_ErrData(self, err):
+        self.ErrData += err
+
+    def get_message(self):
+        return f'ERROR_PLACE = {self.EPlace} ERROR_CODE = {self.ErrCd}, ERROR_DATA = {self.ErrData}'
+
+    def __str__(self):
+        return f'EPLACE = {self.EPlace} ERROR_CODE = {self.ErrCd}, ERROR_DATA = {self.ErrData}'

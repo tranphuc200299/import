@@ -1,15 +1,16 @@
 import logging
-
+import psycopg2
 from main.common.function import SqlExecute, Common
-from django.db import IntegrityError
-from main.common.function.Const import DB_NOT_FIND, DB_NOMAL_OK, DB_FATAL_ERR
+from main.common.function.Const import DB_NOT_FIND, DB_NOMAL_OK
+from main.middleware.exception.exceptions import postgresException
 
 _logger = logging.getLogger(__name__)
 
 
 def TbVessel_TableCheck(strOpeCd, strSelTbl):
+    sql = ""
     try:
-        sql = "SELECT COUNT(OPECD) AS DCNT "
+        sql += "SELECT COUNT(OPECD) AS DCNT "
         sql += f"FROM TBOPE{strSelTbl} "
         sql += f"WHERE VESSELCD = {Common.dbField(strOpeCd)}"
         RsTbVessel = SqlExecute(sql).all()
@@ -17,14 +18,15 @@ def TbVessel_TableCheck(strOpeCd, strSelTbl):
             return DB_NOT_FIND
         else:
             return DB_NOMAL_OK
-    except IntegrityError as ie:
-        _logger.error(ie)
-        return DB_FATAL_ERR
+    except psycopg2.OperationalError as e:
+        _logger.error(e)
+        raise postgresException(Error=e, DbTbl="TBVESSEL" + strSelTbl, SqlStr=sql)
 
 
 def TbOpe_TableCheck(strOpeCd, strSelTbl):
+    sql = ""
     try:
-        sql = "SELECT COUNT(OPECD) AS DCNT "
+        sql += "SELECT COUNT(OPECD) AS DCNT "
         sql += f"FROM TBOPE{strSelTbl} "
         sql += f"WHERE OPECD = {Common.dbField(strOpeCd)}"
         RsTbOpe = SqlExecute(sql).all()
@@ -32,12 +34,15 @@ def TbOpe_TableCheck(strOpeCd, strSelTbl):
             return DB_NOT_FIND
         else:
             return DB_NOMAL_OK
-    except IntegrityError as ie:
-        _logger.error(ie)
-        return DB_FATAL_ERR
+    except psycopg2.OperationalError as e:
+        _logger.error(e)
+        raise postgresException(Error=e, DbTbl="TBOPE" + strSelTbl, SqlStr=sql
+
+                                )
 
 
 def TbPort_TableCheck(strOpeCd, strSelTbl):
+    sql = ""
     try:
         sql = "SELECT COUNT(PORTCD) AS DCNT "
         sql += f"FROM TBPORT{strSelTbl} "
@@ -47,12 +52,13 @@ def TbPort_TableCheck(strOpeCd, strSelTbl):
             return DB_NOT_FIND
         else:
             return DB_NOMAL_OK
-    except IntegrityError as ie:
-        _logger.error(ie)
-        return DB_FATAL_ERR
+    except psycopg2.OperationalError as e:
+        _logger.error(e)
+        raise postgresException(Error=e, DbTbl="TBPORT" + strSelTbl, SqlStr=sql)
 
 
 def TbPackg_TableCheck(strOpeCd, strSelTbl):
+    sql = ""
     try:
         sql = "SELECT COUNT(PACKCD) AS DCNT "
         sql += f"FROM TBPACKG{strSelTbl} "
@@ -62,12 +68,13 @@ def TbPackg_TableCheck(strOpeCd, strSelTbl):
             return DB_NOT_FIND
         else:
             return DB_NOMAL_OK
-    except IntegrityError as ie:
-        _logger.error(ie)
-        return DB_FATAL_ERR
+    except psycopg2.OperationalError as e:
+        _logger.error(e)
+        raise postgresException(Error=e, DbTbl="TBPACKG" + strSelTbl, SqlStr=sql)
 
 
 def TbSTani_TableCheck(strOpeCd, strSyubtKbn, strSelTbl):
+    sql = ""
     try:
         sql = "SELECT COUNT(STANICD) AS DCNT "
         sql += f"FROM TBSTANI{strSelTbl} "
@@ -78,12 +85,13 @@ def TbSTani_TableCheck(strOpeCd, strSyubtKbn, strSelTbl):
             return DB_NOT_FIND
         else:
             return DB_NOMAL_OK
-    except IntegrityError as ie:
-        _logger.error(ie)
-        return DB_FATAL_ERR
+    except psycopg2.OperationalError as e:
+        _logger.error(e)
+        raise postgresException(Error=e, DbTbl="TBSTANI" + strSelTbl, SqlStr=sql)
 
 
 def TbZWork_TableCheck(strZWorkCd, strSelTbl):
+    sql = ""
     try:
         sql = "SELECT COUNT(ZWORKCD) AS DCNT "
         sql += f"FROM TBZWORK{strSelTbl} "
@@ -93,12 +101,13 @@ def TbZWork_TableCheck(strZWorkCd, strSelTbl):
             return DB_NOT_FIND
         else:
             return DB_NOMAL_OK
-    except IntegrityError as ie:
-        _logger.error(ie)
-        return DB_FATAL_ERR
+    except psycopg2.OperationalError as e:
+        _logger.error(e)
+        raise postgresException(Error=e, DbTbl="TBZWORK" + strSelTbl, SqlStr=sql)
 
 
 def TbForward_TableCheck(strFwdCd, strSelTbl):
+    sql = ""
     try:
         sql = "SELECT COUNT(FWDCD) AS DCNT "
         sql += f"FROM TBFORWARD{strSelTbl} "
@@ -108,12 +117,13 @@ def TbForward_TableCheck(strFwdCd, strSelTbl):
             return DB_NOT_FIND
         else:
             return DB_NOMAL_OK
-    except IntegrityError as ie:
-        _logger.error(ie)
-        return DB_FATAL_ERR
+    except psycopg2.OperationalError as e:
+        _logger.error(e)
+        raise postgresException(Error=e, DbTbl="TBFORWARD" + strSelTbl, SqlStr=sql)
 
 
 def TbInland_TableCheck(strInlandCd, strSelTbl):
+    sql = ""
     try:
         sql = "SELECT COUNT(INLANDCD) AS DCNT "
         sql += f"FROM TBINLAND{strSelTbl} "
@@ -123,6 +133,6 @@ def TbInland_TableCheck(strInlandCd, strSelTbl):
             return DB_NOT_FIND
         else:
             return DB_NOMAL_OK
-    except IntegrityError as ie:
-        _logger.error(ie)
-        return DB_FATAL_ERR
+    except psycopg2.OperationalError as e:
+        _logger.error(e)
+        raise postgresException(Error=e, DbTbl="TBINLAND" + strSelTbl, SqlStr=sql)
