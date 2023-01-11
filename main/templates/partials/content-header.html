@@ -1,19 +1,27 @@
 {% load static %}
+{% load core_tags %}
 <div class="content_header_title">
     <div class="row">
+        {% if breadcumbs|length > 0 %}
         <div class="col-md-12">
             <ul>
-                <li><a href="#">ホーム</a></li>
-                <div class="space_title"></div>
-                <li><a href="#">コードテーブル登録系</a></li>
-                <div class="space_title"></div>
-                <li><a href="#">倉庫内蔵置場所コード登録</a></li>
+                {% for br in breadcumbs %}
+                <li><a href="{{br.url|name2url}}">{{br.title}}</a></li>
+                {% if not forloop.last %}
+                    <div class="space_title"></div>
+                {% endif %}
+                {% endfor %}
             </ul>
         </div>
         <div class="col-md-12">
             <div class="content_header">
-                <span>倉庫内蔵置場所コード登録</span>
+                {% for br in breadcumbs %}
+                {% if forloop.last %}
+                    <span>{{ br.title }}</span>
+                {% endif %}
+                {% endfor %}
             </div>
         </div>
+        {% endif %}
     </div>
 </div>

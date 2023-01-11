@@ -63,11 +63,11 @@ def txt_adelchr_LostFocus(request, index):
 
 
 def txt_aopecd_Change(request):
-    request.context["txt_afwdcd"] = request.context["txt_afwdcd"].upper()
+    request.context["txt_aopecd"] = request.context["txt_aopecd"].upper()
     request.context["cmd_entry_enable"] = False
     request.context["cmd_change_enable"] = False
     request.context["cmd_delete_enable"] = False
-    return ["txt_afwdcd", "cmd_entry_enable", "cmd_change_enable", "cmd_delete_enable"]
+    return ["txt_aopecd", "cmd_entry_enable", "cmd_change_enable", "cmd_delete_enable"]
 
 
 def cmd_search_Click(request):

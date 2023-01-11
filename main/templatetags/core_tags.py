@@ -39,6 +39,8 @@ def header(request):
 @register.filter(name="name2url")
 def name2url(name_url):
     try:
+        if name_url == "#":
+            return name_url
         return str(reverse_lazy(name_url))
     except Exception as e:
         _logger.error(e)

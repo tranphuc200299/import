@@ -1,17 +1,19 @@
 <!--navbar section start-->
 {% load static %}
+{% load core_tags %}
 <div class="col-xl-2 col-lg-2 col-sm-6">
     <div class="navbar-about">
         <nav>
             <ul>
-                <li {% if menu1 %} style='display: block' {% else %} style='display: none' {% endif %}>
+                {% for k,v in sider_bar.items %}
+                <li>
                     <div class="navbar_item">
                         <div class="narbar_left">
                             <div class="slider-icon">
-                                <img src="{% static 'images/VectorCreate.png' %}" alt="#">
+                                <img src="{{v.icon}}" alt="#">
                             </div>
                             <div class="text_slidebar">
-                                <span><a href="#">登録系</a></span>
+                                <span><a href="#">{{v.title}}</a></span>
                             </div>
                         </div>
                         <div class="nav-arrow">
@@ -19,97 +21,12 @@
                         </div>
                     </div>
                     <ul class="menu_secondary">
-                        <li><a href="#">マニフェストリスト</a></li>
-                        <li><a href="#">はい票出力</a></li>
-                        <li><a href="#">Landing Report</a>
-                        <li><a href="#">雑作業指示書出力</a></li>
-                        <li><a href="#">フリータイム切れリスト</a></li>
-                        <li><a href="#">在庫問合せリスト</a>
-                        <li><a href="#">D／I出力</a>
-                        <li><a href="#">搬出完了リスト</a></li>
-                        <li><a href="#">保税蔵置場台帳出力</a></li>
-                        <li><a href="#">長期蔵置貨物一覧出力</a>
-                        <li><a href="#">デマレージ一覧データ作成</a>
-                        <li><a href="#">雑作業一覧データ作成</a></li>
-                        <li><a href="#">取扱屯数データ作成</a></li>
-                        <li><a href="#">船社請求データ作成</a>
+                        {% for s in v.sub_menu %}
+                        <li><a href="{{s.url|name2url}}">{{s.title}}</a></li>
+                        {% endfor %}
                     </ul>
                 </li>
-                <li {% if menu2 %} style='display: block' {% else %} style='display: none' {% endif %}>
-                    <div class="navbar_item">
-                        <div class="narbar_left">
-                            <div class="slider-icon">
-                                <img src="{% static 'images/Vector2.png' %}" alt="#">
-                            </div>
-                            <div class="text_slidebar">
-                                <span><a href="#">帳票系</a></span>
-                            </div>
-                        </div>
-                        <div class="nav-arrow">
-                            <img class="arrow" src="{% static 'images/arrow.png' %}" alt="#">
-                        </div>
-                    </div>
-                </li>
-                <li {% if menu3 %} style='display: block' {% else %} style='display: none' {% endif %}>
-                    <div class="navbar_item">
-                        <div class="narbar_left">
-                            <div class="slider-icon">
-                                <img src="{% static 'images/Vector3.png' %} " alt="#">
-                            </div>
-                            <div class="text_slidebar">
-                                <span><a href="#">照会系</a></span>
-                            </div>
-                        </div>
-                        <div class="nav-arrow">
-                            <img class="arrow" src="{% static 'images/arrow.png' %}" alt="#">
-                        </div>
-                    </div>
-                </li>
-                <li {% if menu4 %} style='display: block' {% else %} style='display: none' {% endif %}>
-                    <div class="navbar_item">
-                        <div class="narbar_left">
-                            <div class="slider-icon">
-                                <img src="{% static 'images/Vector4.png' %}" alt="#">
-                            </div>
-                            <div class="text_slidebar">
-                                <span><a href="#">コードテーブル登録系</a></span>
-                            </div>
-                        </div>
-                        <div class="nav-arrow">
-                            <img class="arrow" src="{% static 'images/arrow.png' %}" alt="#">
-                        </div>
-                    </div>
-                </li>
-                <li {% if menu5 %} style='display: block' {% else %} style='display: none' {% endif %}>
-                    <div class="navbar_item">
-                        <div class="narbar_left">
-                            <div class="slider-icon">
-                                <img src="{% static 'images/Vector5.png' %}" alt="#">
-                            </div>
-                            <div class="text_slidebar">
-                                <span><a href="#">コードテーブル照会系</a></span>
-                            </div>
-                        </div>
-                        <div class="nav-arrow">
-                            <img class="arrow" src="{% static 'images/arrow.png' %}" alt="#">
-                        </div>
-                    </div>
-                </li>
-                <li {% if menu6 %} style='display: block' {% else %} style='display: none' {% endif %}>
-                    <div class="navbar_item">
-                        <div class="navbar_left">
-                            <div class="slider-icon">
-                                <img src="{% static 'images/Vector6.png' %}" alt="#">
-                            </div>
-                            <div class="text_slidebar">
-                                <span><a href="#">予備</a></span>
-                            </div>
-                        </div>
-                        <div class="nav-arrow">
-                            <img class="arrow" src="{% static 'images/arrow.png' %}" alt="#">
-                        </div>
-                    </div>
-                </li>
+                {% endfor %}
             </ul>
         </nav>
     </div>
