@@ -6,5 +6,9 @@
   tabindex={{tabIndex}}
   {% if IsEnable == False %}  disabled {% endif %}
   >
-  {{ Text }}
+    {% if htmlText %}
+        {{ htmlText }}
+    {% else %}
+        {{ Text }}
+    {% endif %}
 </button>
