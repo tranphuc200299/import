@@ -47,7 +47,7 @@ def NacUniqGet(strUProGId, SystemData, strSelTbl, iniUpdCd, iniUpdTbl, iniWsNo, 
             sql += f"WHERE HOZEICD = {dbField(strSelHozCd)}"
             SqlExecute(sql).execute()
 
-        return NOMAL_OK
+        return NOMAL_OK, strIoJNo, strUnqFileNm
     except psycopg2.OperationalError as e:
         raise postgresException(Error=e, DbTbl="TBCFSSYS" + strSelTbl, SqlStr=sql)
 
@@ -68,9 +68,9 @@ def NacHdrSet(strNacGymCd, strUserCd, strIdCd, strUserPswd, strIoJNo):
         strNacHdr += " " * 101
         strNacHdr += "2"
         strNacHdr += " " * 33
-        return NOMAL_OK
+        return NOMAL_OK, strNacHdr
     except:
-        return FATAL_ERR
+        return FATAL_ERR, ""
 
 
 def NacFtpPut(SystemData, strSndFilePath, strSndFileNm):
@@ -85,7 +85,9 @@ def NacFtpPut(SystemData, strSndFilePath, strSndFileNm):
                 os.remove(file)
         SetDataLength(strSndFilePath + "\strSndFileNm")
         strSndFileSnd = open(os.path.join(strSndFilePath, strSndFile_Snd), "w")
+        strSndFileSnd.close()
         strSndFileTmp = open(os.path.join(strSndFilePath, strSndFile_Tmp), "w")
+        strSndFileTmp.close()
         objFile = open(os.path.join(strSndFilePath, FTPFILE), "w")
 
         if SystemData.GWSKBN == 1:

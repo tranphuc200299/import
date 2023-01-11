@@ -1,11 +1,16 @@
 import os
 from datetime import datetime
+import logging
+import psycopg2
 from main.common.function.Const import rtnProcOK, rtnProcNG, csBiko300_001_S, csBiko300_001_M, csLOCK_ON, \
     rtnProcNF, rtnOraLock
 from main.common.function.Common import pfncDataSessionGet, dbField, DbDataChange
 from main.common.function import SqlExecute
+from main.middleware.exception.exceptions import postgresException
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
+
+_logger = logging.getLogger(__name__)
 
 
 def GetArguments(EData, csArgsIN, csArgsOK, csArgsNG, WkArgs):
@@ -18,9 +23,7 @@ def GetArguments(EData, csArgsIN, csArgsOK, csArgsNG, WkArgs):
         argNGFile = WkArgs[WkFPos: WkEPos + WkFPos + 1][3].strip()
         return rtnProcOK
     except Exception as Err:
-        EData.ErrCd = Err
-        EData.ErrData = str(Err)
-        EData.EPlace = "GetArguments"
+        _logger.error("GetArguments: {}".format(Err))
         return rtnProcNG
 
 
@@ -53,9 +56,8 @@ def GetArguments2(EData, WkArgs, csArgsOTH1, csArgsOTH2, csArgsOTH3):
         argNGFile = "第三引数 : [" + argStr3 + "]"
         return rtnProcOK
     except Exception as Err:
-        EData.ErrCd = Err
-        EData.ErrData = str(Err)
-        EData.EPlace = "GetArguments2"
+        _logger.error("GetArguments2: {}".format(Err))
+
         return rtnProcNG
 
 
@@ -78,18 +80,15 @@ def InitNaccsBatch(request, EData, WkArgs, csArgsOTH1, csArgsOTH2, csArgsOTH3, a
         SqlStr += f"NOUTINFCD = {dbField(dtNOutInfCd)}"
         RsNaccs = SqlExecute(SqlStr).all()
         if not RsNaccs.Rows:
-            # EData.ErrCd = errOraNotFound
-            # EData.ErrData = "NACCS業務プログラムテーブル該当データなし"
-            # EData.EPlace = "InitNaccsBatch"
+            _logger.error("InitNaccsBatch: errOraNotFound - NACCS業務プログラムテーブル該当データなし")
             return rtnProcNG
         WkBiko300 = DbDataChange(RsNaccs.Rows[0]["BIKO300"])
         strProcTbl = WkBiko300[csBiko300_001_S: csBiko300_001_M]
         return rtnProcOK
-    except:
-        OraErrorB(EData)
-        if EData.ErrCd == 53:
-            EData.ErrData = "NACCS電文" + EData.ErrData
-        EData.EPlace = "InitNaccsBatch"
+    except psycopg2.OperationalError as e:
+        if e.pgcode == "2200H":
+            _logger.error("InitNaccsBatch: NACCS電文{}".format(e))
+
         return rtnProcNG
 
 
@@ -99,44 +98,12 @@ def InitNaccsBatch2(request, EData, WkArgs, csArgsOTH1, csArgsOTH2, csArgsOTH3):
             return rtnProcNG
         iniWsNo = pfncDataSessionGet(request, "sHostnm")
         return rtnProcOK
-    except:
-        OraErrorB(EData)
-        if EData.ErrCd == 53:
-            EData.ErrData = "NACCS電文" + EData.ErrData
-        EData.EPlace = "InitNaccsBatch"
+    except psycopg2.OperationalError as e:
+        if e.pgcode == "2200H":
+            _logger.error("InitNaccsBatch2: NACCS電文{}".format(e))
         return rtnProcNG
 
-        # def EndNaccsBatch(ProgramId, FMoveKbn, WkLogErr):
-        #     try:
-        #         if FMoveKbn == csOKDir:
-        #             MoveRecvFile(argNaccsFile, argOKFile, WkLogErr.EData)
-        #         if FMoveKbn == csNGDir:
-        #             MoveRecvFile(argNaccsFile, argNGFile, WkLogErr.EData)
-        #
-        #
-        #
-        #     except Exception as Err:
-        #         WkLogErr.EData.ErrCd = Err
-        #         WkLogErr.EData.ErrData = str(Err)
-        #         WkLogErr.EData.EPlace = "EndNaccsBatch"
-        #
-        #         WkLogErr.EStatus = csESTATUS_F
-        #         WkLogErr.GData = ""
-        #         WkLogErr.EMsg = "業務プログラム終了時にエラーが発生しました。"
-        #         WkLogErr.Biko = ""
-        #         WkLogErr.EProgId = ProgramId
-        ErrNaccsBatch(WkLogErr)
 
-
-# def ErrNaccsBatch(ELog, OraConFlg):
-#     try:
-#         if OraConFlg == csOraConD or ErrLogWrite(ELog, WkEData) = rtnProcNG:
-#     except Exception as e:
-#         OraErrorB(e)
-#
-# def End_ErrNaccsBatch(argNaccsFile, argNGFile):
-#     if argNaccsFile != "":
-#         argNGFile[:len(argNGFile) - 3] + "err"
 def ErrLogWrite(ELog, EData, dtNUserCd, dtNGyomuCd, dtNOutInfCd, dtSubject, argNaccsFile, argOKFile, argNGFile, iniWsNo):
     try:
         WkEDate = datetime.now().strftime("%Y/%m/%d")
@@ -190,13 +157,12 @@ def ErrLogWrite(ELog, EData, dtNUserCd, dtNGyomuCd, dtNOutInfCd, dtSubject, argN
         SqlStr += "EDATE = " + dbField(WkEDate)
         SqlExecute(SqlStr).execute()
         return rtnProcOK
-    except:
-        OraErrorB(EData)
-        EData.EPlace = "ErrLogWrite"
+    except psycopg2.OperationalError as e:
+        _logger.error("ErrLogWrite: {}".format(e))
         return rtnProcNG
 
 
-def TbCfsSysSELECTB(UserCd, SysData, LockKbn, EData, strProcTbl):
+def TbCfsSysSELECTB(UserCd, SysData, LockKbn, strProcTbl):
     try:
         SqlStr = "SELECT "
         SqlStr += "HOZEICD, "
@@ -286,9 +252,8 @@ def TbCfsSysSELECTB(UserCd, SysData, LockKbn, EData, strProcTbl):
         SysData.GENGOCHG = DbDataChange(RsSys.Rows[0]["GENGOCHG"])
         SysData.SEIKYUHNO = DbDataChange(RsSys.Rows[0]["SEIKYUHNO"])
         return rtnProcOK
-    except:
-        EData.EPlace = "TbCfsSysSELECTB"
-        if OraErrorB(EData) == rtnOraLock:
+    except psycopg2.OperationalError as e:
+        if e.pgcode == "55P03":
             return rtnOraLock
         else:
             return rtnProcNG
