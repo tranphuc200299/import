@@ -180,7 +180,7 @@ class FileDirUtil:
         base_dir = Path(__file__).resolve().parent.parent.parent
         sider_bar_dir = os.path.join(base_dir, "config_sider_bar", "sider_bar.json")
         menu_output = OrderedDict()
-        with open(sider_bar_dir) as json_file:
+        with open(sider_bar_dir, encoding="SJIS") as json_file:
             data = json.load(json_file)
             for menu in new_menu_list:
                 get_menu = data.get(menu, None)
@@ -193,7 +193,7 @@ class FileDirUtil:
     def get_breadcumbs_by_path_name(url_name):
         base_dir = Path(__file__).resolve().parent.parent.parent
         sider_bar_dir = os.path.join(base_dir, "config_sider_bar", "sider_bar.json")
-        with open(sider_bar_dir) as json_file:
+        with open(sider_bar_dir, encoding="SJIS") as json_file:
             data = json.load(json_file)
             output = []
             for k, v in data.items():

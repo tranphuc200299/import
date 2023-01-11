@@ -4,7 +4,7 @@
     <div class="row">
         {% if breadcumbs|length > 0 %}
         <div class="col-md-12">
-            <ul>
+            <ul class="breadcrumb">
                 {% for br in breadcumbs %}
                 <li><a href="{{br.url|name2url}}">{{br.title}}</a></li>
                 {% if not forloop.last %}
