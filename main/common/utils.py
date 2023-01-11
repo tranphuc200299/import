@@ -15,7 +15,7 @@ class Response(object):
     def __init__(self, request):
         self.request = request
 
-    def json_response_textchange(self, id_show_data) -> JsonResponse:
+    def json_response_event_js_html(self, id_show_data) -> JsonResponse:
         if type(id_show_data) is list:
             data = {
                 "gSetField": self.request.context["gSetField"],

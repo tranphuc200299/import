@@ -23,7 +23,7 @@ def f_cfsc3100(request):
         action = request.POST.get("action", None)
         if action == "txt_aszouchicd_Change":
             id_show_data = txt_aszouchicd_Change(request)
-            return Response(request).json_response_textchange(id_show_data)
+            return Response(request).json_response_event_js_html(id_show_data)
         elif action == "cmd_search":
             cmd_search_Click(request)
         elif action == "cmd_entry":

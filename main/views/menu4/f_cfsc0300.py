@@ -5,7 +5,7 @@ from django.shortcuts import render
 
 from main.common.decorators import update_context, load_cfs_ini
 from main.common.function import SqlExecute
-from main.common.function.Common import sqlStringConvert, IsNumeric
+from main.common.function.Common import sqlStringConvert, IsNumeric, DbDataChange
 from main.common.function.Const import NOMAL_OK, FATAL_ERR
 from main.common.utils import Response
 
@@ -35,11 +35,11 @@ def f_cfsc0300(request):
             cmd_delete_Click(request)
         elif action == "txt_aopecd_Change":
             id_show_data = txt_aopecd_Change(request)
-            return Response(request).json_response_textchange(id_show_data)
+            return Response(request).json_response_event_js_html(id_show_data)
         for index in range(3):
-            if action == f"txt_adelchr{index}_Change":
+            if action == f"txt_adelchr{index}_LostFocus":
                 id_show_data = txt_adelchr_LostFocus(request, index)
-                return Response(request).json_response_textchange(id_show_data)
+                return Response(request).json_response_event_js_html(id_show_data)
     else:
         Form_Load(request)
     return render(request, "menu/menu4/f_cfsc0300.html", request.context)
@@ -59,7 +59,7 @@ def txt_adelchr_LostFocus(request, index):
         request.context[f"txt_adellen{index}"] = ""
     else:
         request.context[f"txt_adellen{index}"] = intLen
-    return request.context[f"txt_adellen{index}"]
+    return f"txt_adellen{index}"
 
 
 def txt_aopecd_Change(request):
@@ -314,11 +314,3 @@ def inpdatachk2(request):
         request.context["gSetField"] = "txt_iminton"
         return FATAL_ERR
     return NOMAL_OK
-
-
-def DbDataChange(DbStr):
-    if not DbStr:
-        fn_return_value = ''
-    else:
-        fn_return_value = DbStr
-    return fn_return_value

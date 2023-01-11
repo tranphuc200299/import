@@ -839,6 +839,10 @@ def GetRevenue(OpeCd, KGWeight, M3Measur, RynDataCnt, RynData, strSelTbl):
     except psycopg2.OperationalError as e:
         raise postgresException(Error=e, DbTbl="", SqlStr=SqlStr)
 
+def sqlStringConvert(strSQL):
+    if not strSQL:
+        strSQL = ""
+    return f"'{strSQL}'"
 
 def GetDemurgKDate(OpeCd, FreeTime, strSelTbl, WkDCalc):
     demurgKDate = ""

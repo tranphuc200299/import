@@ -267,8 +267,7 @@ h1 {
  }
 
  .search_item {
-     width: 40%;
-    justify-content: space-between;
+    justify-content: start;
     display: flex;
  }
 
@@ -281,6 +280,8 @@ h1 {
     background: #FFFFFF;
     border: 1px solid #E0E0E0;
     border-radius: 8px;
+     margin-right: 30px;
+     color: black;
  }
 
 .content_button .btn-search{
@@ -310,7 +311,7 @@ h1 {
 .content_control{
     margin-top: 20px;
     padding: 20px 16px;
-    height: 144px;
+    height: 100%;
     background: #FFFFFF;
     border-radius: 12px;
 }
@@ -353,7 +354,8 @@ h1 {
 }
 
 .inactive {
-    background: #BBBBC3;
+    background: #BBBBC3 !important;
+    border: none;
 }
 
 .control_button {
@@ -414,7 +416,7 @@ h1 {
     flex-wrap: wrap;
     justify-content: space-between;
 }
-}
+
 .form{
     display:flex;
     width :100%;
@@ -516,3 +518,170 @@ width:100px;
     font-size: 14px;
     color: #29293D;
 }
+
+/*DuongBN*/
+.width-80 {
+    width: 100px !important;
+}
+
+.width-100 {
+    width: 100px !important;
+}
+
+.width-160 {
+    width: 160px !important;
+}
+
+.width-446 {
+    width: 446px !important;
+}
+
+.width-460 {
+    width: 460px !important;
+}
+
+.display-inline {
+    display: inline !important;
+}
+
+.content_control_inline{
+    justify-content: start;
+    display: inline;
+    margin-right: 25px;
+}
+
+.content_control_flex{
+    justify-content: start;
+    display: flex;
+    margin-right: 10px;
+}
+
+.content_control_flex input {
+    margin-right: 5px;
+}
+
+.background-readonly {
+    background-color: #E9EAF2 !important;
+}
+
+.item_search_title {
+    margin-right: 15px;
+}
+
+
+/*start css*/
+
+.card{
+    -webkit-box-shadow: 0 1px 20px 0 rgb(69 90 100 / 8%);
+    box-shadow: 0 1px 20px 0 rgb(69 90 100 / 8%);
+    margin-bottom: 30px;
+    position: relative;
+    display: -ms-flexbox;
+    display: flex;
+    -ms-flex-direction: column;
+    flex-direction: column;
+    min-width: 0;
+    word-wrap: break-word;
+    background-color: #fff;
+    background-clip: border-box;
+    border: 1px solid rgba(0,0,0,.125);
+    border-radius: 0.75rem;
+    width: 992px;
+}
+.form-horizontal,
+.form-inline {
+    padding: 20px 16px;
+}
+.form-horizontal .btn,
+.form-inline .btn{
+    background: #2D68EA;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    padding: 12px 30px;
+    height: 44px;
+    border-radius: 40px;
+    flex: none;
+    order: 0;
+    flex-grow: 0;
+    font-family: Poppins;
+    font-style: normal;
+    font-weight: 400;
+    font-size: 14px;
+}
+
+.required {
+    color: #F23A46;
+}
+.form-inline input,
+.form-horizontal input {
+    height: 44px !important;
+    background: #FFFFFF;
+    border: 1px solid #E0E0E0;
+    border-radius: 8px;
+}
+
+.form-inline select,
+.form-horizontal select {
+    height: 44px !important;
+    background: #FFFFFF;
+    border: 1px solid #E0E0E0;
+    border-radius: 8px;
+}
+
+.btn-footer {
+    float: right;
+    margin-bottom: 1.25rem;
+    /*margin-right: 15px;*/
+}
+.btn-footer .btn{
+    margin-left: 0.5rem;
+}
+.form-group {
+    margin-bottom: 1.25rem;
+}
+.form-group label,
+.form-group input,
+.form-group select{
+    color: #3E3E4C;
+    font-family: Poppins;
+    font-style: normal;
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 20px;
+}
+.form-group label,
+.form-group>div {
+    padding-left: 0;
+}
+.fa-search{
+    background-image : url(../images/search.svg);
+    background-size: cover;
+    display: inline-block;
+    height: 15px;
+    width: 15px;
+    margin-right: 10.7px;
+}
+/* Style buttons */
+.form-inline .btn-search {
+    font-family: Poppins;
+    font-style: normal;
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 20px;
+    border: none; /* Remove borders */
+    color: white; /* White text */
+    padding: 12px 16px; /* Some padding */
+    cursor: pointer; /* Mouse pointer on hover */
+    width: 116px;
+}
+
+/* Darker background on mouse-over */
+form .btn:hover {
+    background-color: RoyalBlue;
+}
+.form-group-seach {
+    margin-right: 24px;
+}
+/*end css*/
