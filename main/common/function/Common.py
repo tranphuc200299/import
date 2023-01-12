@@ -354,7 +354,7 @@ def GetDemurg(GDemurg, strSelTbl):
     try:
         WkErrTbl = "カレンダーテーブル"
         SqlStr = f"SELECT YMDATE, DAYKBN FROM TBCALENDER{strSelTbl} WHERE "
-        SqlStr += f"YMDATE >= {dbField(CmfDateFmt(GDemurg.FreeTime, '%Y/%m'))}"
+        SqlStr += f"YMDATE >= {dbField(CmfDateFmt(GDemurg['FreeTime'], '%Y/%m'))}"
         SqlStr += " ORDER BY YMDATE"
         RsCalen = SqlExecute(SqlStr).all()
         if not RsCalen.Rows:
@@ -387,7 +387,7 @@ def GetDemurg(GDemurg, strSelTbl):
         SqlStr += "FROM "
         SqlStr += f"TBOPE{strSelTbl} A, "
         SqlStr += f" LEFT OUTER JOIN TBDEMURG{strSelTbl} B ON B.OPECD = A.OPECD"
-        SqlStr += f"WHERE A.OPECD = {dbField(GDemurg.OpeCd)} "
+        SqlStr += f"WHERE A.OPECD = {dbField(GDemurg['OpeCd'])} "
         RsDemu = SqlExecute(SqlStr).all()
         if not RsDemu.Rows:
             return DB_TBOPE_NOT_FIND
@@ -395,7 +395,7 @@ def GetDemurg(GDemurg, strSelTbl):
             return DB_TBDEMURG_NOT_FIND
 
         WkMinTon = int(RsDemu.Rows[0]["minton"])
-        GDemurg.MinTon = int(RsDemu.Rows[0]["minton"])
+        GDemurg["MinTon"] = int(RsDemu.Rows[0]["minton"])
         tbdemurg = []
         for i in range(1, 6):
             tbdemurg.append({
@@ -403,26 +403,26 @@ def GetDemurg(GDemurg, strSelTbl):
                 "TANKA": round(RsDemu.Rows[0]["tanka" + str(i)])
             })
         if RsDemu.Rows[0]["stankakbn"] == csSTANKAKBN_2:
-            WkDemurg = GDemurg.KMeasur
+            WkDemurg = GDemurg["KMeasur"]
         elif RsDemu.Rows[0]["stankakbn"] == csSTANKAKBN_3:
-            WkDemurg = GDemurg.KWeight / 1000
+            WkDemurg = GDemurg["KWeight"] / 1000
         else:
-            WkDemurg = GDemurg.RynTon
+            WkDemurg = GDemurg["RynTon"]
 
-        if GDemurg.MtonTKbn == csMTONTKBN_2:
+        if GDemurg["MtonTKbn"] == csMTONTKBN_2:
             WkDemurg = WkMinTon
-        elif GDemurg.MtonTKbn == csMTONTKBN_3:
+        elif GDemurg["MtonTKbn"] == csMTONTKBN_3:
             if WkMinTon > WkDemurg:
                 WkDemurg = WkMinTon
-        GDemurg.STANKAKBN = RsDemu.Rows[0]["stankakbn"]
+        GDemurg["STANKAKBN"] = RsDemu.Rows[0]["stankakbn"]
         WkTankaC = dbLong(RsDemu.Rows[0]["tankac"])
         WkDCalc = RsDemu.Rows[0]["dcalc"]
         WkDateY = CmfDateFmt(
-            (datetime.strptime(GDemurg.FreeTime, "%Y/%m/%d") + relativedelta(days=1)).strftime("%Y/%m/%d"), "%Y")
+            (datetime.strptime(GDemurg["FreeTime"], "%Y/%m/%d") + relativedelta(days=1)).strftime("%Y/%m/%d"), "%Y")
         WkDateM = CmfDateFmt(
-            (datetime.strptime(GDemurg.FreeTime, "%Y/%m/%d") + relativedelta(days=1)).strftime("%Y/%m/%d"), "%m")
+            (datetime.strptime(GDemurg["FreeTime"], "%Y/%m/%d") + relativedelta(days=1)).strftime("%Y/%m/%d"), "%m")
         WkDateD = CmfDateFmt(
-            (datetime.strptime(GDemurg.FreeTime, "%Y/%m/%d") + relativedelta(days=1)).strftime("%Y/%m/%d"), "%d")
+            (datetime.strptime(GDemurg["FreeTime"], "%Y/%m/%d") + relativedelta(days=1)).strftime("%Y/%m/%d"), "%d")
         WkDate = WkDateY + "/" + WkDateM + "/" + WkDateD
         WkNisu = 0
         WkEndFlg = 0
@@ -430,7 +430,7 @@ def GetDemurg(GDemurg, strSelTbl):
             if WkEndFlg == 9:
                 break
             day_kbn = tbcalen[i]["daykbn"][int(WkDateD)]
-            if tbcalen[i]["ymdate"] + "/" + f"{WkDateD:02}" > GDemurg.OutDate:
+            if tbcalen[i]["ymdate"] + "/" + f"{WkDateD:02}" > GDemurg["OutDate"]:
                 WkEndFlg = 9
                 continue
             if day_kbn == csDAYKBN_2:
@@ -455,45 +455,46 @@ def GetDemurg(GDemurg, strSelTbl):
         if WkEndFlg == 0:
             return DB_TBCALENDER_NOT_FIND
         if WkNisu == 0:
-            GDemurg.demurg = 0
+            GDemurg["demurg"] = 0
             return DB_NOMAL_OK
         if WkTankaC == 0:
-            GDemurg.DemuCKbn = csDEMUCKBN_A
+            GDemurg["DemuCKbn"] = csDEMUCKBN_A
             for i in range(len(tbdemurg)):
                 if WkNisu <= tbdemurg[i]["rank"]:
-                    GDemurg.DemuTanka = tbdemurg[i]["tanka"]
-                    GDemurg.demurg = tbdemurg[i]["tanka"] * WkNisu * WkDemurg
-                    GDemurg.DemurgN = WkNisu
+                    GDemurg["DemuTanka"] = tbdemurg[i]["tanka"]
+                    GDemurg["demurg"] = tbdemurg[i]["tanka"] * WkNisu * WkDemurg
+                    GDemurg["DemurgN"] = WkNisu
                     break
         else:
-            GDemurg.DemuCKbn = csDEMUCKBN_C
+            GDemurg["DemuCKbn"] = csDEMUCKBN_C
             for i in range(len(tbdemurg)):
                 if WkNisu <= tbdemurg[i]["rank"]:
-                    GDemurg.CDemuTanka1 = tbdemurg[i]["tanka"]
-                    GDemurg.CDemuTanka2 = 0
-                    GDemurg.demurg = tbdemurg[i]["tanka"] * WkNisu * WkDemurg
-                    GDemurg.CDemurgN1 = WkNisu
-                    GDemurg.CDemurgN2 = 0
+                    GDemurg["CDemuTanka1"] = tbdemurg[i]["tanka"]
+                    GDemurg["CDemuTanka2"] = 0
+                    GDemurg["demurg"] = tbdemurg[i]["tanka"] * WkNisu * WkDemurg
+                    GDemurg["CDemurgN1"] = WkNisu
+                    GDemurg["CDemurgN2"] = 0
                     break
                 else:
                     if i != 4:
                         if tbdemurg[i + 1]["rank"] == 0:
-                            GDemurg.CDemuTanka1 = tbdemurg[i]["tanka"]
-                            GDemurg.CDemuTanka2 = WkTankaC * (WkNisu - tbdemurg[i]["rank"])
-                            GDemurg.demurg = (tbdemurg[i]["tanka"] * tbdemurg[i]["rank"] * WkDemurg) + (
+                            GDemurg["CDemuTanka1"] = tbdemurg[i]["tanka"]
+                            GDemurg["CDemuTanka2"] = WkTankaC * (WkNisu - tbdemurg[i]["rank"])
+                            GDemurg["demurg"] = (tbdemurg[i]["tanka"] * tbdemurg[i]["rank"] * WkDemurg) + (
                                     WkTankaC * (WkNisu - tbdemurg[i]["rank"]) * WkDemurg)
-                            GDemurg.CDemurgN1 = tbdemurg[i]["rank"]
-                            GDemurg.CDemurgN2 = WkNisu - tbdemurg[i]["rank"]
+                            GDemurg["CDemurgN1"] = tbdemurg[i]["rank"]
+                            GDemurg["CDemurgN2"] = WkNisu - tbdemurg[i]["rank"]
                             break
-            if GDemurg.demurg == 0:
-                GDemurg.CDemuTanka1 = tbdemurg[4]["tanka"]
-                GDemurg.CDemuTanka2 = WkTankaC * (WkNisu - tbdemurg[4]["rank"])
-                GDemurg.demurg = (tbdemurg[4]["tanka"] * tbdemurg[4]["rank"] * WkDemurg) + (
+            if GDemurg["demurg"] == 0:
+                GDemurg["CDemuTanka1"] = tbdemurg[4]["tanka"]
+                GDemurg["CDemuTanka2"] = WkTankaC * (WkNisu - tbdemurg[4]["rank"])
+                GDemurg["demurg"] = (tbdemurg[4]["tanka"] * tbdemurg[4]["rank"] * WkDemurg) + (
                         WkTankaC * (WkNisu - tbdemurg[4]["rank"]) * WkDemurg)
-                GDemurg.CDemurgN1 = tbdemurg[4]["rank"]
-                GDemurg.CDemurgN2 = WkNisu - tbdemurg[4]["rank"]
+                GDemurg["CDemurgN1"] = tbdemurg[4]["rank"]
+                GDemurg["CDemurgN2"] = WkNisu - tbdemurg[4]["rank"]
         return DB_NOMAL_OK
-    except:
+    except Exception as e:
+        _logger.error(e)
         return DB_FATAL_ERR
 
 
@@ -501,8 +502,8 @@ def GetDemurg2(GDemurg, strSelTbl):
     try:
         WkDemurg = 0
         WkErrTbl = "カレンダーテーブル"
-        SqlStr = "SELECT YMDATE, DAYKBN FROM TBCALENDER{strSelTbl} WHERE "
-        SqlStr += f"YMDATE >= {dbField(CmfDateFmt(GDemurg.FreeTime, '%Y/%m'))}"
+        SqlStr = f"SELECT YMDATE, DAYKBN FROM TBCALENDER{strSelTbl} WHERE "
+        SqlStr += f"YMDATE >= {dbField(CmfDateFmt(GDemurg['FreeTime'], '%Y/%m'))}"
         SqlStr += " ORDER BY YMDATE"
         RsCalen = SqlExecute(SqlStr).all()
         if not RsCalen.Rows:
@@ -510,10 +511,10 @@ def GetDemurg2(GDemurg, strSelTbl):
         tbcalen = []
         tbcalen_cnt = len(RsCalen)
         for i in range(tbcalen_cnt):
-            tbcalen[i]["ymdate"] = RsCalen.Rows[0]["ymdate"]
-            tbcalen[i]["ymdatey"] = int(RsCalen.Rows[0]["ymdate"][:4])
-            tbcalen[i]["ymdatem"] = int(RsCalen.Rows[0]["ymdate"][6:8])
-            tbcalen[i]["daykbn"] = RsCalen.Rows[0]["daykbn"]
+            tbcalen[i]["ymdate"] = RsCalen.Rows[i]["ymdate"]
+            tbcalen[i]["ymdatey"] = int(RsCalen.Rows[i]["ymdate"][:4])
+            tbcalen[i]["ymdatem"] = int(RsCalen.Rows[i]["ymdate"][6:8])
+            tbcalen[i]["daykbn"] = RsCalen.Rows[i]["daykbn"]
         WkErrTbl = "デマレージテーブル"
         SqlStr = "SELECT "
         SqlStr += "B.OPECD AS OPECD, "
@@ -532,7 +533,7 @@ def GetDemurg2(GDemurg, strSelTbl):
         SqlStr += "FROM "
         SqlStr += f"TBDEMURG{strSelTbl} B "
         SqlStr += "WHERE "
-        SqlStr += f"B.OPECD = {dbField(GDemurg.OpeCd)}"
+        SqlStr += f"B.OPECD = {dbField(GDemurg['OpeCd'])}"
         RsDemu = SqlExecute(SqlStr).all()
         if not RsDemu.Rows:
             return DB_TBDEMURG_NOT_FIND
@@ -545,23 +546,23 @@ def GetDemurg2(GDemurg, strSelTbl):
             })
             if WkRankMax < int(RsDemu.Rows[0]["rank" + str(i)]):
                 WkRankMax = int(RsDemu.Rows[0]["rank" + str(i)])
-        if GDemurg.MtonTKbn == csMTONTKBN_1:
-            WkDemurg = GDemurg.RynTon
-        elif GDemurg.MtonTKbn == csMTONTKBN_2:
-            WkDemurg = GDemurg.MinTon
-        elif GDemurg.MtonTKbn == csMTONTKBN_3:
-            if GDemurg.RynTon > GDemurg.MinTon:
-                WkDemurg = GDemurg.RynTon
+        if GDemurg["MtonTKbn"] == csMTONTKBN_1:
+            WkDemurg = GDemurg["RynTon"]
+        elif GDemurg["MtonTKbn"] == csMTONTKBN_2:
+            WkDemurg = GDemurg["MinTon"]
+        elif GDemurg["MtonTKbn"] == csMTONTKBN_3:
+            if GDemurg["RynTon"] > GDemurg["MinTon"]:
+                WkDemurg = GDemurg["RynTon"]
             else:
-                WkDemurg = GDemurg.MinTon
+                WkDemurg = GDemurg["MinTon"]
 
         WkTankaC = dbLong(RsDemu.Rows[0]["tankac"])
         WkDCalc = RsDemu.Rows[0]["dcalc"]
-        WkDateY = CmfDateFmt((datetime.strptime(GDemurg.FreeTime, "%Y/%m/%d") + relativedelta(days=1)).strftime("%Y/%m/%d"),
+        WkDateY = CmfDateFmt((datetime.strptime(GDemurg["FreeTime"], "%Y/%m/%d") + relativedelta(days=1)).strftime("%Y/%m/%d"),
                              "%Y")
-        WkDateM = CmfDateFmt((datetime.strptime(GDemurg.FreeTime, "%Y/%m/%d") + relativedelta(days=1)).strftime("%Y/%m/%d"),
+        WkDateM = CmfDateFmt((datetime.strptime(GDemurg["FreeTime"], "%Y/%m/%d") + relativedelta(days=1)).strftime("%Y/%m/%d"),
                              "%m")
-        WkDateD = CmfDateFmt((datetime.strptime(GDemurg.FreeTime, "%Y/%m/%d") + relativedelta(days=1)).strftime("%Y/%m/%d"),
+        WkDateD = CmfDateFmt((datetime.strptime(GDemurg["FreeTime"], "%Y/%m/%d") + relativedelta(days=1)).strftime("%Y/%m/%d"),
                              "%d")
         WkDate = WkDateY + "/" + WkDateM + "/" + WkDateD
         WkNisu = 0
@@ -571,6 +572,7 @@ def GetDemurg2(GDemurg, strSelTbl):
                 break
             if tbcalen[i]["ymdate"] >= WkDateY + "/" + WkDateM:
                 WkEndFlg = 9
+                continue
             day_kbn = tbcalen[i]["daykbn"][int(WkDateD)]
             if day_kbn == csDAYKBN_2:
                 if WkDCalc == csDCALC_1 or WkDCalc == csDCALC_3:
@@ -591,55 +593,59 @@ def GetDemurg2(GDemurg, strSelTbl):
                                      "%m")
                 WkDateD = CmfDateFmt((datetime.strptime(WkDate, "%Y/%m/%d") + relativedelta(months=1)).strftime("%Y/%m/%d"),
                                      "%d")
-
+                WkDate = ""
         if WkEndFlg == 0:
             return DB_TBCALENDER_NOT_FIND
         if WkNisu == 0:
-            GDemurg.demurg = 0
-            GDemurg.DemurgN = 0
+            GDemurg["demurg"] = 0
+            GDemurg["demurgN"] = 0
             return DB_NOMAL_OK
         if WkTankaC == 0:
-            GDemurg.DemuCKbn = csDEMUCKBN_A
+            GDemurg["DemuCKbn"] = csDEMUCKBN_A
             for i in range(len(tbdemurg)):
                 if WkNisu <= tbdemurg[i]["rank"]:
-                    GDemurg.DemuTanka = tbdemurg[i]["tanka"]
-                    GDemurg.demurg = f"{tbdemurg[i]['tanka'] * WkNisu * WkDemurg :01}"
-                    GDemurg.DemurgN = WkNisu
+                    GDemurg["DemuTanka"] = tbdemurg[i]["tanka"]
+                    GDemurg["demurg"] = f"{tbdemurg[i]['tanka'] * WkNisu * WkDemurg :01}"
+                    GDemurg["demurgN"] = WkNisu
                     break
                 else:
                     if WkRankMax == tbdemurg[i]["rank"]:
                         if WkNisu >= tbdemurg[i]["rank"]:
-                            GDemurg.DemuTanka = tbdemurg[i]["tanka"]
-                            GDemurg.demurg = f"{tbdemurg[i]['tanka'] * WkNisu * WkDemurg :01}"
-                            GDemurg.DemurgN = WkNisu
+                            GDemurg["DemuTanka"] = tbdemurg[i]["tanka"]
+                            GDemurg["demurg"] = f"{tbdemurg[i]['tanka'] * WkNisu * WkDemurg :01}"
+                            GDemurg["demurgN"] = WkNisu
                             break
         else:
-            GDemurg.DemuCKbn = csDEMUCKBN_C
+            GDemurg["DemuCKbn"] = csDEMUCKBN_C
             for i in range(len(tbdemurg)):
                 if WkNisu <= tbdemurg[i]["rank"]:
-                    GDemurg.CDemuTanka1 = tbdemurg[i]["tanka"]
-                    GDemurg.CDemuTanka2 = 0
-                    GDemurg.demurg = f"{tbdemurg[i]['tanka'] * WkNisu * WkDemurg :01}"
-                    GDemurg.CDemurgN1 = WkNisu
-                    GDemurg.CDemurgN2 = 0
+                    GDemurg["CDemuTanka1"] = tbdemurg[i]["tanka"]
+                    GDemurg["CDemuTanka2"] = 0
+                    GDemurg["demurg"] = f"{tbdemurg[i]['tanka'] * WkNisu * WkDemurg :01}"
+                    GDemurg["CDemurgN1"] = WkNisu
+                    GDemurg["CDemurgN2"] = 0
+                    break
                 else:
                     if i != 4:
                         if tbdemurg[i + 1]["rank"] == 0:
-                            GDemurg.CDemuTanka1 = tbdemurg[i]["tanka"]
-                            GDemurg.CDemuTanka2 = WkTankaC * (WkNisu - tbdemurg[i]["rank"])
-                            GDemurg.demurg = f"{(tbdemurg[i]['tanka'] * tbdemurg[i]['rank'] * WkDemurg) + (WkTankaC * (WkNisu - tbdemurg[i]['rank']) * WkDemurg) :01}"
-                            GDemurg.CDemurgN1 = tbdemurg[i]["rank"]
-                            GDemurg.CDemurgN2 = WkNisu - tbdemurg[i]["rank"]
+                            GDemurg["CDemuTanka1"] = tbdemurg[i]["tanka"]
+                            GDemurg["CDemuTanka2"] = WkTankaC * (WkNisu - tbdemurg[i]["rank"])
+                            GDemurg[
+                                "demurg"] = f"{(tbdemurg[i]['tanka'] * tbdemurg[i]['rank'] * WkDemurg) + (WkTankaC * (WkNisu - tbdemurg[i]['rank']) * WkDemurg) :01}"
+                            GDemurg["CDemurgN1"] = tbdemurg[i]["rank"]
+                            GDemurg["CDemurgN2"] = WkNisu - tbdemurg[i]["rank"]
                             break
 
-            if GDemurg.demurg == 0:
-                GDemurg.CDemuTanka1 = tbdemurg[4]["tanka"]
-                GDemurg.CDemuTanka2 = WkTankaC * (WkNisu - tbdemurg[4]["rank"])
-                GDemurg.demurg = f"{(tbdemurg[4]['tanka'] * tbdemurg[4]['rank'] * WkDemurg) + (WkTankaC * (WkNisu - tbdemurg[4]['rank']) * WkDemurg) :01}"
-                GDemurg.CDemurgN1 = tbdemurg[4]["rank"]
-                GDemurg.CDemurgN2 = WkNisu - tbdemurg[4]["rank"]
+            if GDemurg["demurg"] == 0:
+                GDemurg["CDemuTanka1"] = tbdemurg[4]["tanka"]
+                GDemurg["CDemuTanka2"] = WkTankaC * (WkNisu - tbdemurg[4]["rank"])
+                GDemurg[
+                    "demurg"] = f"{(tbdemurg[4]['tanka'] * tbdemurg[4]['rank'] * WkDemurg) + (WkTankaC * (WkNisu - tbdemurg[4]['rank']) * WkDemurg) :01}"
+                GDemurg["CDemurgN1"] = tbdemurg[4]["rank"]
+                GDemurg["CDemurgN2"] = WkNisu - tbdemurg[4]["rank"]
         return DB_NOMAL_OK
-    except:
+    except Exception as e:
+        _logger.error(e)
         return DB_FATAL_ERR
 
 
@@ -914,8 +920,8 @@ def GetDemurgKDate(OpeCd, FreeTime, strSelTbl, WkDCalc):
                                      "%d")
                 WkDate = ""
         return demurgKDate
-
-    except:
+    except Exception as e:
+        _logger.error(e)
         return DB_FATAL_ERR
 
 
@@ -1007,7 +1013,7 @@ def TxtOutSkCd_CodeCheck(request, TbInlandData, strProcTbl):
 def Cm_TbShipSchChk(strProcTbl, strVesselCd, strVoyNo):
     sql = ""
     try:
-        sql = "SELECT VESSELNM,ATA "
+        sql = "SELECT VESSELNM,ATA,OPECD,CPORTCD,ETA "
         sql += f"FROM TBSHIPSCH{strProcTbl} "
         sql += f"WHERE VESSELCD = {dbField(strVesselCd)}"
         sql += f" AND VOYNO = {dbField(strVoyNo)}"

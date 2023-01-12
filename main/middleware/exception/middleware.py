@@ -7,6 +7,7 @@ from main.middleware.exception.exceptions import (
     BondAreaNameException,
     postgresException
 )
+from main.common.function.DspMessage import MsgDspError
 
 logger = logging.getLogger(__name__)
 
@@ -23,12 +24,12 @@ class ExceptionHandleMiddleware(object):
         if isinstance(exception, RuntimeException):
             request.context["lblMsg"] = exception.get_message()
         elif isinstance(exception, postgresException):
-            request.context["lblMsg"] = exception.get_message()
+            MsgDspError(request, exception.DbTbl, exception.get_message())
         elif isinstance(exception, BondAreaNameException):
             request.context["lblMsg"] = str(exception)
             return render(request, "home.html", request.context)
         else:
-            request.context["lblMsg"] = f"Server error: {str(exception)}"
+            MsgDspError(request, "システムエラー", f"システムエラーが発生しました。\n\n : {str(exception)}")
         url_name = request.resolver_match.url_name
         return render(request, FileDirUtil.get_html_dir_by_url_name(url_name), request.context)
 

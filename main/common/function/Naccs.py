@@ -74,16 +74,15 @@ def NacHdrSet(strNacGymCd, strUserCd, strIdCd, strUserPswd, strIoJNo):
 
 
 def NacFtpPut(SystemData, strSndFilePath, strSndFileNm):
+    strSndFile_Snd = strSndFileNm + FILENM_SND
+    strSndFile_Tmp = strSndFileNm + FILENM_TMP
     try:
         if SystemData.GWSKBN == csGWSKBN_9:
             return NOMAL_OK
-        strSndFile_Snd = strSndFileNm + FILENM_SND
-        strSndFile_Tmp = strSndFileNm + FILENM_TMP
-        strCurrentFolder = dir_path
         for file in [FTPFILE, FTPLOGFILE, FTPBATFILE, FTPFNDFILE, FTPENDFILE]:
             if os.path.exists(file):
                 os.remove(file)
-        SetDataLength(strSndFilePath + "\strSndFileNm")
+        SetDataLength(os.path.join(strSndFilePath, "strSndFileNm"))
         strSndFileSnd = open(os.path.join(strSndFilePath, strSndFile_Snd), "w")
         strSndFileSnd.close()
         strSndFileTmp = open(os.path.join(strSndFilePath, strSndFile_Tmp), "w")
@@ -128,22 +127,22 @@ def NacFtpPut(SystemData, strSndFilePath, strSndFileNm):
         while sngMaxTime > datetime.now():
             if datetime.now() > sngRetry + timedelta(seconds=sngPauseTime):
                 sngRetry = datetime.now()
-            if os.path.exists(FTPENDFILE):
-                objFile = open(FTPENDFILE, "r")
-                objLineFile = objFile.readline()
-                while objLineFile:
-                    if FTPCMPMSG == objLineFile:
-                        intCmpMsgCnt = intCmpMsgCnt + 1
+                if os.path.exists(FTPENDFILE):
+                    objFile = open(FTPENDFILE, "r")
                     objLineFile = objFile.readline()
+                    while objLineFile:
+                        if FTPCMPMSG == objLineFile:
+                            intCmpMsgCnt = intCmpMsgCnt + 1
+                        objLineFile = objFile.readline()
         if intCmpMsgCnt != 2:
             return FATAL_ERR
-
-        for file in [FTPFILE, FTPLOGFILE, FTPBATFILE, FTPFNDFILE, FTPENDFILE, strSndFile_Tmp]:
-            if os.path.exists(file):
-                os.remove(file)
         return NOMAL_OK
     except:
         return FATAL_ERR
+    finally:
+        for file in [FTPFILE, FTPLOGFILE, FTPBATFILE, FTPFNDFILE, FTPENDFILE, strSndFile_Tmp]:
+            if os.path.exists(file):
+                os.remove(file)
 
 
 def NacDataChange(strData, intDataLen):
