@@ -1,6 +1,8 @@
 import configparser
+import json
 import os
 import socket
+from collections import OrderedDict
 from pathlib import Path
 
 from django.http import JsonResponse
@@ -105,8 +107,10 @@ class ConfigIni(object):
         if not Common.pfncDataSessionGet(request, "bond_area_name"):
             Common.pfncDataSessionSet(request, "bond_area_name", self.get_default_area_name())
         list_menu = self.get_list_menu_by_area_name(Common.pfncDataSessionGet(request, "bond_area_name"))
-        for menu in list_menu:
-            request.context[menu] = "Display"
+        request.context["sider_bar"] = FileDirUtil.get_sider_bar_by_menu_list(list_menu)
+        url_name = request.resolver_match.url_name
+        if url_name != "home":
+            request.context["breadcumbs"] = FileDirUtil.get_breadcumbs_by_path_name(request.resolver_match.url_name)
         if cfs_menu not in list_menu:
             raise BondAreaNameException(Common.pfncDataSessionGet(request, "bond_area_name"))
 
@@ -122,13 +126,15 @@ class ConfigIni(object):
     def get_all_area_name(self):
         config = configparser.ConfigParser()
         file_names = os.listdir(self.config_ini_dir)
-        names = set()
+        names = list()
         for filename in file_names:
             config.read(os.path.join(self.config_ini_dir, filename), encoding="SJIS")
             sections = [section for section in config.sections() if section.startswith("USER")]
             for section in sections:
                 user_section = config[section]
-                names.add(self.__cut_string(user_section["DspName"]))
+                if self.__cut_string(user_section["DspName"]) not in names:
+                    names.append(self.__cut_string(user_section["DspName"]))
+        names.sort()
         return names
 
     def get_list_menu_by_area_name(self, area_name):
@@ -165,3 +171,51 @@ class FileDirUtil:
             if f"{url_name}.html" in menu_files:
                 return f"menu/{menu_folder}/{url_name}.html"
         return "home.html"
+
+    @staticmethod
+    def get_sider_bar_by_menu_list(menu_list):
+        new_menu_list = menu_list.copy()
+        new_menu_list.remove('')
+        new_menu_list.sort()
+        base_dir = Path(__file__).resolve().parent.parent.parent
+        sider_bar_dir = os.path.join(base_dir, "config_sider_bar", "sider_bar.json")
+        menu_output = OrderedDict()
+        with open(sider_bar_dir, encoding="SJIS") as json_file:
+            data = json.load(json_file)
+            for menu in new_menu_list:
+                get_menu = data.get(menu, None)
+                if get_menu is None:
+                    raise RuntimeException(error_code=E00002, message="Has an error when generate menu")
+                menu_output[menu] = data[menu]
+        return menu_output
+
+    @staticmethod
+    def get_breadcumbs_by_path_name(url_name):
+        base_dir = Path(__file__).resolve().parent.parent.parent
+        sider_bar_dir = os.path.join(base_dir, "config_sider_bar", "sider_bar.json")
+        with open(sider_bar_dir, encoding="SJIS") as json_file:
+            data = json.load(json_file)
+            output = []
+            for k, v in data.items():
+                dict_home = {'url': 'home', 'title': 'ホーム'}
+                dict_ = {'url': '#', 'title': v['title']}
+                sub_menu = v['sub_menu']
+                for s in sub_menu:
+                    output.append(dict_home)
+                    output.append(dict_)
+                    output, is_find = FileDirUtil.recursive(s, url_name, output)
+                    if is_find:
+                        return output
+
+    @staticmethod
+    def recursive(jsons, url_name, output):
+        if jsons is None:
+            output.clear()
+            return output, False
+        screen_url = jsons['url']
+        screen_title = jsons['title']
+        dict_ = {'url': screen_url, 'title': screen_title}
+        output.append(dict_)
+        if url_name == screen_url:
+            return output, True
+        return FileDirUtil.recursive(jsons.get('sub_menu', None), url_name, output)

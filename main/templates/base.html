@@ -11,7 +11,7 @@
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="robots" content="all,follow">
-    <link rel="stylesheet" href="{%static 'vendor/bootstrap/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'vendor/bootstrap/css/bootstrap.min.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'plugins/jquery.dataTables.min.css' %}"/>
     <link rel="stylesheet" href="{% static 'plugins/jquery-ui.css' %}">
     <link rel="stylesheet" href="{% static 'css/styles.css' %}">
@@ -25,23 +25,23 @@
 {% spaceless %}
     {% header request %}
     <input type="hidden" id="gSetField" value="{{ gSetField }}">
-<!--navbar section start-->
-<section class="content" id="content">
-    <div class="row">
-        {% include "partials/siderBar.html" %}
-        <div class="col-xl-10 col-lg-10 col-sm-6">
-            <div class="content-items">
-                <div class="content-right">
-                 {% include "partials/content-header.html" %}
-                 {% include "includes/lblMsg.html" %}
-                 {% block main %}{% endblock main %}
+    <!--navbar section start-->
+
+
+    <section class="content" id="content">
+        <div class="row">
+            {% include "partials/siderBar.html" %}
+            <div class="col-xl-10 col-lg-10 col-sm-6 pl-0">
+                <div class="content-items">
+                    {% include "partials/content-header.html" %}
+                    {% include "includes/lblMsg.html" %}
+                    {% block main %}{% endblock main %}
                 </div>
             </div>
         </div>
-    </div>
-</section>
+    </section>
 
-<!--navbar section end-->
+    <!--navbar section end-->
 {% endspaceless %}
 <!-- JavaScript files-->
 <script src="{% static 'plugins/jquery-3.3.1.min.js' %}"></script>

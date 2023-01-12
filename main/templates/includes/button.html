@@ -3,7 +3,12 @@
   class="{{ CssClass }} {% if IsEnable == False or not IsEnable %} inactive {% endif %}"
   value="{{ id }}"
   name="{{ name }}"
+  tabindex={{tabIndex}}
   {% if IsEnable == False or not IsEnable  %}  disabled {% endif %}
   >
-  {{ Text }}
+    {% if htmlText %}
+        {{ htmlText }}
+    {% else %}
+        {{ Text }}
+    {% endif %}
 </button>
