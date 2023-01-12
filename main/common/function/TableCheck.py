@@ -39,12 +39,12 @@ def TbOpe_TableCheck(strOpeCd, strSelTbl):
         raise postgresException(Error=e, DbTbl="TBOPE" + strSelTbl, SqlStr=sql)
 
 
-def TbPort_TableCheck(strOpeCd, strSelTbl):
+def TbPort_TableCheck(strPortCd, strSelTbl):
     sql = ""
     try:
         sql = "SELECT COUNT(PORTCD) AS dcnt "
         sql += f"FROM TBPORT{strSelTbl} "
-        sql += f"WHERE PORTCD = {Common.dbField(strOpeCd)}"
+        sql += f"WHERE PORTCD = {Common.dbField(strPortCd)}"
         RsTbPort = SqlExecute(sql).all()
         if RsTbPort.Rows[0]["dcnt"] == 0:
             return DB_NOT_FIND
@@ -55,12 +55,12 @@ def TbPort_TableCheck(strOpeCd, strSelTbl):
         raise postgresException(Error=e, DbTbl="TBPORT" + strSelTbl, SqlStr=sql)
 
 
-def TbPackg_TableCheck(strOpeCd, strSelTbl):
+def TbPackg_TableCheck(strPackCd, strSelTbl):
     sql = ""
     try:
         sql = "SELECT COUNT(PACKCD) AS dcnt "
         sql += f"FROM TBPACKG{strSelTbl} "
-        sql += f"WHERE PACKCD = {Common.dbField(strOpeCd)}"
+        sql += f"WHERE PACKCD = {Common.dbField(strPackCd)}"
         RsTbPackg = SqlExecute(sql).all()
         if RsTbPackg.Rows[0]["dcnt"] == 0:
             return DB_NOT_FIND
@@ -71,12 +71,12 @@ def TbPackg_TableCheck(strOpeCd, strSelTbl):
         raise postgresException(Error=e, DbTbl="TBPACKG" + strSelTbl, SqlStr=sql)
 
 
-def TbSTani_TableCheck(strOpeCd, strSyubtKbn, strSelTbl):
+def TbSTani_TableCheck(strSTaniCd, strSyubtKbn, strSelTbl):
     sql = ""
     try:
         sql = "SELECT COUNT(STANICD) AS dcnt "
         sql += f"FROM TBSTANI{strSelTbl} "
-        sql += f"WHERE STANICD = {Common.dbField(strOpeCd)}"
+        sql += f"WHERE STANICD = {Common.dbField(strSTaniCd)}"
         sql += f" AND SYUBTKBN = {Common.dbField(strSyubtKbn)}"
         RsTbSTani = SqlExecute(sql).all()
         if RsTbSTani.Rows[0]["dcnt"] == 0:

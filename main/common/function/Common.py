@@ -152,25 +152,19 @@ def MakeNaBlNo(objRsOpe, strCtBl):
             strNscacflg = objRsOpe.Rows[0]["nscacflg"]
 
         if strDelLen[0] > 0:
-            while True:
-                try:
-                    intBlLen = len(strCtBl)
-                    intPtr = strCtBl.index(strDelChr[0])
-                    strAns = strCtBl[:intPtr]
-                    strCtBl = strAns + strCtBl[(intPtr - 1 + strDelLen[0]) - intBlLen:]
-                except:
-                    break
+            while strDelChr[0] in strCtBl:
+                intBlLen = len(strCtBl)
+                intPtr = strCtBl.index(strDelChr[0])
+                strAns = strCtBl[:intPtr]
+                strCtBl = strAns + strCtBl[(intPtr - 1 + strDelLen[0]) - intBlLen:]
         if strDelLen[1] > 0:
-            while True:
-                try:
-                    intBlLen = len(strCtBl)
-                    intPtr = strCtBl.index(strDelChr[1])
-                    strAns = strCtBl[:intPtr]
-                    strCtBl = strAns + strCtBl[(intPtr - 1 + strDelLen[1]) - intBlLen:]
-                except:
-                    break
+            while strDelChr[0] in strCtBl:
+                intBlLen = len(strCtBl)
+                intPtr = strCtBl.index(strDelChr[1])
+                strAns = strCtBl[:intPtr]
+                strCtBl = strAns + strCtBl[(intPtr - 1 + strDelLen[1]) - intBlLen:]
         if strDelLen[2] > 0:
-            while True:
+            while strDelChr[0] in strCtBl:
                 try:
                     intBlLen = len(strCtBl)
                     intPtr = strCtBl.index(strDelChr[2])
@@ -368,10 +362,10 @@ def GetDemurg(GDemurg, strSelTbl):
         tbcalen = []
         tbcalen_cnt = len(RsCalen)
         for i in range(tbcalen_cnt):
-            tbcalen[i]["ymdate"] = RsCalen.Rows["YMDATE"]
-            tbcalen[i]["ymdatey"] = int(RsCalen.Rows["YMDATE"][:4])
-            tbcalen[i]["ymdatem"] = int(RsCalen.Rows["YMDATE"][6:8])
-            tbcalen[i]["daykbn"] = RsCalen.Rows["DAYKBN"]
+            tbcalen[i]["ymdate"] = RsCalen.Rows[i]["ymdate"]
+            tbcalen[i]["ymdatey"] = int(RsCalen.Rows[i]["ymdate"][:4])
+            tbcalen[i]["ymdatem"] = int(RsCalen.Rows[i]["ymdate"][6:8])
+            tbcalen[i]["daykbn"] = RsCalen.Rows[i]["daykbn"]
         WkErrTbl = "デマレージテーブル"
         SqlStr = "SELECT "
         SqlStr += "A.OPECD AS OPECD1, "
@@ -475,29 +469,29 @@ def GetDemurg(GDemurg, strSelTbl):
             GDemurg.DemuCKbn = csDEMUCKBN_C
             for i in range(len(tbdemurg)):
                 if WkNisu <= tbdemurg[i]["rank"]:
-                    GDemurg.CDemuTanka1 = tbdemurg[i]["TANKA"]
+                    GDemurg.CDemuTanka1 = tbdemurg[i]["tanka"]
                     GDemurg.CDemuTanka2 = 0
-                    GDemurg.demurg = tbdemurg[i]["TANKA"] * WkNisu * WkDemurg
+                    GDemurg.demurg = tbdemurg[i]["tanka"] * WkNisu * WkDemurg
                     GDemurg.CDemurgN1 = WkNisu
                     GDemurg.CDemurgN2 = 0
                     break
                 else:
                     if i != 4:
-                        if tbdemurg[i + 1]["RANK"] == 0:
-                            GDemurg.CDemuTanka1 = tbdemurg[i]["TANKA"]
-                            GDemurg.CDemuTanka2 = WkTankaC * (WkNisu - tbdemurg[i]["RANK"])
-                            GDemurg.demurg = (tbdemurg[i]["TANKA"] * tbdemurg[i]["RANK"] * WkDemurg) + (
-                                    WkTankaC * (WkNisu - tbdemurg[i]["RANK"]) * WkDemurg)
-                            GDemurg.CDemurgN1 = tbdemurg[i]["RANK"]
-                            GDemurg.CDemurgN2 = WkNisu - tbdemurg[i]["RANK"]
+                        if tbdemurg[i + 1]["rank"] == 0:
+                            GDemurg.CDemuTanka1 = tbdemurg[i]["tanka"]
+                            GDemurg.CDemuTanka2 = WkTankaC * (WkNisu - tbdemurg[i]["rank"])
+                            GDemurg.demurg = (tbdemurg[i]["tanka"] * tbdemurg[i]["rank"] * WkDemurg) + (
+                                    WkTankaC * (WkNisu - tbdemurg[i]["rank"]) * WkDemurg)
+                            GDemurg.CDemurgN1 = tbdemurg[i]["rank"]
+                            GDemurg.CDemurgN2 = WkNisu - tbdemurg[i]["rank"]
                             break
             if GDemurg.demurg == 0:
-                GDemurg.CDemuTanka1 = tbdemurg[4]["TANKA"]
-                GDemurg.CDemuTanka2 = WkTankaC * (WkNisu - tbdemurg[4]["RANK"])
-                GDemurg.demurg = (tbdemurg[4]["TANKA"] * tbdemurg[4]["RANK"] * WkDemurg) + (
-                        WkTankaC * (WkNisu - tbdemurg[4]["RANK"]) * WkDemurg)
-                GDemurg.CDemurgN1 = tbdemurg[4]["RANK"]
-                GDemurg.CDemurgN2 = WkNisu - tbdemurg[4]["RANK"]
+                GDemurg.CDemuTanka1 = tbdemurg[4]["tanka"]
+                GDemurg.CDemuTanka2 = WkTankaC * (WkNisu - tbdemurg[4]["rank"])
+                GDemurg.demurg = (tbdemurg[4]["tanka"] * tbdemurg[4]["rank"] * WkDemurg) + (
+                        WkTankaC * (WkNisu - tbdemurg[4]["rank"]) * WkDemurg)
+                GDemurg.CDemurgN1 = tbdemurg[4]["rank"]
+                GDemurg.CDemurgN2 = WkNisu - tbdemurg[4]["rank"]
         return DB_NOMAL_OK
     except:
         return DB_FATAL_ERR
@@ -516,10 +510,10 @@ def GetDemurg2(GDemurg, strSelTbl):
         tbcalen = []
         tbcalen_cnt = len(RsCalen)
         for i in range(tbcalen_cnt):
-            tbcalen[i]["YMDATE"] = RsCalen.Rows[0]["ymdate"]
-            tbcalen[i]["YMDATEY"] = int(RsCalen.Rows[0]["ymdate"][:4])
-            tbcalen[i]["YMDATEM"] = int(RsCalen.Rows[0]["ymdate"][6:8])
-            tbcalen[i]["DAYKBN"] = RsCalen.Rows[0]["daykbn"]
+            tbcalen[i]["ymdate"] = RsCalen.Rows[0]["ymdate"]
+            tbcalen[i]["ymdatey"] = int(RsCalen.Rows[0]["ymdate"][:4])
+            tbcalen[i]["ymdatem"] = int(RsCalen.Rows[0]["ymdate"][6:8])
+            tbcalen[i]["daykbn"] = RsCalen.Rows[0]["daykbn"]
         WkErrTbl = "デマレージテーブル"
         SqlStr = "SELECT "
         SqlStr += "B.OPECD AS OPECD, "
@@ -575,9 +569,9 @@ def GetDemurg2(GDemurg, strSelTbl):
         for i in range(tbcalen_cnt):
             if WkEndFlg == 9:
                 break
-            if tbcalen[i]["YMDATE"] >= WkDateY + "/" + WkDateM:
+            if tbcalen[i]["ymdate"] >= WkDateY + "/" + WkDateM:
                 WkEndFlg = 9
-            day_kbn = tbcalen[i]["DAYKBN"][int(WkDateD)]
+            day_kbn = tbcalen[i]["daykbn"][int(WkDateD)]
             if day_kbn == csDAYKBN_2:
                 if WkDCalc == csDCALC_1 or WkDCalc == csDCALC_3:
                     WkNisu = WkNisu + 1
@@ -589,7 +583,7 @@ def GetDemurg2(GDemurg, strSelTbl):
             else:
                 WkNisu = WkNisu + 1
             WkDateD = f"{int(WkDateD) + 1 :02}"
-            if WkDateD == "32" or tbcalen[i]["DAYKBN"][int(WkDateD) - 2] == csDAYKBN_9:
+            if WkDateD == "32" or tbcalen[i]["daykbn"][int(WkDateD) - 2] == csDAYKBN_9:
                 WkDate = WkDateY + "/" + WkDateM + "/01"
                 WkDateY = CmfDateFmt((datetime.strptime(WkDate, "%Y/%m/%d") + relativedelta(months=1)).strftime("%Y/%m/%d"),
                                      "%Y")
@@ -607,43 +601,43 @@ def GetDemurg2(GDemurg, strSelTbl):
         if WkTankaC == 0:
             GDemurg.DemuCKbn = csDEMUCKBN_A
             for i in range(len(tbdemurg)):
-                if WkNisu <= tbdemurg[i]["RANK"]:
-                    GDemurg.DemuTanka = tbdemurg[i]["TANKA"]
-                    GDemurg.demurg = f"{tbdemurg[i]['TANKA'] * WkNisu * WkDemurg :01}"
+                if WkNisu <= tbdemurg[i]["rank"]:
+                    GDemurg.DemuTanka = tbdemurg[i]["tanka"]
+                    GDemurg.demurg = f"{tbdemurg[i]['tanka'] * WkNisu * WkDemurg :01}"
                     GDemurg.DemurgN = WkNisu
                     break
                 else:
-                    if WkRankMax == tbdemurg[i]["RANK"]:
-                        if WkNisu >= tbdemurg[i]["RANK"]:
-                            GDemurg.DemuTanka = tbdemurg[i]["TANKA"]
-                            GDemurg.demurg = f"{tbdemurg[i]['TANKA'] * WkNisu * WkDemurg :01}"
+                    if WkRankMax == tbdemurg[i]["rank"]:
+                        if WkNisu >= tbdemurg[i]["rank"]:
+                            GDemurg.DemuTanka = tbdemurg[i]["tanka"]
+                            GDemurg.demurg = f"{tbdemurg[i]['tanka'] * WkNisu * WkDemurg :01}"
                             GDemurg.DemurgN = WkNisu
                             break
         else:
             GDemurg.DemuCKbn = csDEMUCKBN_C
             for i in range(len(tbdemurg)):
-                if WkNisu <= tbdemurg[i]["RANK"]:
-                    GDemurg.CDemuTanka1 = tbdemurg[i]["TANKA"]
+                if WkNisu <= tbdemurg[i]["rank"]:
+                    GDemurg.CDemuTanka1 = tbdemurg[i]["tanka"]
                     GDemurg.CDemuTanka2 = 0
-                    GDemurg.demurg = f"{tbdemurg[i]['TANKA'] * WkNisu * WkDemurg :01}"
+                    GDemurg.demurg = f"{tbdemurg[i]['tanka'] * WkNisu * WkDemurg :01}"
                     GDemurg.CDemurgN1 = WkNisu
                     GDemurg.CDemurgN2 = 0
                 else:
                     if i != 4:
-                        if tbdemurg[i + 1]["RANK"] == 0:
-                            GDemurg.CDemuTanka1 = tbdemurg[i]["TANKA"]
-                            GDemurg.CDemuTanka2 = WkTankaC * (WkNisu - tbdemurg[i]["RANK"])
-                            GDemurg.demurg = f"{(tbdemurg[i]['TANKA'] * tbdemurg[i]['RANK'] * WkDemurg) + (WkTankaC * (WkNisu - tbdemurg[i]['RANK']) * WkDemurg) :01}"
-                            GDemurg.CDemurgN1 = tbdemurg[i]["RANK"]
-                            GDemurg.CDemurgN2 = WkNisu - tbdemurg[i]["RANK"]
+                        if tbdemurg[i + 1]["rank"] == 0:
+                            GDemurg.CDemuTanka1 = tbdemurg[i]["tanka"]
+                            GDemurg.CDemuTanka2 = WkTankaC * (WkNisu - tbdemurg[i]["rank"])
+                            GDemurg.demurg = f"{(tbdemurg[i]['tanka'] * tbdemurg[i]['rank'] * WkDemurg) + (WkTankaC * (WkNisu - tbdemurg[i]['rank']) * WkDemurg) :01}"
+                            GDemurg.CDemurgN1 = tbdemurg[i]["rank"]
+                            GDemurg.CDemurgN2 = WkNisu - tbdemurg[i]["rank"]
                             break
 
             if GDemurg.demurg == 0:
-                GDemurg.CDemuTanka1 = tbdemurg[4]["TANKA"]
-                GDemurg.CDemuTanka2 = WkTankaC * (WkNisu - tbdemurg[4]["RANK"])
-                GDemurg.demurg = f"{(tbdemurg[4]['TANKA'] * tbdemurg[4]['RANK'] * WkDemurg) + (WkTankaC * (WkNisu - tbdemurg[4]['RANK']) * WkDemurg) :01}"
-                GDemurg.CDemurgN1 = tbdemurg[4]["RANK"]
-                GDemurg.CDemurgN2 = WkNisu - tbdemurg[4]["RANK"]
+                GDemurg.CDemuTanka1 = tbdemurg[4]["tanka"]
+                GDemurg.CDemuTanka2 = WkTankaC * (WkNisu - tbdemurg[4]["rank"])
+                GDemurg.demurg = f"{(tbdemurg[4]['tanka'] * tbdemurg[4]['rank'] * WkDemurg) + (WkTankaC * (WkNisu - tbdemurg[4]['rank']) * WkDemurg) :01}"
+                GDemurg.CDemurgN1 = tbdemurg[4]["rank"]
+                GDemurg.CDemurgN2 = WkNisu - tbdemurg[4]["rank"]
         return DB_NOMAL_OK
     except:
         return DB_FATAL_ERR
@@ -804,9 +798,9 @@ def GetRevenue(OpeCd, KGWeight, M3Measur, RynDataCnt, RynData, strSelTbl):
             RynData = []
         else:
             for i in range(len(RynData)):
-                if RynData[i]["OpeCd"] == OpeCd:
-                    WkSTankaKbn = RynData[i]["STANKAKBN"]
-                    MinTon = RynData[i]["MinTon"]
+                if RynData[i]["opecd"] == OpeCd:
+                    WkSTankaKbn = RynData[i]["stankakbn"]
+                    MinTon = RynData[i]["minton"]
         if WkSTankaKbn == "":
             SqlStr = "SELECT "
             SqlStr += "A.MINTON AS MINTON, "
@@ -876,10 +870,10 @@ def GetDemurgKDate(OpeCd, FreeTime, strSelTbl, WkDCalc):
         tbcalen = []
         tbcalen_cnt = len(RsCalen)
         for i in range(tbcalen_cnt):
-            tbcalen[i]["YMDATE"] = RsCalen.Rows[0]["ymdate"]
-            tbcalen[i]["YMDATEY"] = int(RsCalen.Rows[0]["ymdate"][:4])
-            tbcalen[i]["YMDATEM"] = int(RsCalen.Rows[0]["ymdate"][6:8])
-            tbcalen[i]["DAYKBN"] = RsCalen.Rows[0]["daykbn"]
+            tbcalen[i]["ymdate"] = RsCalen.Rows[0]["ymdate"]
+            tbcalen[i]["ymdatey"] = int(RsCalen.Rows[0]["ymdate"][:4])
+            tbcalen[i]["ymdatem"] = int(RsCalen.Rows[0]["ymdate"][6:8])
+            tbcalen[i]["daykbn"] = RsCalen.Rows[0]["daykbn"]
         WkErrTbl = "デマレージテーブル"
         SqlStr = "SELECT "
         SqlStr += "DCALC "
@@ -893,24 +887,24 @@ def GetDemurgKDate(OpeCd, FreeTime, strSelTbl, WkDCalc):
         for i in range(len(RsDemu.Rows)):
             if WkEndFlg == 9:
                 break
-            day_kbn = tbcalen[i]["DAYKBN"][int(WkDateD)]
+            day_kbn = tbcalen[i]["daykbn"][int(WkDateD)]
             if day_kbn == csDAYKBN_2:
                 if WkDCalc in [csDCALC_1, csDCALC_3]:
-                    demurgKDate = tbcalen[i]["YMDATE"] + "/" + WkDateD
+                    demurgKDate = tbcalen[i]["ymdate"] + "/" + WkDateD
                     WkEndFlg = 9
                     continue
             elif day_kbn in [csDAYKBN_3, csDAYKBN_4]:
                 if WkDCalc == csDCALC_3:
-                    demurgKDate = tbcalen[i]["YMDATE"] + "/" + WkDateD
+                    demurgKDate = tbcalen[i]["ymdate"] + "/" + WkDateD
                     WkEndFlg = 9
                     continue
             elif day_kbn == csDAYKBN_9:
                 pass
             else:
-                demurgKDate = tbcalen[i]["YMDATE"] + "/" + WkDateD
+                demurgKDate = tbcalen[i]["ymdate"] + "/" + WkDateD
                 WkEndFlg = 9
             WkDateD = f"{int(WkDateD) + 1 :02}"
-            if WkDateD == "32" or tbcalen[i]["DAYKBN"][int(WkDateD) - 2] == csDAYKBN_9:
+            if WkDateD == "32" or tbcalen[i]["daykbn"][int(WkDateD) - 2] == csDAYKBN_9:
                 WkDate = WkDateY + "/" + WkDateM + "/01"
                 WkDateY = CmfDateFmt((datetime.strptime(WkDate, "%Y/%m/%d") + relativedelta(months=1)).strftime("%Y/%m/%d"),
                                      "%Y")
@@ -986,9 +980,9 @@ def TxtOutSkCd_CodeCheck(request, TbInlandData, strProcTbl):
     SqlStr = ""
     try:
         for i in range(len(TbInlandData)):
-            if TbInlandData[i]["InlandCd"] == request.context["TxtOutSkCd"]:
+            if TbInlandData[i]["inlandcd"] == request.context["TxtOutSkCd"]:
                 outInlandData["InlandCd"] = request.context["TxtOutSkCd"]
-                outInlandData["InlandNm"] = TbInlandData[i]["InlandNm"]
+                outInlandData["InlandNm"] = TbInlandData[i]["inlandnm"]
                 WkDFlg = 1
                 break
         if WkDFlg == 0:
@@ -1001,8 +995,8 @@ def TxtOutSkCd_CodeCheck(request, TbInlandData, strProcTbl):
                 request.context["gSetField"] = "TxtOutSkCd"
                 return False
             WkCnt = len(TbInlandData)
-            TbInlandData[WkCnt]["InlandCd"] = request.context["TxtFwdCd"]
-            TbInlandData[WkCnt]["InlandNm"] = DbDataChange(RsInland.Rows[0]["inlandnm"])
+            TbInlandData[WkCnt]["inlandcd"] = request.context["TxtFwdCd"]
+            TbInlandData[WkCnt]["inlandnm"] = DbDataChange(RsInland.Rows[0]["inlandnm"])
             outInlandData["InlandCd"] = request.context["TxtOutSkCd"]
             outInlandData["InlandNm"] = DbDataChange(RsInland.Rows[0]["inlandnm"])
         return True
