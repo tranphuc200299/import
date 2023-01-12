@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}荷姿コード登録{% endblock title %}
+
+{% block main %}
+<form id="f_cfsc1500" method="post">
+    {% csrf_token %}
+    <div class="title_content">
+        <div class="search_about">
+            <div class="search_item">
+                <div class="item_search_title">
+                    <h3>荷姿コード <span class="text-danger">* </span></h3>
+                </div>
+                <div class="search_input">
+                    {% include "includes/textbox.html" with id="txt_apackcd" CssClass="width-100" MaxLength=3 Title="必須入力・荷姿 Code" Change="True" %}
+                </div>
+                <div class="content_button">
+                    <img src="{% static 'images/search.svg' %}" alt="">
+                    {% include "includes/button.html" with name="action" id="cmd_search" CssClass="btn-search" Text="検索" IsEnable=True %}
+                </div>
+            </div>
+        </div>
+        <div class="content_control">
+            <div class="">
+                <div class="content_control_flex">
+                    <div class="control_title">
+                        <h3>荷姿名称 <span class="text-danger">* </span></h3>
+                    </div>
+                    <div>
+                        {% include "includes/textbox.html" with id="txt_apacknm" CssClass="control-input display-inline width-446" MaxLength=25 Title="必須入力" %}
+                    </div>
+                </div>
+            </div>
+            <div class="control_button">
+                {% include "includes/button.html" with name="action" id="cmd_entry" CssClass="btn-register" Text="登録" IsEnable=cmd_entry_enable %}
+                {% include "includes/button.html" with name="action" id="cmd_change" CssClass="btn-register" Text="変更" IsEnable=cmd_change_enable %}
+                {% include "includes/button.html" with name="action" id="cmd_delete" CssClass="btn-register" Text="削除" IsEnable=cmd_delete_enable  %}
+                {% include "includes/button.html" with name="action" id="cmd_cancel" CssClass="btn-register" Text="取消" IsEnable=True %}
+            </div>
+        </div>
+    </div>
+</form>
+{% endblock main %}
+
+{% block js %}
+{% endblock js %}
+{% block internal_css %}
+    <link rel="stylesheet" href="{% static 'css/menu4/f_cfsc1500.css' %}">
+{% endblock internal_css %}

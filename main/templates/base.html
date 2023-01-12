@@ -15,6 +15,7 @@
     <link rel="stylesheet" type="text/css" href="{% static 'plugins/jquery.dataTables.min.css' %}"/>
     <link rel="stylesheet" href="{% static 'plugins/jquery-ui.css' %}">
     <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    {% block internal_css %}{% endblock internal_css %}
     <!-- Favicon-->
     <!-- <link rel="shortcut icon" href="img/favicon.png' %}"> -->
     {% block css %}{% endblock css %}
