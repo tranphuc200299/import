@@ -7,7 +7,7 @@ from main.common.decorators import update_context, load_cfs_ini
 from main.common.function import SqlExecute, Common
 from main.common.function.Common import sqlStringConvert
 from main.common.function.Const import \
-    FATAL_ERR, NOMAL_OK, csFKISANKBN_1, csFKISANKBN_2, csFCALC_1, csFCALC_2, csFCALC_3, DB_NOMAL_OK, DB_NOT_FIND
+    FATAL_ERR, NOMAL_OK, csFKISANKBN_1, csFKISANKBN_2, csFCALC_1, csFCALC_2, csFCALC_3, DB_NOT_FIND
 from main.common.function.TableCheck import TbOpe_TableCheck
 from main.common.utils import Response
 
@@ -70,8 +70,8 @@ def inpdatachk1(request):
         request.context["lblMsg"] = "必須入力エラー", "オペレータコードを入力して下さい。"
         request.context["gSetField"] = "txt_aopecd"
         return FATAL_ERR
-    intRtn = sqlStringConvert(TbOpe_TableCheck(request.context["txt_aopecd"], request.cfs_ini["iniUpdTbl"]))
-    if intRtn == DB_NOMAL_OK and intRtn == DB_NOT_FIND:
+    intRtn = TbOpe_TableCheck(request.context["txt_aopecd"], request.cfs_ini["iniUpdTbl"])
+    if intRtn == DB_NOT_FIND:
         request.context["lblMsg"] = "コード未登録エラー", "Operator Code Tableが登録されていません。"
         request.context["gSetField"] = "txt_aopecd"
         return FATAL_ERR
@@ -115,6 +115,7 @@ def cmd_search_Click(request):
     except Exception as e:
         __logger.error(e)
         # TODO
+        # OraError "TBSFREETM" & strProcTbl, sql
 
 
 def inpdatachk2(request):

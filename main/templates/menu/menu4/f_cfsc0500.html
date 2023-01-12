@@ -12,12 +12,12 @@
                     <div class="form-group form-group-seach">
                         <label for="txt_aopecd" class="mr-3" tabIndex=4>オペレータコード <span
                                 class="required">*</span></label>
-                        {% include "includes/textbox.html" with class="form-control" id="txt_aopecd" name="txt_aopecd" tabIndex=4 width="122" MaxLength=4 TextChange="True"  Change="True" Title="必須入力・Operator Code" %}
+                        {% include "includes/textbox.html" with class="form-control" id="txt_aopecd" name="txt_aopecd" tabIndex=4 width="122" MaxLength=4  Change="True" Title="必須入力・Operator Code" %}
                     </div>
                     <div class="form-group">
                         <label for="txt_afreekbn" tabIndex=6>エリアコード <span
                                 class="required">*</span></label>
-                        {% include "includes/textbox.html" with class="form-control" id="txt_afreekbn" name="txt_afreekbn" width="84" tabIndex=6 MaxLength=1 TextChange="True" Change="True" %}
+                        {% include "includes/textbox.html" with class="form-control" id="txt_afreekbn" name="txt_afreekbn" width="84" tabIndex=6 MaxLength=1 Change="True" %}
                     </div>
                     <div class="pt-4 mt-3">
                         {% include "includes/button.html" with name="action" id="cmd_search" class="btn btn-primary btn-search" TabIndex=7 htmlText='<i class="fa fa-search"></i> 検索' %}
