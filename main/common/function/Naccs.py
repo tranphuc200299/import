@@ -41,7 +41,7 @@ def NacUniqGet(strUProGId, SystemData, strSelTbl, iniUpdCd, iniUpdTbl, iniWsNo, 
             sql = f"UPDATE TBCFSSYS{strSelTbl} "
             sql += f"SET IOJNONOW = {lngIoJNo},"
             sql += f"UNQFILENM = {dbField(strUnqFileNm)},"
-            sql += f"UDATE = SYSDATE,"
+            sql += f"UDATE = CURRENT_TIMESTAMP,"
             sql += f"UPROGID = {dbField(strUProGId)},"
             sql += f"UWSID = {dbField(iniWsNo)} "
             sql += f"WHERE HOZEICD = {dbField(strSelHozCd)}"

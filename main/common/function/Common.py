@@ -73,7 +73,12 @@ def dbsingle(strIn: str) -> float:
     if strIn == "":
         return 0
     else:
-        return float(strIn.replace(",", ""))
+        try:
+            if '.' in strIn:
+                int(strIn.split(".")[1])
+            return float(strIn.replace(",", ""))
+        except:
+            return 0
 
 
 def dbLong(strIn: str) -> int:
@@ -203,10 +208,10 @@ def GetFreeTime(OpeCd, AreaCd, KDate, strSelTbl):
         tbcalen_cnt = len(RsCalen)
         for i in range(tbcalen_cnt):
             tbcalen.append({
-                "YMDATE": RsCalen.Rows[i]["YMDATE"],
-                "YMDATEY": int(RsCalen.Rows[i]["YMDATE"][0:4]),
-                "YMDATEM": int(RsCalen.Rows[i]["YMDATE"][6:8]),
-                "DAYKBN": RsCalen.Rows[i]["DAYKBN"]
+                "YMDATE": RsCalen.Rows[i]["ymdate"],
+                "YMDATEY": int(RsCalen.Rows[i]["ymdate"][0:4]),
+                "YMDATEM": int(RsCalen.Rows[i]["ymdate"][6:8]),
+                "DAYKBN": RsCalen.Rows[i]["daykbn"]
             })
         if WkFKISANKBN == csFKISANKBN_1:
             WkKDate = KDate
@@ -224,8 +229,8 @@ def GetFreeTime(OpeCd, AreaCd, KDate, strSelTbl):
                 for i in range(tbcalen_cnt):
                     if WkKDate != "":
                         break
-                    if tbcalen[i]["YMDATE"] == WkKDateY + "/" + WkKDateM:
-                        day_kbn = tbcalen[i]["DAYKBN"][int(WkKDateD) - 1]
+                    if tbcalen[i]["ymdate"] == WkKDateY + "/" + WkKDateM:
+                        day_kbn = tbcalen[i]["daykbn"][int(WkKDateD) - 1]
                         if day_kbn == csDAYKBN_2:
                             if WkFCALC == csFCALC_1:
                                 WkKDate = WkKDateY + "/" + WkKDateM + "/" + WkKDateD
@@ -239,7 +244,7 @@ def GetFreeTime(OpeCd, AreaCd, KDate, strSelTbl):
                         else:
                             WkKDate = WkKDateY + "/" + WkKDateM + "/" + WkKDateD
                             continue
-                        if WkKDateD == "32" or tbcalen[i]["DAYKBN"][int(WkKDateD) - 1] == csDAYKBN_9:
+                        if WkKDateD == "32" or tbcalen[i]["daykbn"][int(WkKDateD) - 2] == csDAYKBN_9:
                             WkKDate = WkKDateY + "/" + WkKDateM + "/01"
                             WkKDateY = CmfDateFmt(
                                 (datetime.strptime(WkKDate, "%Y/%m/%d") + relativedelta(months=1)).strftime("%Y/%m/%d"), "%Y")
@@ -265,8 +270,8 @@ def GetFreeTime(OpeCd, AreaCd, KDate, strSelTbl):
         for i in range(len(RsFreeTm.Rows)):
             if WkFreeTime != "":
                 break
-            if tbcalen[i]["YMDATE"] == WkKDateY + "/" + WkKDateM:
-                if tbcalen[i]["DAYKBN"][int(WkKDateD)] == csDAYKBN_9:
+            if tbcalen[i]["ymdate"] == WkKDateY + "/" + WkKDateM:
+                if tbcalen[i]["daykbn"][int(WkKDateD) - 1] == csDAYKBN_9:
                     WkFreeTime = WkKDateY + "/" + WkKDateM + "/01"
                     WkKDateY = CmfDateFmt(
                         (datetime.strptime(WkFreeTime, "%Y/%m/%d") + relativedelta(months=1)).strftime("%Y/%m/%d"), "%Y")
@@ -276,11 +281,11 @@ def GetFreeTime(OpeCd, AreaCd, KDate, strSelTbl):
                         (datetime.strptime(WkFreeTime, "%Y/%m/%d") + relativedelta(months=1)).strftime("%Y/%m/%d"), "%d")
                     WkFreeTime = ""
                     continue
-                if not tbcalen[i]["YMDATE"] == WkKDateY + "/" + WkKDateM:
+                if not tbcalen[i]["ymdate"] == WkKDateY + "/" + WkKDateM:
                     continue
-                if tbcalen[i]["DAYKBN"][int(WkKDateD)] == csDAYKBN_1:
+                if tbcalen[i]["daykbn"][int(WkKDateD) - 1] == csDAYKBN_1:
                     WkFCnt = WkFCnt + 1
-                if WkFCALC == csFCALC_1 and tbcalen[i]["DAYKBN"][int(WkKDateD)] == csDAYKBN_2:
+                if WkFCALC == csFCALC_1 and tbcalen[i]["daykbn"][int(WkKDateD) - 1] == csDAYKBN_2:
                     WkFCnt = WkFCnt + 1
                 if WkFCnt == WkFDAYS:
                     WkFreeTime = WkKDateY + "/" + WkKDateM + "/" + WkKDateD
@@ -363,10 +368,10 @@ def GetDemurg(GDemurg, strSelTbl):
         tbcalen = []
         tbcalen_cnt = len(RsCalen)
         for i in range(tbcalen_cnt):
-            tbcalen[i]["YMDATE"] = RsCalen.Rows["YMDATE"]
-            tbcalen[i]["YMDATEY"] = int(RsCalen.Rows["YMDATE"][:4])
-            tbcalen[i]["YMDATEM"] = int(RsCalen.Rows["YMDATE"][6:8])
-            tbcalen[i]["DAYKBN"] = RsCalen.Rows["DAYKBN"]
+            tbcalen[i]["ymdate"] = RsCalen.Rows["YMDATE"]
+            tbcalen[i]["ymdatey"] = int(RsCalen.Rows["YMDATE"][:4])
+            tbcalen[i]["ymdatem"] = int(RsCalen.Rows["YMDATE"][6:8])
+            tbcalen[i]["daykbn"] = RsCalen.Rows["DAYKBN"]
         WkErrTbl = "デマレージテーブル"
         SqlStr = "SELECT "
         SqlStr += "A.OPECD AS OPECD1, "
@@ -430,8 +435,8 @@ def GetDemurg(GDemurg, strSelTbl):
         for i in range(tbcalen_cnt):
             if WkEndFlg == 9:
                 break
-            day_kbn = tbcalen[i]["DAYKBN"][int(WkDateD)]
-            if tbcalen[i]["YMDATE"] + "/" + f"{WkDateD:02}" > GDemurg.OutDate:
+            day_kbn = tbcalen[i]["daykbn"][int(WkDateD)]
+            if tbcalen[i]["ymdate"] + "/" + f"{WkDateD:02}" > GDemurg.OutDate:
                 WkEndFlg = 9
                 continue
             if day_kbn == csDAYKBN_2:
@@ -445,7 +450,7 @@ def GetDemurg(GDemurg, strSelTbl):
             else:
                 WkNisu = WkNisu + 1
             WkDateD = f"{int(WkDateD) + 1 :02}"
-            if WkDateD == "32" or tbcalen[i]["DAYKBN"][int(WkDateD) - 2] == csDAYKBN_9:
+            if WkDateD == "32" or tbcalen[i]["daykbn"][int(WkDateD) - 2] == csDAYKBN_9:
                 WkDate = WkDateY + "/" + WkDateM + "/01"
                 WkDateY = CmfDateFmt((datetime.strptime(WkDate, "%Y/%m/%d") + relativedelta(months=1)).strftime("%Y/%m/%d"),
                                      "%Y")
@@ -461,15 +466,15 @@ def GetDemurg(GDemurg, strSelTbl):
         if WkTankaC == 0:
             GDemurg.DemuCKbn = csDEMUCKBN_A
             for i in range(len(tbdemurg)):
-                if WkNisu <= tbdemurg[i]["RANK"]:
-                    GDemurg.DemuTanka = tbdemurg[i]["TANKA"]
-                    GDemurg.demurg = tbdemurg[i]["TANKA"] * WkNisu * WkDemurg
+                if WkNisu <= tbdemurg[i]["rank"]:
+                    GDemurg.DemuTanka = tbdemurg[i]["tanka"]
+                    GDemurg.demurg = tbdemurg[i]["tanka"] * WkNisu * WkDemurg
                     GDemurg.DemurgN = WkNisu
                     break
         else:
             GDemurg.DemuCKbn = csDEMUCKBN_C
             for i in range(len(tbdemurg)):
-                if WkNisu <= tbdemurg[i]["RANK"]:
+                if WkNisu <= tbdemurg[i]["rank"]:
                     GDemurg.CDemuTanka1 = tbdemurg[i]["TANKA"]
                     GDemurg.CDemuTanka2 = 0
                     GDemurg.demurg = tbdemurg[i]["TANKA"] * WkNisu * WkDemurg
@@ -670,7 +675,7 @@ def GetSeikyuNo(ProgramId, SystemData, iniUpdCd, iniWsNo):
         with transaction.atomic():
             SqlStr = "UPDATE TBCFSSYS{strSelTbl} SET "
             SqlStr += f"SEIKYUHNO = {dbField(SystemData.SEIKYUHNO)}, "
-            SqlStr += "UDATE = SYSDATE, "
+            SqlStr += "UDATE = CURRENT_TIMESTAMP, "
             SqlStr += f"UPROGID = {dbField(ProgramId)}, "
             SqlStr += f"UWSID = {dbField(iniWsNo)}"
             SqlStr += f" WHERE HOZEICD = {dbField(SystemData.HOZEICD)}"
@@ -727,7 +732,7 @@ def TbCfsSysSELECT(SystemData, LockKbn, iniUpdCd):
         SqlStr += "GENGOOLD, "
         SqlStr += "GENGOCHG, "
         SqlStr += "SEIKYUHNO, "
-        SqlStr += "TO_CHAR(SYSDATE,'YYYYMMDD') AS NOWDATE "
+        SqlStr += "TO_CHAR(CURRENT_TIMESTAMP,'YYYYMMDD') AS NOWDATE "
         SqlStr += f"FROM TBCFSSYS{WkTblKbn}"
         SqlStr += " WHERE "
         SqlStr += f"HOZEICD = {dbField(SystemData.HOZEICD)}"

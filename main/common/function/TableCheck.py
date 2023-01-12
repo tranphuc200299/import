@@ -7,14 +7,14 @@ from main.middleware.exception.exceptions import postgresException
 _logger = logging.getLogger(__name__)
 
 
-def TbVessel_TableCheck(strOpeCd, strSelTbl):
+def TbVessel_TableCheck(strVesselCd, strSelTbl):
     sql = ""
     try:
-        sql += "SELECT COUNT(OPECD) AS DCNT "
-        sql += f"FROM TBOPE{strSelTbl} "
-        sql += f"WHERE VESSELCD = {Common.dbField(strOpeCd)}"
+        sql += "SELECT COUNT(VESSELCD) AS DCNT "
+        sql += f"FROM TBVESSEL{strSelTbl} "
+        sql += f"WHERE VESSELCD = {Common.dbField(strVesselCd)}"
         RsTbVessel = SqlExecute(sql).all()
-        if RsTbVessel.Rows[0]["DCNT"] == 0:
+        if RsTbVessel.Rows[0]["dcnt"] == 0:
             return DB_NOT_FIND
         else:
             return DB_NOMAL_OK
@@ -36,9 +36,7 @@ def TbOpe_TableCheck(strOpeCd, strSelTbl):
             return DB_NOMAL_OK
     except psycopg2.OperationalError as e:
         _logger.error(e)
-        raise postgresException(Error=e, DbTbl="TBOPE" + strSelTbl, SqlStr=sql
-
-                                )
+        raise postgresException(Error=e, DbTbl="TBOPE" + strSelTbl, SqlStr=sql)
 
 
 def TbPort_TableCheck(strOpeCd, strSelTbl):
