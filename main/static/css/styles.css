@@ -6,9 +6,32 @@
     --light-color: #eee;
     --box-shadow: 0 .5rem 1.5rem rgba(0, 0, 0, .1);
 }
+::-webkit-scrollbar {
+    width: 6px;
+}
 
+/* Track */
+::-webkit-scrollbar-track {
+    background: #FFFFFF;
+    opacity: 0.5;
+    border-radius: 20px;
+    margin-right: 5px;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+    background: #EBF0FC;
+    border-radius: 20px;
+    margin-right: 5px;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+    background: #D6E1FA;
+}
 * {
-    font-family: 'Nunito', sans-serif;
+    font-family: 'Poppins';
+    font-style: normal;
     margin: 0;
     padding: 0;
     box-sizing: border-box;
@@ -17,7 +40,6 @@
     border: none;
     text-transform: capitalize;
     transition: all .2s linear;
-    color: #eee;
 }
 
 html {
@@ -109,7 +131,7 @@ h1 {
 .navbar-about {
     position: relative;
     align-items: center;
-    width: 248px;
+    width: 100%;
     height: 70px;
     margin: 20px 0px;
 }
@@ -118,19 +140,19 @@ h1 {
     font-family: 'Poppins';
     font-style: normal;
     font-weight: 400;
-    font-size: 16px;
+    font-size: 14px;
     line-height: 20px;
     letter-spacing: 0.01em;
-    color: #7A7A85;
+    color: #3E3E4C;
 }
 
-.navbar-about ul>li {
+.navbar-about nav>ul>li {
     cursor: pointer;
     flex-direction: row;
     align-items: center;
     padding: 16px 20px;
     gap: 12px;
-    width: 320px;
+    width: 100%;
     height: 52px;
     background: #FFFFFF;
     flex: none;
@@ -139,6 +161,23 @@ h1 {
     flex-grow: 0;
 
 }
+.menu_secondary>li {
+    cursor: pointer;
+    flex-direction: row;
+    align-items: center;
+    padding: 16px 20px;
+    padding-left: 52px;
+    gap: 12px;
+    width: 248px;
+    height: 52px;
+    background: #FFFFFF;
+    flex: none;
+    order: 0;
+    align-self: stretch;
+    flex-grow: 0;
+
+}
+
 .navbar-about ul>li:hover .menu_secondary {
     transition-duration: 4s;
     transition-delay: 2s;
@@ -154,6 +193,7 @@ h1 {
 
 .navbar-about nav ul li:hover {
     background: #D6E1FA;
+    position: relative;
 }
 
 .navbar-about nav ul li:hover .boder-sliderbar{
@@ -163,26 +203,31 @@ h1 {
 .navbar_item {
     display: flex;
     justify-content: space-between;
+    align-items: center;
 }
 
 .narbar_left {
     display: flex;
+    align-items: center;
 }
 
 .text_slidebar {
-    width: 136px;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 20px;
+    letter-spacing: 0.01em;
+
 }
 
 .menu_secondary{
     display: none;
     position: absolute;
     top: 0;
-    left: 24px;
+    left: 4px;
     z-index: 2;
-    background-color: #7A7A85;
     margin-left: 276px;
-    height: 700px;
-    overflow-y: scroll;
+    max-height: 700px;
+    overflow-y: auto;
     margin-top: -20px;
 }
 
@@ -201,22 +246,18 @@ h1 {
     font-weight: 400;
     font-size: 15px;
 }
-.content-right {
- padding: 0px 25px;
-}
+
 #content{
     height: calc(100vh - 85px);
 }
 .row{
     height : 100%;
 }
-.navbar-about {
-
-}
 
 .content-items {
   height : 100%;
   background-color: #F5F5F5;
+  padding: 0px 25px;
 }
 
 .space_title {
@@ -347,7 +388,8 @@ h1 {
 }
 
 .inactive {
-    background: #BBBBC3;
+    background: #BBBBC3 !important;
+    border: none;
 }
 
 .control_button {
@@ -356,11 +398,10 @@ h1 {
     width:100%;
 }
 .content_header_title {
-   padding: 20px 0px;
+   padding: 16px 0px;
 }
 .content_header_title ul {
     display: flex;
-    height: 20px;
     line-height: 20px;
     display: flex;
     align-items: center;
@@ -622,3 +663,159 @@ width:100px;
 .form_calendar .control_button{
     color:white;
 }
+
+/*start css*/
+
+.card{
+    margin-bottom: 30px;
+    border: none;
+    border-radius: 12px;
+}
+.form-inline {
+    padding: 20px 16px;
+    display: flex;
+    -webkit-box-orient: horizontal;
+    -webkit-box-direction: normal;
+    flex-flow: row wrap;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+}
+.form-horizontal,
+.form-inline {
+    padding: 20px 16px;
+}
+.form-horizontal .btn,
+.form-inline .btn{
+    background: #2D68EA;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    padding: 12px 30px;
+    height: 44px;
+    border-radius: 40px;
+    flex: none;
+    order: 0;
+    flex-grow: 0;
+    font-family: Poppins;
+    font-style: normal;
+    font-weight: 400;
+    font-size: 14px;
+}
+
+.required {
+    color: #F23A46;
+}
+.form-inline input,
+.form-horizontal input {
+    height: 44px !important;
+    background: #FFFFFF;
+    border: 1px solid #E0E0E0;
+    border-radius: 8px;
+}
+
+.form-inline select,
+.form-horizontal select {
+    height: 44px !important;
+    background: #FFFFFF;
+    border: 1px solid #E0E0E0;
+    border-radius: 8px;
+}
+
+.btn-footer {
+    float: right;
+}
+.btn-footer .btn{
+    margin-left: 0.5rem;
+}
+.form-group {
+    margin-bottom: 1.25rem;
+}
+.form-group label,
+.form-group input,
+.form-group select{
+    color: #3E3E4C;
+    font-family: Poppins;
+    font-style: normal;
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 20px;
+}
+.form-group label,
+.form-group>div {
+    padding-left: 0;
+    padding-right: 0;
+}
+.form-inline>div {
+    padding-left: 0;
+}
+
+.fa-search{
+    background-image : url(../images/search.svg);
+    background-size: cover;
+    display: inline-block;
+    height: 15px;
+    width: 15px;
+    margin-right: 10.7px;
+}
+/* Style buttons */
+.form-inline .btn-search {
+    font-family: Poppins;
+    font-style: normal;
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 20px;
+    border: none; /* Remove borders */
+    color: white; /* White text */
+    padding: 12px 16px; /* Some padding */
+    cursor: pointer; /* Mouse pointer on hover */
+    width: 116px;
+}
+
+/* Darker background on mouse-over */
+form .btn:hover {
+    background-color: RoyalBlue;
+}
+.form-group-seach {
+    margin-right: 24px;
+}
+.form-horizontal select,
+.form-inline select{
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background: transparent;
+    background-image: url(../images/icon-dropdown.svg);
+    background-repeat: no-repeat;
+    background-position: bottom 50% right 14.67px;
+}
+ul.breadcrumb {
+    padding: 0;
+    list-style: none;
+    background-color: transparent;
+    margin-bottom: 12px;
+}
+ul.breadcrumb li {
+    display: inline;
+    color: #7A7A85;
+    text-decoration: none;
+    font-family: Poppins;
+    font-style: normal;
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 20px
+}
+ul.breadcrumb li+li:before {
+    padding: 8px;
+    color: black;
+    content: "/\00a0";
+}
+ul.breadcrumb li a {
+    color: #7A7A85;
+    text-decoration: none;
+}
+ul.breadcrumb li a:hover {
+    color: #01447e;
+    text-decoration: underline;
+}
+/*end css*/

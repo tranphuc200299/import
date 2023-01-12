@@ -16,18 +16,18 @@
                     {% include "includes/textbox.html" with id="txt_ayear" CssClass="form-control" MaxLength=8 TextChange="True" %}
                     <label>年</label>
                 </div>
-                 <div class="search_input input_small input_register calendar_form">
+                <div class="search_input input_small input_register calendar_form">
                     {% include "includes/textbox.html" with id="" CssClass="form-control" MaxLength=8 TextChange="True" %}
                     <label>月</label>
                 </div>
-                <div class="content_button button_register calendar_button">
+                <div class="content_button button_register">
                     <img src="{% static 'images/search.svg' %}" alt="">
-                    {% include "includes/button.html" with name="action" id="cmd_search" CssClass="btn-search" Text="検索" %}
+                    {% include "includes/button.html" with name="action" id="cmd_search" class="btn-search" Text="検索" %}
                 </div>
             </div>
         </div>
         <!--form layout-->
-            <div class="form-container">
+        <div class="form-container">
             <div class="form_about form_calendar">
                 <table class="calendar_about">
                     <tr class="calendar_table_row calendar_alphabet">
@@ -146,11 +146,11 @@
                         </td>
                     </tr>
                 </table>
-                 <div class="control_button">
-                    {% include "includes/button.html" with name="action" id="cmd_entry" CssClass="btn-register" Text="登録" IsEnable=cmd_entry_enable %}
-                    {% include "includes/button.html" with name="action" id="cmd_change" CssClass="btn-register" Text="変更" IsEnable=cmd_change_enable %}
-                    {% include "includes/button.html" with name="action" id="cmd_delete" CssClass="btn-register" Text="削除" IsEnable=cmd_delete_enable %}
-                    {% include "includes/button.html" with name="action" id="cmd_cancel" CssClass="btn-register" Text="取消" %}
+                <div class="control_button">
+                    {% include "includes/button.html" with name="action" id="cmd_entry" class="btn-register" Text="登録" IsEnable=cmd_entry_enable %}
+                    {% include "includes/button.html" with name="action" id="cmd_change" class="btn-register" Text="変更" IsEnable=cmd_change_enable %}
+                    {% include "includes/button.html" with name="action" id="cmd_delete" class="btn-register" Text="削除" IsEnable=cmd_delete_enable %}
+                    {% include "includes/button.html" with name="action" id="cmd_cancel" class="btn-register" Text="取消" %}
                 </div>
             </div>
         </div>

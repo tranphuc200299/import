@@ -13,11 +13,11 @@
                     <h3>倉庫内蔵置場所コード <span style="color:red">* </span></h3>
                 </div>
                 <div class="search_input">
-                    {% include "includes/textbox.html" with id="txt_aszouchicd" CssClass="form-control" MaxLength=5 TextChange="True" %}
+                    {% include "includes/textbox.html" with id="txt_aszouchicd" class="form-control" MaxLength=5 TextChange="True" %}
                 </div>
                 <div class="content_button">
                     <img src="{% static 'images/search.svg' %}" alt="">
-                    {% include "includes/button.html" with name="action" id="cmd_search" CssClass="btn-search" Text="検索" %}
+                    {% include "includes/button.html" with name="action" id="cmd_search" class="btn-search" Text="検索" %}
                 </div>
             </div>
         </div>
@@ -27,14 +27,14 @@
                     <h3>倉庫内蔵置場所名称 <span style="color:red">* </span></h3>
                 </div>
                 <div class="search_input">
-                    {% include "includes/textbox.html" with id="txt_aszouchinm" CssClass="form-control" MaxLength=20 %}
+                    {% include "includes/textbox.html" with id="txt_aszouchinm" class="form-control" MaxLength=20 %}
                 </div>
             </div>
             <div class="control_button">
-                {% include "includes/button.html" with name="action" id="cmd_entry" CssClass="btn-register" Text="登録" IsEnable=cmd_entry_enable %}
-                {% include "includes/button.html" with name="action" id="cmd_change" CssClass="btn-register" Text="変更" IsEnable=cmd_change_enable %}
-                {% include "includes/button.html" with name="action" id="cmd_delete" CssClass="btn-register" Text="削除" IsEnable=cmd_delete_enable  %}
-                {% include "includes/button.html" with name="action" id="cmd_cancel" CssClass="btn-register" Text="取消" %}
+                {% include "includes/button.html" with name="action" id="cmd_entry" class="btn-register" Text="登録" IsEnable=cmd_entry_enable %}
+                {% include "includes/button.html" with name="action" id="cmd_change" class="btn-register" Text="変更" IsEnable=cmd_change_enable %}
+                {% include "includes/button.html" with name="action" id="cmd_delete" class="btn-register" Text="削除" IsEnable=cmd_delete_enable  %}
+                {% include "includes/button.html" with name="action" id="cmd_cancel" class="btn-register" Text="取消" %}
             </div>
         </div>
     </div>

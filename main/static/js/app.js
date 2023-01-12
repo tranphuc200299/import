@@ -77,7 +77,6 @@ $(function () {
             data: data,
             type: 'post'
         }).done(function (responseData) {
-            $('#' + input_ids[0]).val($('#' + input_ids[0]).val().toUpperCase())
             const keys = Object.keys(responseData)
             for (const index in keys) {
                 let key = keys[index];
