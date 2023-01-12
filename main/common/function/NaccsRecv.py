@@ -2,11 +2,9 @@ import os
 from datetime import datetime
 import logging
 import psycopg2
-from main.common.function.Const import rtnProcOK, rtnProcNG, csBiko300_001_S, csBiko300_001_M, csLOCK_ON, \
-    rtnProcNF, rtnOraLock
+from main.common.function.Const import *
 from main.common.function.Common import pfncDataSessionGet, dbField, DbDataChange
 from main.common.function import SqlExecute
-from main.middleware.exception.exceptions import postgresException
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
 

@@ -101,7 +101,7 @@ def KijyunM3(objRsStani, strM3):
         if not objRsStani.Rows[0]["convert"]:
             dblConv = 0
         else:
-            dblConv = float(objRsStani.Rows[0]["convert"].replace(",", ""))
+            dblConv = float(objRsStani.Rows[0]["convert"])
         if IsNumeric(strM3.lstrip()):
             return dbsingle(strM3.lstrip()) * dblConv
     return 0
@@ -112,7 +112,7 @@ def KijyunWt(objRsStani, strWeight):
         if not objRsStani.Rows[0]["convert"]:
             dblConv = 0
         else:
-            dblConv = float(objRsStani.Rows[0]["convert"].replace(",", ""))
+            dblConv = float(objRsStani.Rows[0]["convert"])
         if IsNumeric(strWeight.lstrip()):
             return dbsingle(strWeight.lstrip()) * dblConv
     return 0
@@ -165,13 +165,10 @@ def MakeNaBlNo(objRsOpe, strCtBl):
                 strCtBl = strAns + strCtBl[(intPtr - 1 + strDelLen[1]) - intBlLen:]
         if strDelLen[2] > 0:
             while strDelChr[0] in strCtBl:
-                try:
-                    intBlLen = len(strCtBl)
-                    intPtr = strCtBl.index(strDelChr[2])
-                    strAns = strCtBl[:intPtr]
-                    strCtBl = strAns + strCtBl[(intPtr - 1 + strDelLen[2]) - intBlLen:]
-                except:
-                    break
+                intBlLen = len(strCtBl)
+                intPtr = strCtBl.index(strDelChr[2])
+                strAns = strCtBl[:intPtr]
+                strCtBl = strAns + strCtBl[(intPtr - 1 + strDelLen[2]) - intBlLen:]
         if strNscacflg == "y" or strNscacflg == "Y":
             return strScac + strCtBl
         return strCtBl
@@ -204,7 +201,7 @@ def GetFreeTime(OpeCd, AreaCd, KDate, strSelTbl):
             tbcalen.append({
                 "YMDATE": RsCalen.Rows[i]["ymdate"],
                 "YMDATEY": int(RsCalen.Rows[i]["ymdate"][0:4]),
-                "YMDATEM": int(RsCalen.Rows[i]["ymdate"][6:8]),
+                "YMDATEM": int(RsCalen.Rows[i]["ymdate"][5:7]),
                 "DAYKBN": RsCalen.Rows[i]["daykbn"]
             })
         if WkFKISANKBN == csFKISANKBN_1:
@@ -364,7 +361,7 @@ def GetDemurg(GDemurg, strSelTbl):
         for i in range(tbcalen_cnt):
             tbcalen[i]["ymdate"] = RsCalen.Rows[i]["ymdate"]
             tbcalen[i]["ymdatey"] = int(RsCalen.Rows[i]["ymdate"][:4])
-            tbcalen[i]["ymdatem"] = int(RsCalen.Rows[i]["ymdate"][6:8])
+            tbcalen[i]["ymdatem"] = int(RsCalen.Rows[i]["ymdate"][5:7])
             tbcalen[i]["daykbn"] = RsCalen.Rows[i]["daykbn"]
         WkErrTbl = "デマレージテーブル"
         SqlStr = "SELECT "
@@ -429,7 +426,7 @@ def GetDemurg(GDemurg, strSelTbl):
         for i in range(tbcalen_cnt):
             if WkEndFlg == 9:
                 break
-            day_kbn = tbcalen[i]["daykbn"][int(WkDateD)]
+            day_kbn = tbcalen[i]["daykbn"][int(WkDateD) - 1]
             if tbcalen[i]["ymdate"] + "/" + f"{WkDateD:02}" > GDemurg["OutDate"]:
                 WkEndFlg = 9
                 continue
@@ -452,6 +449,7 @@ def GetDemurg(GDemurg, strSelTbl):
                                      "%m")
                 WkDateD = CmfDateFmt((datetime.strptime(WkDate, "%Y/%m/%d") + relativedelta(months=1)).strftime("%Y/%m/%d"),
                                      "%d")
+                WkDate = ""
         if WkEndFlg == 0:
             return DB_TBCALENDER_NOT_FIND
         if WkNisu == 0:
@@ -573,7 +571,7 @@ def GetDemurg2(GDemurg, strSelTbl):
             if tbcalen[i]["ymdate"] >= WkDateY + "/" + WkDateM:
                 WkEndFlg = 9
                 continue
-            day_kbn = tbcalen[i]["daykbn"][int(WkDateD)]
+            day_kbn = tbcalen[i]["daykbn"][int(WkDateD) - 1]
             if day_kbn == csDAYKBN_2:
                 if WkDCalc == csDCALC_1 or WkDCalc == csDCALC_3:
                     WkNisu = WkNisu + 1
@@ -821,9 +819,9 @@ def GetRevenue(OpeCd, KGWeight, M3Measur, RynDataCnt, RynData, strSelTbl):
             if not RsDb.Rows:
                 return DB_NOT_FIND, None, None
             RynDataCnt += 1
-            RynData[- 1].OpeCd = OpeCd
-            RynData[- 1].STANKAKBN = DbDataChange(RsDb.Rows[0]["stankakbn"])
-            RynData[- 1].MinTon = int(DbDataChange(RsDb.Rows[0]["minton"]))
+            RynData[- 1]["OpeCd"] = OpeCd
+            RynData[- 1]["STANKAKBN"] = DbDataChange(RsDb.Rows[0]["stankakbn"])
+            RynData[- 1]["MinTon"] = int(DbDataChange(RsDb.Rows[0]["minton"]))
             WkSTankaKbn = DbDataChange(RsDb.Rows[0]["stankakbn"])
             MinTon = int(DbDataChange(RsDb.Rows[0]["minton"]))
 
@@ -876,10 +874,10 @@ def GetDemurgKDate(OpeCd, FreeTime, strSelTbl, WkDCalc):
         tbcalen = []
         tbcalen_cnt = len(RsCalen)
         for i in range(tbcalen_cnt):
-            tbcalen[i]["ymdate"] = RsCalen.Rows[0]["ymdate"]
-            tbcalen[i]["ymdatey"] = int(RsCalen.Rows[0]["ymdate"][:4])
-            tbcalen[i]["ymdatem"] = int(RsCalen.Rows[0]["ymdate"][6:8])
-            tbcalen[i]["daykbn"] = RsCalen.Rows[0]["daykbn"]
+            tbcalen[i]["ymdate"] = RsCalen.Rows[i]["ymdate"]
+            tbcalen[i]["ymdatey"] = int(RsCalen.Rows[i]["ymdate"][:4])
+            tbcalen[i]["ymdatem"] = int(RsCalen.Rows[i]["ymdate"][5:7])
+            tbcalen[i]["daykbn"] = RsCalen.Rows[i]["daykbn"]
         WkErrTbl = "デマレージテーブル"
         SqlStr = "SELECT "
         SqlStr += "DCALC "
@@ -890,10 +888,11 @@ def GetDemurgKDate(OpeCd, FreeTime, strSelTbl, WkDCalc):
         RsDemu = SqlExecute(SqlStr).all()
         if not RsDemu.Rows:
             return DB_TBDEMURG_NOT_FIND
-        for i in range(len(RsDemu.Rows)):
+        WkDCalc = RsDemu.Rows[0]["DCALC"]
+        for i in range(tbcalen_cnt):
             if WkEndFlg == 9:
                 break
-            day_kbn = tbcalen[i]["daykbn"][int(WkDateD)]
+            day_kbn = tbcalen[i]["daykbn"][int(WkDateD) - 1]
             if day_kbn == csDAYKBN_2:
                 if WkDCalc in [csDCALC_1, csDCALC_3]:
                     demurgKDate = tbcalen[i]["ymdate"] + "/" + WkDateD
@@ -1023,12 +1022,13 @@ def Cm_TbShipSchChk(strProcTbl, strVesselCd, strVoyNo):
 
 
 def inpdatechk(strDate, format="%Y/%m/%d"):
-    res = False
+    if not strDate:
+        return FATAL_ERR
     try:
         if strDate:
             res = bool(datetime.strptime(strDate, format).date())
+            if res:
+                return NOMAL_OK
     except ValueError:
-        pass
-    if res:
-        return NOMAL_OK
+        return FATAL_ERR
     return FATAL_ERR

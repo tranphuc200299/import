@@ -1,10 +1,9 @@
 import os
 from time import sleep
+import psycopg2
 from datetime import datetime, timedelta
 from django.db import transaction
-import psycopg2
-from main.common.function.Const import FATAL_ERR, csLOCK_ON, DB_NOMAL_OK, DB_LOCK, NOMAL_OK, csGWSKBN_9, FILENM_SND, FILENM_TMP, \
-    FTPFILE, FTPLOGFILE, FTPBATFILE, FTPFNDFILE, FTPENDFILE, FTPCMPMSG
+from main.common.function.Const import *
 from main.common.function.Common import TbCfsSysSELECT, dbField
 from main.common.function import SqlExecute
 from main.middleware.exception.exceptions import postgresException
