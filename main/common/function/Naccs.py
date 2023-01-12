@@ -12,11 +12,11 @@ from main.middleware.exception.exceptions import postgresException
 dir_path = os.path.dirname(os.path.realpath(__file__))
 
 
-def NacUniqGet(strUProGId, SystemData, strSelTbl, iniUpdCd, iniUpdTbl, iniWsNo, strSelHozCd):
+def NacUniqGet(strUProGId, SystemData, strSelTbl, iniUpdCd, iniWsNo, strSelHozCd):
     try:
         intDataGet = 0
         for intCnt in range(11):
-            tb_cfs_sys = TbCfsSysSELECT(SystemData, csLOCK_ON, iniUpdCd, iniUpdTbl)
+            tb_cfs_sys = TbCfsSysSELECT(SystemData, csLOCK_ON, iniUpdCd)
             if tb_cfs_sys == DB_NOMAL_OK:
                 intDataGet = 1
                 break
