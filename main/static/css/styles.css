@@ -397,6 +397,7 @@ h1 {
 .inactive {
     background: #BBBBC3 !important;
     border: none;
+    cursor: default;
 }
 
 .control_button {
@@ -763,4 +764,9 @@ ul.breadcrumb li a:hover {
     color: #01447e;
     text-decoration: underline;
 }
+
+.box-shadow {
+    box-shadow: 0px 4px 4px 0px #00000040;
+}
+
 /*end css*/

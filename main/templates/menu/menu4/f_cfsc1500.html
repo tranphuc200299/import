@@ -1,50 +1,43 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}荷姿コード登録{% endblock title %}
+{% block title %}<cfsc15> 荷姿コード登録{% endblock title %}
 
 {% block main %}
-<form id="f_cfsc1500" method="post">
-    {% csrf_token %}
-    <div class="title_content">
-        <div class="search_about">
-            <div class="search_item">
-                <div class="item_search_title">
-                    <h3>荷姿コード <span class="text-danger">* </span></h3>
+    <form class="" id="f_cfsc0300" method="post">
+        {% csrf_token %}
+        <div class="card mb-4 box-shadow">
+            <div class="form-inline">
+                <div class="form-group">
+                    <label for="txt_apackcd" class="mr-3" tabindex="3">
+                        荷姿コード<span class="required">*</span>
+                    </label>
+                    {% include "includes/textbox.html" with class="form-control" id="txt_apackcd" tabIndex=4 width="60" MaxLength=4 Change="True" Title="必須入力・荷姿 Code" %}
                 </div>
-                <div class="search_input">
-                    {% include "includes/textbox.html" with id="txt_apackcd" CssClass="width-100" MaxLength=3 Title="必須入力・荷姿 Code" Change="True" %}
-                </div>
-                <div class="content_button">
-                    <img src="{% static 'images/search.svg' %}" alt="">
-                    {% include "includes/button.html" with name="action" id="cmd_search" CssClass="btn-search" Text="検索" IsEnable=True %}
-                </div>
+                {% include "includes/button.html" with  name="action" id="cmd_search" class="btn btn-primary btn-search ml-4" IsEnable=True TabIndex=5 htmlText='<i class="fa fa-search"></i> 検索' %}
             </div>
         </div>
-        <div class="content_control">
-            <div class="">
-                <div class="content_control_flex">
-                    <div class="control_title">
-                        <h3>荷姿名称 <span class="text-danger">* </span></h3>
-                    </div>
-                    <div>
-                        {% include "includes/textbox.html" with id="txt_apacknm" CssClass="control-input display-inline width-446" MaxLength=25 Title="必須入力" %}
-                    </div>
-                </div>
-            </div>
-            <div class="control_button">
-                {% include "includes/button.html" with name="action" id="cmd_entry" CssClass="btn-register" Text="登録" IsEnable=cmd_entry_enable %}
-                {% include "includes/button.html" with name="action" id="cmd_change" CssClass="btn-register" Text="変更" IsEnable=cmd_change_enable %}
-                {% include "includes/button.html" with name="action" id="cmd_delete" CssClass="btn-register" Text="削除" IsEnable=cmd_delete_enable  %}
-                {% include "includes/button.html" with name="action" id="cmd_cancel" CssClass="btn-register" Text="取消" IsEnable=True %}
-            </div>
-        </div>
-    </div>
-</form>
-{% endblock main %}
 
-{% block js %}
-{% endblock js %}
-{% block internal_css %}
-    <link rel="stylesheet" href="{% static 'css/menu4/f_cfsc1500.css' %}">
-{% endblock internal_css %}
+        <div class="card">
+            <div class="form-horizontal pl-0 pt-0">
+                <div class="row col-12">
+                    <div class="form-group form-inline pb-0">
+                      <label for="txt_apacknm" tabindex="7" class="mr-3">
+                          荷姿名称<span class="required">*</span>
+                      </label>
+                      {% include "includes/textbox.html" with class="form-control ml-4" id="txt_apacknm" tabIndex=8 width="220" MaxLength=25 Change="True" Title="必須入力" %}
+                    </div>
+                </div>
+                <div class="row btn-footer">
+                    <div class="col-12 d-flex">
+                        {% include "includes/button.html" with name="action" id="cmd_entry" class="btn btn-primary " Text="登録" tabIndex=9 IsEnable=cmd_entry_enable %}
+                        {% include "includes/button.html" with name="action" id="cmd_change" class="btn btn-primary" Text="変更" tabIndex=10 IsEnable=cmd_change_enable %}
+                        {% include "includes/button.html" with name="action" id="cmd_delete" class="btn btn-primary" Text="削除" tabIndex=11 IsEnable=cmd_delete_enable %}
+                        {% include "includes/button.html" with name="action" id="cmd_cancel" class="btn btn-primary" Text="取消" tabIndex=12 IsEnable=True %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </form>
+{% endblock main %}
