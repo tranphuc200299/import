@@ -888,7 +888,7 @@ def GetDemurgKDate(OpeCd, FreeTime, strSelTbl, WkDCalc):
         RsDemu = SqlExecute(SqlStr).all()
         if not RsDemu.Rows:
             return DB_TBDEMURG_NOT_FIND
-        WkDCalc = RsDemu.Rows[0]["DCALC"]
+        WkDCalc = RsDemu.Rows[0]["dcalc"]
         for i in range(tbcalen_cnt):
             if WkEndFlg == 9:
                 break
@@ -1022,13 +1022,10 @@ def Cm_TbShipSchChk(strProcTbl, strVesselCd, strVoyNo):
 
 
 def inpdatechk(strDate, format="%Y/%m/%d"):
-    if not strDate:
-        return FATAL_ERR
     try:
-        if strDate:
-            res = bool(datetime.strptime(strDate, format).date())
-            if res:
-                return NOMAL_OK
+        res = bool(datetime.strptime(strDate, format).date())
+        if res:
+            return NOMAL_OK
     except ValueError:
         return FATAL_ERR
     return FATAL_ERR
