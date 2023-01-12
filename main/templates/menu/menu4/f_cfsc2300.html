@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}雑作業コード登録{% endblock title %}
+
+{% block main %}
+    <form class="" id="f_cfsc2300" method="post">
+        {% csrf_token %}
+        <div class="card">
+            <div class="form-inline">
+                <div class="form-group form-group-seach">
+                    <label for="txt_azworkcd" class="label-form-group mr-3" tabIndex=4>雑作業コード <span
+                            class="required">*</span></label>
+                    {% include "includes/textbox.html" with class="form-control" id="txt_azworkcd" name="txt_azworkcd" tabIndex=4  MaxLength=3 width="120" Change="True" Title="必須入力・雑作業 Code" %}
+                </div>
+                {% include "includes/button.html" with name="action" id="cmd_search" class="btn btn-primary btn-search" TabIndex=5 htmlText='<i class="fa fa-search"></i> 検索' %}
+            </div>
+        </div>
+        <div class="card">
+            <div class="form-inline">
+                <div class="form-group">
+                    <label for="txt_azworknm" class="label-form-group mr-3" tabIndex=4>雑作業名称 <span
+                            class="required">*</span></label>
+                    {% include "includes/textbox.html" with class="form-control" id="txt_azworknm" name="txt_azworknm" tabIndex=4  MaxLength=3 width="300" Change="True" Title="必須入力" %}
+
+                </div>
+            </div>
+            <div class="form-inline">
+                <div class="form-group ">
+                    <label for="txt_azworknm" class="label-form-group mr-3" tabIndex=4>単価 <span
+                            class="required">*</span>
+                    </label>
+                    {% include "includes/textbox.html" with class="form-control" id="txt_azworknm" name="txt_azworknm" tabIndex=4  MaxLength=3  Change="True" Title="必須入力" %}
+                </div>
+            </div>
+            <div class="col-lg-5">
+                <div class="form-group d-flex">
+                    <label class="control-label col-lg-12" for="cmb_ataxkbn" tabindex="13">課税区分
+                        <span class="required">*</span></label>
+                    <div class="col-4">
+                        {% include 'includes/dropdownlist.html' with id="cmb_ataxkbn" class="form-control" tabIndex=14 %}
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-5">
+                <div class="form-group d-inline-flex">
+                    <label class="control-label col-lg-12" for="cmb_ataxkbn" tabindex="13">課税区分
+                        <span class="required">*</span></label>
+                    <div class="col-4">
+                        {% include 'includes/dropdownlist.html' with id="cmb_ataxkbn" class="form-control" tabIndex=14 %}
+                    </div>
+                </div>
+            </div>
+            <div class="form-inline">
+                <div class="form-group ">
+                    <label for="txt_azworknm" class="label-form-group mr-3" tabIndex=4>回数表示 <span
+                            class="required">*</span>
+                    </label>
+                    {% include "includes/textbox.html" with class="form-control" id="txt_azworknm" name="txt_azworknm" tabIndex=4  MaxLength=3 width="300" Change="True" Title="必須入力" %}
+                </div>
+            </div>
+        </div>
+
+    </form>
+
+{% endblock main %}
+
+{% block js %}
+
+{% endblock js %}

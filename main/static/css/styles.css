@@ -764,3 +764,9 @@ ul.breadcrumb li a:hover {
     text-decoration: underline;
 }
 /*end css*/
+/* f_cfsc2300 */
+.form-inline .label-form-group {
+    width: 109px;
+    justify-content: left;
+}
+/* */
