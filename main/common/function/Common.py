@@ -2,13 +2,12 @@ import logging
 import psycopg2
 from datetime import datetime
 from time import sleep
-from django.db import IntegrityError, transaction
+from django.db import transaction
 from dateutil.relativedelta import relativedelta
 from main.common.function import SqlExecute
 from main.common.function.Const import *
 from main.common.function.DspMessage import *
-from main.middleware.exception.exceptions import RuntimeException, postgresException
-from main.middleware.exception.message import E00001
+from main.middleware.exception.exceptions import postgresException
 
 _logger = logging.getLogger(__name__)
 
@@ -93,22 +92,22 @@ def IsNumeric(obj):
 
 
 def KijyunM3(objRsStani, strM3):
-    if objRsStani.Rows and strM3 != "" and objRsStani.Rows[0]["SYUBTKBN"] != "2":
-        if not objRsStani.Rows[0]["CONVERT"]:
+    if objRsStani.Rows and strM3 != "" and objRsStani.Rows[0]["syubtkbn"] != "2":
+        if not objRsStani.Rows[0]["convert"]:
             dblConv = 0
         else:
-            dblConv = float(objRsStani.Rows[0]["CONVERT"].replace(",", ""))
+            dblConv = float(objRsStani.Rows[0]["convert"].replace(",", ""))
         if IsNumeric(strM3.lstrip()):
             return dbsingle(strM3.lstrip()) * dblConv
     return 0
 
 
 def KijyunWt(objRsStani, strWeight):
-    if objRsStani.Rows and strWeight != "" and objRsStani.Rows[0]["SYUBTKBN"] != "1":
-        if not objRsStani.Rows[0]("CONVERT"):
+    if objRsStani.Rows and strWeight != "" and objRsStani.Rows[0]["syubtkbn"] != "1":
+        if not objRsStani.Rows[0]["convert"]:
             dblConv = 0
         else:
-            dblConv = float(objRsStani.Rows[0]["CONVERT"].replace(",", ""))
+            dblConv = float(objRsStani.Rows[0]["convert"].replace(",", ""))
         if IsNumeric(strWeight.lstrip()):
             return dbsingle(strWeight.lstrip()) * dblConv
     return 0
@@ -126,26 +125,26 @@ def MakeNaBlNo(objRsOpe, strCtBl):
     if strCtBl[:6] == "KKLUSH":
         return strCtBl
     if objRsOpe.Rows and strCtBl != "":
-        if objRsOpe.Rows[0]["DELCHR1"] != chr(0):
-            strDelChr[0] = objRsOpe.Rows[0]["DELCHR1"]
-        if objRsOpe.Rows[0]["DELCHR2"] != chr(0):
-            strDelChr[1] = objRsOpe.Rows[0]["DELCHR2"]
-        if objRsOpe.Rows[0]["DELCHR3"] != chr(0):
-            strDelChr[2] = objRsOpe.Rows[0]["DELCHR3"]
-        if objRsOpe.Rows[0]["DELLEN1"] != chr(0):
-            strDelLen[0] = objRsOpe.Rows[0]["DELLEN1"]
-        if objRsOpe.Rows[0]["DELLEN2"] != chr(0):
-            strDelLen[1] = objRsOpe.Rows[0]["DELLEN2"]
-        if objRsOpe.Rows[0]["DELLEN3"] != chr(0):
-            strDelLen[2] = objRsOpe.Rows[0]["DELLEN3"]
-        if not objRsOpe.Rows[0]["SCACCD"]:
+        if objRsOpe.Rows[0]["delchr1"] != chr(0):
+            strDelChr[0] = objRsOpe.Rows[0]["delchr1"]
+        if objRsOpe.Rows[0]["delchr2"] != chr(0):
+            strDelChr[1] = objRsOpe.Rows[0]["delchr2"]
+        if objRsOpe.Rows[0]["delchr3"] != chr(0):
+            strDelChr[2] = objRsOpe.Rows[0]["delchr3"]
+        if objRsOpe.Rows[0]["dellen1"] != chr(0):
+            strDelLen[0] = objRsOpe.Rows[0]["dellen1"]
+        if objRsOpe.Rows[0]["dellen2"] != chr(0):
+            strDelLen[1] = objRsOpe.Rows[0]["dellen2"]
+        if objRsOpe.Rows[0]["dellen3"] != chr(0):
+            strDelLen[2] = objRsOpe.Rows[0]["dellen3"]
+        if not objRsOpe.Rows[0]["scaccd"]:
             strScac = ""
         else:
-            strScac = objRsOpe.Rows[0]["SCACCD"]
-        if not objRsOpe.Rows[0]["NSCACFLG"]:
+            strScac = objRsOpe.Rows[0]["scaccd"]
+        if not objRsOpe.Rows[0]["nscacflg"]:
             strNscacflg = ""
         else:
-            strNscacflg = objRsOpe.Rows[0]["NSCACFLG"]
+            strNscacflg = objRsOpe.Rows[0]["nscacflg"]
 
         if strDelLen[0] > 0:
             while True:
@@ -177,6 +176,8 @@ def MakeNaBlNo(objRsOpe, strCtBl):
         if strNscacflg == "y" or strNscacflg == "Y":
             return strScac + strCtBl
         return strCtBl
+    else:
+        return ""
 
 
 def GetFreeTime(OpeCd, AreaCd, KDate, strSelTbl):
@@ -188,9 +189,9 @@ def GetFreeTime(OpeCd, AreaCd, KDate, strSelTbl):
         RsFreeTm = SqlExecute(SqlStr).all()
         if not RsFreeTm.Rows:
             return DB_TBFREETM_NOT_FIND
-        WkFKISANKBN = RsFreeTm.Rows[0]["FKISANKBN"]
-        WkFDAYS = int(RsFreeTm.Rows[0]["FDAYS"]) - 1
-        WkFCALC = RsFreeTm.Rows[0]["FCALC"]
+        WkFKISANKBN = RsFreeTm.Rows[0]["fkisankbn"]
+        WkFDAYS = int(RsFreeTm.Rows[0]["fdays"]) - 1
+        WkFCALC = RsFreeTm.Rows[0]["fcalc"]
         WkErrTbl = "カレンダーテーブル"
         SqlStr = f"SELECT YMDATE, DAYKBN FROM TBCALENDER{strSelTbl} WHERE "
         SqlStr += f"YMDATE >= {dbField(CmfDateFmt(KDate, output_format='%Y/%m'))}"
@@ -199,12 +200,13 @@ def GetFreeTime(OpeCd, AreaCd, KDate, strSelTbl):
         if not RsCalen.Rows:
             return DB_TBCALENDER_NOT_FIND
         tbcalen = []
-        for i in range(len(RsFreeTm.Rows)):
+        tbcalen_cnt = len(RsCalen)
+        for i in range(tbcalen_cnt):
             tbcalen.append({
-                "YMDATE": RsFreeTm.Rows[i]["YMDATE"],
-                "YMDATEY": int(RsFreeTm.Rows[i]["YMDATE"][0:4]),
-                "YMDATEM": int(RsFreeTm.Rows[i]["YMDATE"][6:8]),
-                "DAYKBN": RsFreeTm.Rows[i]["DAYKBN"]
+                "YMDATE": RsCalen.Rows[i]["YMDATE"],
+                "YMDATEY": int(RsCalen.Rows[i]["YMDATE"][0:4]),
+                "YMDATEM": int(RsCalen.Rows[i]["YMDATE"][6:8]),
+                "DAYKBN": RsCalen.Rows[i]["DAYKBN"]
             })
         if WkFKISANKBN == csFKISANKBN_1:
             WkKDate = KDate
@@ -215,12 +217,11 @@ def GetFreeTime(OpeCd, AreaCd, KDate, strSelTbl):
                                   "%m")
             WkKDateD = CmfDateFmt((datetime.strptime(KDate, "%Y/%m/%d") + relativedelta(days=1)).strftime("%Y/%m/%d"),
                                   "%d")
-            WkFreeTime = ""
             if WkFCALC == csFCALC_3:
                 WkKDate = WkKDateY + "/" + WkKDateM + "/" + WkKDateD
             else:
                 WkKDate = ""
-                for i in range(len(RsFreeTm.Rows)):
+                for i in range(tbcalen_cnt):
                     if WkKDate != "":
                         break
                     if tbcalen[i]["YMDATE"] == WkKDateY + "/" + WkKDateM:
@@ -241,11 +242,11 @@ def GetFreeTime(OpeCd, AreaCd, KDate, strSelTbl):
                         if WkKDateD == "32" or tbcalen[i]["DAYKBN"][int(WkKDateD) - 1] == csDAYKBN_9:
                             WkKDate = WkKDateY + "/" + WkKDateM + "/01"
                             WkKDateY = CmfDateFmt(
-                                (datetime.strptime(WkKDate, "%Y/%m/%d") + relativedelta(days=1)).strftime("%Y/%m/%d"), "%Y")
+                                (datetime.strptime(WkKDate, "%Y/%m/%d") + relativedelta(months=1)).strftime("%Y/%m/%d"), "%Y")
                             WkKDateM = CmfDateFmt(
-                                (datetime.strptime(WkKDate, "%Y/%m/%d") + relativedelta(days=1)).strftime("%Y/%m/%d"), "%m")
+                                (datetime.strptime(WkKDate, "%Y/%m/%d") + relativedelta(months=1)).strftime("%Y/%m/%d"), "%m")
                             WkKDateD = CmfDateFmt(
-                                (datetime.strptime(WkKDate, "%Y/%m/%d") + relativedelta(days=1)).strftime("%Y/%m/%d"), "%d")
+                                (datetime.strptime(WkKDate, "%Y/%m/%d") + relativedelta(months=1)).strftime("%Y/%m/%d"), "%d")
                             WkKDate = ""
                             continue
                     else:
@@ -268,11 +269,11 @@ def GetFreeTime(OpeCd, AreaCd, KDate, strSelTbl):
                 if tbcalen[i]["DAYKBN"][int(WkKDateD)] == csDAYKBN_9:
                     WkFreeTime = WkKDateY + "/" + WkKDateM + "/01"
                     WkKDateY = CmfDateFmt(
-                        (datetime.strptime(WkFreeTime, "%Y/%m/%d") + relativedelta(days=1)).strftime("%Y/%m/%d"), "%Y")
+                        (datetime.strptime(WkFreeTime, "%Y/%m/%d") + relativedelta(months=1)).strftime("%Y/%m/%d"), "%Y")
                     WkKDateM = CmfDateFmt(
-                        (datetime.strptime(WkFreeTime, "%Y/%m/%d") + relativedelta(days=1)).strftime("%Y/%m/%d"), "%m")
+                        (datetime.strptime(WkFreeTime, "%Y/%m/%d") + relativedelta(months=1)).strftime("%Y/%m/%d"), "%m")
                     WkKDateD = CmfDateFmt(
-                        (datetime.strptime(WkFreeTime, "%Y/%m/%d") + relativedelta(days=1)).strftime("%Y/%m/%d"), "%d")
+                        (datetime.strptime(WkFreeTime, "%Y/%m/%d") + relativedelta(months=1)).strftime("%Y/%m/%d"), "%d")
                     WkFreeTime = ""
                     continue
                 if not tbcalen[i]["YMDATE"] == WkKDateY + "/" + WkKDateM:
@@ -345,7 +346,7 @@ def HomePortGet(strSelTbl, strSelHozCd):
         if not RsTbCfsSys.Rows:
             return ""
         else:
-            return RsTbCfsSys.Rows[0]["HPORTCD"]
+            return RsTbCfsSys.Rows[0]["hportcd"]
     except psycopg2.OperationalError as e:
         raise postgresException(Error=e, DbTbl="TBCFSSYS" + strSelTbl, SqlStr=sql)
 
@@ -360,7 +361,8 @@ def GetDemurg(GDemurg, strSelTbl):
         if not RsCalen.Rows:
             return DB_TBCALENDER_NOT_FIND
         tbcalen = []
-        for i in range(len(RsCalen.Rows)):
+        tbcalen_cnt = len(RsCalen)
+        for i in range(tbcalen_cnt):
             tbcalen[i]["YMDATE"] = RsCalen.Rows["YMDATE"]
             tbcalen[i]["YMDATEY"] = int(RsCalen.Rows["YMDATE"][:4])
             tbcalen[i]["YMDATEM"] = int(RsCalen.Rows["YMDATE"][6:8])
@@ -390,20 +392,20 @@ def GetDemurg(GDemurg, strSelTbl):
         RsDemu = SqlExecute(SqlStr).all()
         if not RsDemu.Rows:
             return DB_TBOPE_NOT_FIND
-        if not RsDemu.Rows[0]["OPECD2"]:
+        if not RsDemu.Rows[0]["opecd2"]:
             return DB_TBDEMURG_NOT_FIND
 
-        WkMinTon = int(RsDemu.Rows[0]["MinTon"])
-        GDemurg.MinTon = int(RsDemu.Rows[0]["MinTon"])
+        WkMinTon = int(RsDemu.Rows[0]["minton"])
+        GDemurg.MinTon = int(RsDemu.Rows[0]["minton"])
         tbdemurg = []
         for i in range(1, 6):
             tbdemurg.append({
-                "RANK": int(RsDemu.Rows[0]["RANK" + str(i)]),
-                "TANKA": round(RsDemu.Rows[0]["TANKA" + str(i)])
+                "RANK": int(RsDemu.Rows[0]["rank" + str(i)]),
+                "TANKA": round(RsDemu.Rows[0]["tanka" + str(i)])
             })
-        if RsDemu.Rows[0]["STANKAKBN"] == csSTANKAKBN_2:
+        if RsDemu.Rows[0]["stankakbn"] == csSTANKAKBN_2:
             WkDemurg = GDemurg.KMeasur
-        elif RsDemu.Rows[0]["STANKAKBN"] == csSTANKAKBN_3:
+        elif RsDemu.Rows[0]["stankakbn"] == csSTANKAKBN_3:
             WkDemurg = GDemurg.KWeight / 1000
         else:
             WkDemurg = GDemurg.RynTon
@@ -413,9 +415,9 @@ def GetDemurg(GDemurg, strSelTbl):
         elif GDemurg.MtonTKbn == csMTONTKBN_3:
             if WkMinTon > WkDemurg:
                 WkDemurg = WkMinTon
-        GDemurg.STANKAKBN = RsDemu.Rows[0]["STANKAKBN"]
-        WkTankaC = dbLong(RsDemu.Rows[0]["TANKAC"])
-        WkDCalc = RsDemu.Rows[0]["DCALC"]
+        GDemurg.STANKAKBN = RsDemu.Rows[0]["stankakbn"]
+        WkTankaC = dbLong(RsDemu.Rows[0]["tankac"])
+        WkDCalc = RsDemu.Rows[0]["dcalc"]
         WkDateY = CmfDateFmt(
             (datetime.strptime(GDemurg.FreeTime, "%Y/%m/%d") + relativedelta(days=1)).strftime("%Y/%m/%d"), "%Y")
         WkDateM = CmfDateFmt(
@@ -425,7 +427,7 @@ def GetDemurg(GDemurg, strSelTbl):
         WkDate = WkDateY + "/" + WkDateM + "/" + WkDateD
         WkNisu = 0
         WkEndFlg = 0
-        for i in range(len(RsCalen.Rows)):
+        for i in range(tbcalen_cnt):
             if WkEndFlg == 9:
                 break
             day_kbn = tbcalen[i]["DAYKBN"][int(WkDateD)]
@@ -507,11 +509,12 @@ def GetDemurg2(GDemurg, strSelTbl):
         if not RsCalen.Rows:
             return DB_TBCALENDER_NOT_FIND
         tbcalen = []
-        for i in range(len(RsCalen.Rows)):
-            tbcalen[i]["YMDATE"] = RsCalen.Rows[0]["YMDATE"]
-            tbcalen[i]["YMDATEY"] = int(RsCalen.Rows[0]["YMDATE"][:4])
-            tbcalen[i]["YMDATEM"] = int(RsCalen.Rows[0]["YMDATE"][6:8])
-            tbcalen[i]["DAYKBN"] = RsCalen.Rows[0]["DAYKBN"]
+        tbcalen_cnt = len(RsCalen)
+        for i in range(tbcalen_cnt):
+            tbcalen[i]["YMDATE"] = RsCalen.Rows[0]["ymdate"]
+            tbcalen[i]["YMDATEY"] = int(RsCalen.Rows[0]["ymdate"][:4])
+            tbcalen[i]["YMDATEM"] = int(RsCalen.Rows[0]["ymdate"][6:8])
+            tbcalen[i]["DAYKBN"] = RsCalen.Rows[0]["daykbn"]
         WkErrTbl = "デマレージテーブル"
         SqlStr = "SELECT "
         SqlStr += "B.OPECD AS OPECD, "
@@ -538,11 +541,11 @@ def GetDemurg2(GDemurg, strSelTbl):
         WkRankMax = 0
         for i in range(1, 6):
             tbdemurg.append({
-                "RANK": int(RsDemu.Rows[0]["RANK" + str(i)]),
-                "TANKA": round(RsDemu.Rows[0]["TANKA" + str(i)])
+                "RANK": int(RsDemu.Rows[0]["rank" + str(i)]),
+                "TANKA": round(RsDemu.Rows[0]["tanka" + str(i)])
             })
-            if WkRankMax < int(RsDemu.Rows[0]["RANK" + str(i)]):
-                WkRankMax = int(RsDemu.Rows[0]["RANK" + str(i)])
+            if WkRankMax < int(RsDemu.Rows[0]["rank" + str(i)]):
+                WkRankMax = int(RsDemu.Rows[0]["rank" + str(i)])
         if GDemurg.MtonTKbn == csMTONTKBN_1:
             WkDemurg = GDemurg.RynTon
         elif GDemurg.MtonTKbn == csMTONTKBN_2:
@@ -553,8 +556,8 @@ def GetDemurg2(GDemurg, strSelTbl):
             else:
                 WkDemurg = GDemurg.MinTon
 
-        WkTankaC = dbLong(RsDemu.Rows[0]["TANKAC"])
-        WkDCalc = RsDemu.Rows[0]["DCALC"]
+        WkTankaC = dbLong(RsDemu.Rows[0]["tankac"])
+        WkDCalc = RsDemu.Rows[0]["dcalc"]
         WkDateY = CmfDateFmt((datetime.strptime(GDemurg.FreeTime, "%Y/%m/%d") + relativedelta(days=1)).strftime("%Y/%m/%d"),
                              "%Y")
         WkDateM = CmfDateFmt((datetime.strptime(GDemurg.FreeTime, "%Y/%m/%d") + relativedelta(days=1)).strftime("%Y/%m/%d"),
@@ -564,7 +567,7 @@ def GetDemurg2(GDemurg, strSelTbl):
         WkDate = WkDateY + "/" + WkDateM + "/" + WkDateD
         WkNisu = 0
         WkEndFlg = 0
-        for i in range(len(RsCalen.Rows)):
+        for i in range(tbcalen_cnt):
             if WkEndFlg == 9:
                 break
             if tbcalen[i]["YMDATE"] >= WkDateY + "/" + WkDateM:
@@ -733,45 +736,45 @@ def TbCfsSysSELECT(SystemData, LockKbn, iniUpdCd):
         RsSys = SqlExecute(SqlStr).all()
         if not RsSys.Rows:
             return DB_NOT_FIND
-        SystemData.COMPANYNM = DbDataChange(RsSys.Rows[0]["COMPANYNM"])
-        SystemData.BRANCHNM = DbDataChange(RsSys.Rows[0]["BRANCHNM"])
-        SystemData.JIMUSYCD = DbDataChange(RsSys.Rows[0]["JIMUSYCD"])
-        SystemData.JIMUSYNM = DbDataChange(RsSys.Rows[0]["JIMUSYNM"])
-        SystemData.JIMUSYADR = DbDataChange(RsSys.Rows[0]["JIMUSYADR"])
-        SystemData.JIMUSYTEL = DbDataChange(RsSys.Rows[0]["JIMUSYTEL"])
-        SystemData.JIMUSYFAX = DbDataChange(RsSys.Rows[0]["JIMUSYFAX"])
-        SystemData.KEIJIMSG = DbDataChange(RsSys.Rows[0]["KEIJIMSG"])
-        SystemData.HPORTCD = DbDataChange(RsSys.Rows[0]["HPORTCD"])
-        SystemData.HOZEINM = DbDataChange(RsSys.Rows[0]["HOZEINM"])
-        SystemData.GWSKBN = DbDataChange(RsSys.Rows[0]["GWSKBN"])
-        SystemData.GW1IP = DbDataChange(RsSys.Rows[0]["GW1IP"])
-        SystemData.GW1USERID = DbDataChange(RsSys.Rows[0]["GW1USERID"])
-        SystemData.GW1PASSWD = DbDataChange(RsSys.Rows[0]["GW1PASSWD"])
-        SystemData.GW1NAME = DbDataChange(RsSys.Rows[0]["GW1NAME"])
-        SystemData.GW1SDIR = DbDataChange(RsSys.Rows[0]["GW1SDIR"])
-        SystemData.GW2IP = DbDataChange(RsSys.Rows[0]["GW2IP"])
-        SystemData.GW2USERID = DbDataChange(RsSys.Rows[0]["GW2USERID"])
-        SystemData.GW2PASSWD = DbDataChange(RsSys.Rows[0]["GW2PASSWD"])
-        SystemData.GW2NAME = DbDataChange(RsSys.Rows[0]["GW2NAME"])
-        SystemData.GW2SDIR = DbDataChange(RsSys.Rows[0]["GW2SDIR"])
-        SystemData.USERCD = DbDataChange(RsSys.Rows[0]["USERCD"])
-        SystemData.IDCD1 = DbDataChange(RsSys.Rows[0]["IDCD1"])
-        SystemData.USERPSWD1 = DbDataChange(RsSys.Rows[0]["USERPSWD1"])
-        SystemData.IDCD2 = DbDataChange(RsSys.Rows[0]["IDCD2"])
-        SystemData.USERPSWD2 = DbDataChange(RsSys.Rows[0]["USERPSWD2"])
-        SystemData.IOJNOHEAD = DbDataChange(RsSys.Rows[0]["IOJNOHEAD"])
-        SystemData.IOJNOMIN = DbDataChange(RsSys.Rows[0]["IOJNOMIN"])
-        SystemData.IOJNOMAX = DbDataChange(RsSys.Rows[0]["IOJNOMAX"])
-        SystemData.IOJNONOW = DbDataChange(RsSys.Rows[0]["IOJNONOW"])
-        SystemData.UNQFILENM = DbDataChange(RsSys.Rows[0]["UNQFILENM"])
-        SystemData.TAXNEW = DbDataChange(RsSys.Rows[0]["TAXNEW"])
-        SystemData.TAXOLD = DbDataChange(RsSys.Rows[0]["TAXOLD"])
-        SystemData.TAXCHG = DbDataChange(RsSys.Rows[0]["TAXCHG"])
-        SystemData.GENGONEW = DbDataChange(RsSys.Rows[0]["GENGONEW"])
-        SystemData.GENGOOLD = DbDataChange(RsSys.Rows[0]["GENGOOLD"])
-        SystemData.GENGOCHG = DbDataChange(RsSys.Rows[0]["GENGOCHG"])
-        SystemData.SEIKYUHNO = DbDataChange(RsSys.Rows[0]["SEIKYUHNO"])
-        NowDate = DbDataChange(RsSys.Rows[0]["NowDate"])
+        SystemData.COMPANYNM = DbDataChange(RsSys.Rows[0]["companynm"])
+        SystemData.BRANCHNM = DbDataChange(RsSys.Rows[0]["branchnm"])
+        SystemData.JIMUSYCD = DbDataChange(RsSys.Rows[0]["jimusycd"])
+        SystemData.JIMUSYNM = DbDataChange(RsSys.Rows[0]["jimusynm"])
+        SystemData.JIMUSYADR = DbDataChange(RsSys.Rows[0]["jimusyadr"])
+        SystemData.JIMUSYTEL = DbDataChange(RsSys.Rows[0]["jimusytel"])
+        SystemData.JIMUSYFAX = DbDataChange(RsSys.Rows[0]["jimusyfax"])
+        SystemData.KEIJIMSG = DbDataChange(RsSys.Rows[0]["keijimsg"])
+        SystemData.HPORTCD = DbDataChange(RsSys.Rows[0]["hportcd"])
+        SystemData.HOZEINM = DbDataChange(RsSys.Rows[0]["hozeinm"])
+        SystemData.GWSKBN = DbDataChange(RsSys.Rows[0]["gwskbn"])
+        SystemData.GW1IP = DbDataChange(RsSys.Rows[0]["gw1ip"])
+        SystemData.GW1USERID = DbDataChange(RsSys.Rows[0]["gw1userid"])
+        SystemData.GW1PASSWD = DbDataChange(RsSys.Rows[0]["gw1passwd"])
+        SystemData.GW1NAME = DbDataChange(RsSys.Rows[0]["gw1name"])
+        SystemData.GW1SDIR = DbDataChange(RsSys.Rows[0]["gw1sdir"])
+        SystemData.GW2IP = DbDataChange(RsSys.Rows[0]["gw2ip"])
+        SystemData.GW2USERID = DbDataChange(RsSys.Rows[0]["gw2userid"])
+        SystemData.GW2PASSWD = DbDataChange(RsSys.Rows[0]["gw2passwd"])
+        SystemData.GW2NAME = DbDataChange(RsSys.Rows[0]["gw2name"])
+        SystemData.GW2SDIR = DbDataChange(RsSys.Rows[0]["gw2sdir"])
+        SystemData.USERCD = DbDataChange(RsSys.Rows[0]["usercd"])
+        SystemData.IDCD1 = DbDataChange(RsSys.Rows[0]["idcd1"])
+        SystemData.USERPSWD1 = DbDataChange(RsSys.Rows[0]["userpswd1"])
+        SystemData.IDCD2 = DbDataChange(RsSys.Rows[0]["idcd2"])
+        SystemData.USERPSWD2 = DbDataChange(RsSys.Rows[0]["userpswd2"])
+        SystemData.IOJNOHEAD = DbDataChange(RsSys.Rows[0]["iojnohead"])
+        SystemData.IOJNOMIN = DbDataChange(RsSys.Rows[0]["iojnomin"])
+        SystemData.IOJNOMAX = DbDataChange(RsSys.Rows[0]["iojnomax"])
+        SystemData.IOJNONOW = DbDataChange(RsSys.Rows[0]["iojnonow"])
+        SystemData.UNQFILENM = DbDataChange(RsSys.Rows[0]["unqfilenm"])
+        SystemData.TAXNEW = DbDataChange(RsSys.Rows[0]["taxnew"])
+        SystemData.TAXOLD = DbDataChange(RsSys.Rows[0]["taxold"])
+        SystemData.TAXCHG = DbDataChange(RsSys.Rows[0]["taxchg"])
+        SystemData.GENGONEW = DbDataChange(RsSys.Rows[0]["gengonew"])
+        SystemData.GENGOOLD = DbDataChange(RsSys.Rows[0]["gengoold"])
+        SystemData.GENGOCHG = DbDataChange(RsSys.Rows[0]["gengochg"])
+        SystemData.SEIKYUHNO = DbDataChange(RsSys.Rows[0]["seikyuhno"])
+        NowDate = DbDataChange(RsSys.Rows[0]["nowdate"])
         return DB_NOMAL_OK, NowDate
     except psycopg2.OperationalError as e:
         if e.pgcode == "55P03":
@@ -814,10 +817,10 @@ def GetRevenue(OpeCd, KGWeight, M3Measur, RynDataCnt, RynData, strSelTbl):
                 return DB_NOT_FIND, None, None
             RynDataCnt += 1
             RynData[- 1].OpeCd = OpeCd
-            RynData[- 1].STANKAKBN = DbDataChange(RsDb.Rows[0]["STANKAKBN"])
-            RynData[- 1].MinTon = int(DbDataChange(RsDb.Rows[0]["MinTon"]))
-            WkSTankaKbn = DbDataChange(RsDb.Rows[0]["STANKAKBN"])
-            MinTon = int(DbDataChange(RsDb.Rows[0]["MinTon"]))
+            RynData[- 1].STANKAKBN = DbDataChange(RsDb.Rows[0]["stankakbn"])
+            RynData[- 1].MinTon = int(DbDataChange(RsDb.Rows[0]["minton"]))
+            WkSTankaKbn = DbDataChange(RsDb.Rows[0]["stankakbn"])
+            MinTon = int(DbDataChange(RsDb.Rows[0]["minton"]))
 
         if WkSTankaKbn == csSTANKAKBN_1:
             if (KGWeight / 1000) > M3Measur:
@@ -866,11 +869,12 @@ def GetDemurgKDate(OpeCd, FreeTime, strSelTbl, WkDCalc):
             return DB_TBDEMURG_NOT_FIND
 
         tbcalen = []
-        for i in range(len(RsCalen.Rows)):
-            tbcalen[i]["YMDATE"] = RsCalen.Rows[0]["YMDATE"]
-            tbcalen[i]["YMDATEY"] = int(RsCalen.Rows[0]["YMDATE"][:4])
-            tbcalen[i]["YMDATEM"] = int(RsCalen.Rows[0]["YMDATE"][6:8])
-            tbcalen[i]["DAYKBN"] = RsCalen.Rows[0]["DAYKBN"]
+        tbcalen_cnt = len(RsCalen)
+        for i in range(tbcalen_cnt):
+            tbcalen[i]["YMDATE"] = RsCalen.Rows[0]["ymdate"]
+            tbcalen[i]["YMDATEY"] = int(RsCalen.Rows[0]["ymdate"][:4])
+            tbcalen[i]["YMDATEM"] = int(RsCalen.Rows[0]["ymdate"][6:8])
+            tbcalen[i]["DAYKBN"] = RsCalen.Rows[0]["daykbn"]
         WkErrTbl = "デマレージテーブル"
         SqlStr = "SELECT "
         SqlStr += "DCALC "
@@ -993,9 +997,9 @@ def TxtOutSkCd_CodeCheck(request, TbInlandData, strProcTbl):
                 return False
             WkCnt = len(TbInlandData)
             TbInlandData[WkCnt]["InlandCd"] = request.context["TxtFwdCd"]
-            TbInlandData[WkCnt]["InlandNm"] = DbDataChange(RsInland.Rows[0]["InlandNm"])
+            TbInlandData[WkCnt]["InlandNm"] = DbDataChange(RsInland.Rows[0]["inlandnm"])
             outInlandData["InlandCd"] = request.context["TxtOutSkCd"]
-            outInlandData["InlandNm"] = DbDataChange(RsInland.Rows[0]["InlandNm"])
+            outInlandData["InlandNm"] = DbDataChange(RsInland.Rows[0]["inlandnm"])
         return True
     except psycopg2.OperationalError as e:
         raise postgresException(Error=e, DbTbl="搬入出先テーブル", SqlStr=SqlStr)
