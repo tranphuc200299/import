@@ -5,8 +5,8 @@ from django.shortcuts import render
 
 from main.common.decorators import update_context, load_cfs_ini
 from main.common.function import SqlExecute
+from main.common.function.Common import sqlStringConvert, DbDataChange
 from main.common.function.Const import FATAL_ERR, NOMAL_OK
-from main.common.function.Common import sqlStringConvert, IsNumeric, DbDataChange
 
 __logger = logging.getLogger(__name__)
 
@@ -73,16 +73,17 @@ def cmd_change_Click(request):
     try:
         if inpdatachk2(request) != NOMAL_OK:
             return
+
+        sql = "UPDATE TBPORT" + request.cfs_ini["iniUpdTbl"] + ""
+        sql += " SET PORTNM = " + sqlStringConvert(request.context["txt_aportnm"]) + ","
+        sql += " AREACD = " + sqlStringConvert(request.context["txt_aareacd"]) + ","
+        sql += " UDATE = CURRENT_TIMESTAMP" + ","
+        sql += " UWSID = " + sqlStringConvert(request.cfs_ini["iniWsNo"]) + " "
+        sql += " WHERE PORTCD = " + sqlStringConvert(request.context["txt_aportcd"])
         with transaction.atomic():
-            sql = "UPDATE TBPORT" + request.cfs_ini["iniUpdTbl"] + ""
-            sql += " SET PORTNM = " + sqlStringConvert(request.context["txt_aportnm"]) + ","
-            sql += " AREACD = " + sqlStringConvert(request.context["txt_aareacd"]) + ","
-            sql += 'UDATE = CURRENT_TIMESTAMP' + ','
-            sql += " UWSID = " + sqlStringConvert(request.cfs_ini["iniWsNo"]) + " "
-            sql += " WHERE PORTCD = " + sqlStringConvert(request.context["txt_aportcd"])
             SqlExecute(sql).execute()
-            init_form(request, CFSC09_MODE0)
-            request.context["gSetField"] = "txt_aportcd"
+        init_form(request, CFSC09_MODE0)
+        request.context["gSetField"] = "txt_aportcd"
     except Exception as e:
         __logger.error(e)
         request.context["cmd_entry_enable"] = False
@@ -108,15 +109,16 @@ def cmd_entry_Click(request):
     try:
         if inpdatachk2(request) != NOMAL_OK:
             return
+
+        sql = "INSERT INTO TBPORT" + request.cfs_ini["iniUpdTbl"] + ' '
+        sql += "(PORTCD,PORTNM,AREACD,UDATE,UWSID) "
+        sql += "VALUES("
+        sql += sqlStringConvert(request.context["txt_aportcd"]) + ","
+        sql += sqlStringConvert(request.context["txt_aportnm"]) + ","
+        sql += sqlStringConvert(request.context["txt_aareacd"]) + ","
+        sql += 'CURRENT_TIMESTAMP' + ","
+        sql += sqlStringConvert(request.cfs_ini["iniWsNo"]) + ')'
         with transaction.atomic():
-            sql = "INSERT INTO TBPORT" + request.cfs_ini["iniUpdTbl"] + ' '
-            sql += "(PORTCD,PORTNM,AREACD,UDATE,UWSID) "
-            sql += "VALUES("
-            sql += sqlStringConvert(request.context["txt_aportcd"]) + ","
-            sql += sqlStringConvert(request.context["txt_aportnm"]) + ","
-            sql += sqlStringConvert(request.context["txt_aareacd"]) + ","
-            sql += 'CURRENT_TIMESTAMP' + ','
-            sql += sqlStringConvert(request.cfs_ini["iniWsNo"]) + ')'
             SqlExecute(sql).execute()
         init_form(request, CFSC09_MODE0)
         request.context["gSetField"] = "txt_aportcd"
