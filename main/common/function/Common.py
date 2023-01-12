@@ -513,7 +513,7 @@ def GetDemurg2(GDemurg, strSelTbl):
         for i in range(tbcalen_cnt):
             tbcalen[i]["ymdate"] = RsCalen.Rows[i]["ymdate"]
             tbcalen[i]["ymdatey"] = int(RsCalen.Rows[i]["ymdate"][:4])
-            tbcalen[i]["ymdatem"] = int(RsCalen.Rows[i]["ymdate"][6:8])
+            tbcalen[i]["ymdatem"] = int(RsCalen.Rows[i]["ymdate"][5:7])
             tbcalen[i]["daykbn"] = RsCalen.Rows[i]["daykbn"]
         WkErrTbl = "デマレージテーブル"
         SqlStr = "SELECT "
