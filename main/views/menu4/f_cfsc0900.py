@@ -7,6 +7,7 @@ from main.common.decorators import update_context, load_cfs_ini
 from main.common.function import SqlExecute
 from main.common.function.Common import sqlStringConvert, DbDataChange
 from main.common.function.Const import FATAL_ERR, NOMAL_OK
+from main.common.utils import Response
 
 __logger = logging.getLogger(__name__)
 
@@ -30,6 +31,9 @@ def f_cfsc0900(request):
             cmd_entry_Click(request)
         elif action == "cmd_cancel":
             cmd_cancel_Click(request)
+        elif action == "txt_aportcd_Change":
+            id_show_data = txt_aportcd_Change(request)
+            return Response(request).json_response_event_js_html(id_show_data)
     else:
         Form_Load(request)
     return render(request, 'menu/menu4/f_cfsc0900.html', request.context)
@@ -156,3 +160,13 @@ def cmd_cancel_Click(request):
     request.context["cmd_delete_enable"] = False
     init_form(request, CFSC09_MODE0)
     request.context["gSetField"] = "txt_aportcd"
+
+
+def txt_aportcd_Change(request):
+    request.context["txt_aportcd"] = request.context["txt_aportcd"].upper()
+    request.context["cmd_entry_enable"] = False
+    request.context["cmd_change_enable"] = False
+    request.context["cmd_delete_enable"] = False
+    return ["txt_aportcd", "cmd_entry_enable", "cmd_change_enable", "cmd_delete_enable"]
+
+
