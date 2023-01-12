@@ -10,7 +10,7 @@ _logger = logging.getLogger(__name__)
 def TbVessel_TableCheck(strVesselCd, strSelTbl):
     sql = ""
     try:
-        sql += "SELECT COUNT(VESSELCD) AS DCNT "
+        sql += "SELECT COUNT(VESSELCD) AS dcnt "
         sql += f"FROM TBVESSEL{strSelTbl} "
         sql += f"WHERE VESSELCD = {Common.dbField(strVesselCd)}"
         RsTbVessel = SqlExecute(sql).all()
@@ -26,7 +26,7 @@ def TbVessel_TableCheck(strVesselCd, strSelTbl):
 def TbOpe_TableCheck(strOpeCd, strSelTbl):
     sql = ""
     try:
-        sql += "SELECT COUNT(OPECD) AS DCNT "
+        sql += "SELECT COUNT(OPECD) AS dcnt "
         sql += f"FROM TBOPE{strSelTbl} "
         sql += f"WHERE OPECD = {Common.dbField(strOpeCd)}"
         RsTbOpe = SqlExecute(sql).all()
@@ -42,7 +42,7 @@ def TbOpe_TableCheck(strOpeCd, strSelTbl):
 def TbPort_TableCheck(strOpeCd, strSelTbl):
     sql = ""
     try:
-        sql = "SELECT COUNT(PORTCD) AS DCNT "
+        sql = "SELECT COUNT(PORTCD) AS dcnt "
         sql += f"FROM TBPORT{strSelTbl} "
         sql += f"WHERE PORTCD = {Common.dbField(strOpeCd)}"
         RsTbPort = SqlExecute(sql).all()
@@ -58,7 +58,7 @@ def TbPort_TableCheck(strOpeCd, strSelTbl):
 def TbPackg_TableCheck(strOpeCd, strSelTbl):
     sql = ""
     try:
-        sql = "SELECT COUNT(PACKCD) AS DCNT "
+        sql = "SELECT COUNT(PACKCD) AS dcnt "
         sql += f"FROM TBPACKG{strSelTbl} "
         sql += f"WHERE PACKCD = {Common.dbField(strOpeCd)}"
         RsTbPackg = SqlExecute(sql).all()
@@ -74,7 +74,7 @@ def TbPackg_TableCheck(strOpeCd, strSelTbl):
 def TbSTani_TableCheck(strOpeCd, strSyubtKbn, strSelTbl):
     sql = ""
     try:
-        sql = "SELECT COUNT(STANICD) AS DCNT "
+        sql = "SELECT COUNT(STANICD) AS dcnt "
         sql += f"FROM TBSTANI{strSelTbl} "
         sql += f"WHERE STANICD = {Common.dbField(strOpeCd)}"
         sql += f" AND SYUBTKBN = {Common.dbField(strSyubtKbn)}"
@@ -91,7 +91,7 @@ def TbSTani_TableCheck(strOpeCd, strSyubtKbn, strSelTbl):
 def TbZWork_TableCheck(strZWorkCd, strSelTbl):
     sql = ""
     try:
-        sql = "SELECT COUNT(ZWORKCD) AS DCNT "
+        sql = "SELECT COUNT(ZWORKCD) AS dcnt "
         sql += f"FROM TBZWORK{strSelTbl} "
         sql += f"WHERE ZWORKCD = {Common.dbField(strZWorkCd)}"
         RsTbZWork = SqlExecute(sql).all()
@@ -107,7 +107,7 @@ def TbZWork_TableCheck(strZWorkCd, strSelTbl):
 def TbForward_TableCheck(strFwdCd, strSelTbl):
     sql = ""
     try:
-        sql = "SELECT COUNT(FWDCD) AS DCNT "
+        sql = "SELECT COUNT(FWDCD) AS dcnt "
         sql += f"FROM TBFORWARD{strSelTbl} "
         sql += f"WHERE FWDCD = {Common.dbField(strFwdCd)}"
         RsTbForward = SqlExecute(sql).all()
@@ -123,7 +123,7 @@ def TbForward_TableCheck(strFwdCd, strSelTbl):
 def TbInland_TableCheck(strInlandCd, strSelTbl):
     sql = ""
     try:
-        sql = "SELECT COUNT(INLANDCD) AS DCNT "
+        sql = "SELECT COUNT(INLANDCD) AS dcnt "
         sql += f"FROM TBINLAND{strSelTbl} "
         sql += f"WHERE INLANDCD = {Common.dbField(strInlandCd)}"
         RsTbInland = SqlExecute(sql).all()
