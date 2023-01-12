@@ -660,7 +660,7 @@ width:100px;
 .last_weed {
     background: #EBF0FC;
 }
-.form_calendar .control_button{
+.form_calendar .control_button .btn-register{
     color:white;
 }
 

@@ -17,7 +17,7 @@
                     <label>年</label>
                 </div>
                 <div class="search_input input_small input_register calendar_form">
-                    {% include "includes/textbox.html" with id="" CssClass="form-control" MaxLength=8 TextChange="True" %}
+                    {% include "includes/textbox.html" with id="txt_amonth" CssClass="form-control" MaxLength=8 TextChange="True" %}
                     <label>月</label>
                 </div>
                 <div class="content_button button_register">
@@ -96,12 +96,18 @@
                             <label>26</label>
                         </td>
                         <td class="last_weed">
-                            <label>27</label>
+                            <label>{{txt_adaytp6_caption}}</label>
                         </td>
                     </tr>
                     <tr class="calendar_table_row calendar_number">
                         <td class="first_weed">
-                            <label>21</label>
+                            <label BackGroundColor = txt_adaytp_background_color >21</label>
+                            {% include day_calendar.html with id="txt_adaytp" cssclass=... BackGroundColor = txt_adaytp_background_color %}
+
+<!--                            day_calendar.html:-->
+<!--                            {% if BackGroundColor %}-->
+<!--                            style='background_color: {{BackGroundColor}}'-->
+<!--                            {% endif %}-->
                         </td>
                         <td>
                             <label>22</label>
