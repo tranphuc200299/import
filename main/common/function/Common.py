@@ -29,6 +29,13 @@ def pfncDataSessionGet(request, strSessionNM: str):
         _logger.error(e)
 
 
+def pfncDataSessionSet(request, strSessionNM: str, objData):
+    try:
+        request.session[strSessionNM] = objData
+    except Exception as e:
+        _logger.error(e)
+
+
 def ValidChr(strIn: int) -> bool:
     strValid = "1234567890 ABCDEFGHIJKLMNOPQRSTUVWXYZ-/.()"
     strIn = chr(strIn).upper()
@@ -238,11 +245,14 @@ def GetFreeTime(OpeCd, AreaCd, KDate, strSelTbl):
                         if WkKDateD == "32" or tbcalen[i]["daykbn"][int(WkKDateD) - 2] == csDAYKBN_9:
                             WkKDate = WkKDateY + "/" + WkKDateM + "/01"
                             WkKDateY = CmfDateFmt(
-                                (datetime.strptime(WkKDate, "%Y/%m/%d") + relativedelta(months=1)).strftime("%Y/%m/%d"), "%Y")
+                                (datetime.strptime(WkKDate, "%Y/%m/%d") + relativedelta(months=1)).strftime("%Y/%m/%d"),
+                                "%Y")
                             WkKDateM = CmfDateFmt(
-                                (datetime.strptime(WkKDate, "%Y/%m/%d") + relativedelta(months=1)).strftime("%Y/%m/%d"), "%m")
+                                (datetime.strptime(WkKDate, "%Y/%m/%d") + relativedelta(months=1)).strftime("%Y/%m/%d"),
+                                "%m")
                             WkKDateD = CmfDateFmt(
-                                (datetime.strptime(WkKDate, "%Y/%m/%d") + relativedelta(months=1)).strftime("%Y/%m/%d"), "%d")
+                                (datetime.strptime(WkKDate, "%Y/%m/%d") + relativedelta(months=1)).strftime("%Y/%m/%d"),
+                                "%d")
                             WkKDate = ""
                             continue
                     else:
@@ -250,12 +260,16 @@ def GetFreeTime(OpeCd, AreaCd, KDate, strSelTbl):
                 if WkKDate == "":
                     return DB_TBCALENDER_NOT_FIND
         if WkFCALC == csFCALC_3 or WkFDAYS == 0:
-            WkFreeTime = CmfDateFmt((datetime.strptime(WkKDate, "%Y/%m/%d") + relativedelta(days=WkFDAYS)).strftime("%Y/%m/%d"),
-                                    "%Y/%m/%d")
+            WkFreeTime = CmfDateFmt(
+                (datetime.strptime(WkKDate, "%Y/%m/%d") + relativedelta(days=WkFDAYS)).strftime("%Y/%m/%d"),
+                "%Y/%m/%d")
             return WkFreeTime
-        WkKDateY = CmfDateFmt((datetime.strptime(WkKDate, "%Y/%m/%d") + relativedelta(days=1)).strftime("%Y/%m/%d"), "%Y")
-        WkKDateM = CmfDateFmt((datetime.strptime(WkKDate, "%Y/%m/%d") + relativedelta(days=1)).strftime("%Y/%m/%d"), "%m")
-        WkKDateD = CmfDateFmt((datetime.strptime(WkKDate, "%Y/%m/%d") + relativedelta(days=1)).strftime("%Y/%m/%d"), "%d")
+        WkKDateY = CmfDateFmt((datetime.strptime(WkKDate, "%Y/%m/%d") + relativedelta(days=1)).strftime("%Y/%m/%d"),
+                              "%Y")
+        WkKDateM = CmfDateFmt((datetime.strptime(WkKDate, "%Y/%m/%d") + relativedelta(days=1)).strftime("%Y/%m/%d"),
+                              "%m")
+        WkKDateD = CmfDateFmt((datetime.strptime(WkKDate, "%Y/%m/%d") + relativedelta(days=1)).strftime("%Y/%m/%d"),
+                              "%d")
         WkFreeTime = ""
         WkFCnt = 0
         for i in range(tbcalen_cnt):
@@ -265,11 +279,14 @@ def GetFreeTime(OpeCd, AreaCd, KDate, strSelTbl):
                 if tbcalen[i]["daykbn"][int(WkKDateD) - 1] == csDAYKBN_9:
                     WkFreeTime = WkKDateY + "/" + WkKDateM + "/01"
                     WkKDateY = CmfDateFmt(
-                        (datetime.strptime(WkFreeTime, "%Y/%m/%d") + relativedelta(months=1)).strftime("%Y/%m/%d"), "%Y")
+                        (datetime.strptime(WkFreeTime, "%Y/%m/%d") + relativedelta(months=1)).strftime("%Y/%m/%d"),
+                        "%Y")
                     WkKDateM = CmfDateFmt(
-                        (datetime.strptime(WkFreeTime, "%Y/%m/%d") + relativedelta(months=1)).strftime("%Y/%m/%d"), "%m")
+                        (datetime.strptime(WkFreeTime, "%Y/%m/%d") + relativedelta(months=1)).strftime("%Y/%m/%d"),
+                        "%m")
                     WkKDateD = CmfDateFmt(
-                        (datetime.strptime(WkFreeTime, "%Y/%m/%d") + relativedelta(months=1)).strftime("%Y/%m/%d"), "%d")
+                        (datetime.strptime(WkFreeTime, "%Y/%m/%d") + relativedelta(months=1)).strftime("%Y/%m/%d"),
+                        "%d")
                     WkFreeTime = ""
                     continue
                 if not tbcalen[i]["ymdate"] == WkKDateY + "/" + WkKDateM:
@@ -301,9 +318,11 @@ def GetFreeTime(OpeCd, AreaCd, KDate, strSelTbl):
 
 
 def VanDigit_Check(strVanNo):
-    vntVanChr = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V",
+    vntVanChr = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T",
+                 "U", "V",
                  "W", "X", "Y", "Z", "*"]
-    vntVanNum = ["10", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "23", "24", "25", "26", "27", "28", "29",
+    vntVanNum = ["10", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "23", "24", "25", "26", "27", "28",
+                 "29",
                  "30", "31", "32", "34", "35", "36", "37", "38", "*"]
     if strVanNo[:3] == TRACK_VANNO:
         return NOMAL_OK
@@ -443,12 +462,15 @@ def GetDemurg(GDemurg, strSelTbl):
             WkDateD = f"{int(WkDateD) + 1 :02}"
             if WkDateD == "32" or tbcalen[i]["daykbn"][int(WkDateD) - 2] == csDAYKBN_9:
                 WkDate = WkDateY + "/" + WkDateM + "/01"
-                WkDateY = CmfDateFmt((datetime.strptime(WkDate, "%Y/%m/%d") + relativedelta(months=1)).strftime("%Y/%m/%d"),
-                                     "%Y")
-                WkDateM = CmfDateFmt((datetime.strptime(WkDate, "%Y/%m/%d") + relativedelta(months=1)).strftime("%Y/%m/%d"),
-                                     "%m")
-                WkDateD = CmfDateFmt((datetime.strptime(WkDate, "%Y/%m/%d") + relativedelta(months=1)).strftime("%Y/%m/%d"),
-                                     "%d")
+                WkDateY = CmfDateFmt(
+                    (datetime.strptime(WkDate, "%Y/%m/%d") + relativedelta(months=1)).strftime("%Y/%m/%d"),
+                    "%Y")
+                WkDateM = CmfDateFmt(
+                    (datetime.strptime(WkDate, "%Y/%m/%d") + relativedelta(months=1)).strftime("%Y/%m/%d"),
+                    "%m")
+                WkDateD = CmfDateFmt(
+                    (datetime.strptime(WkDate, "%Y/%m/%d") + relativedelta(months=1)).strftime("%Y/%m/%d"),
+                    "%d")
                 WkDate = ""
         if WkEndFlg == 0:
             return DB_TBCALENDER_NOT_FIND
@@ -556,12 +578,15 @@ def GetDemurg2(GDemurg, strSelTbl):
 
         WkTankaC = dbLong(RsDemu.Rows[0]["tankac"])
         WkDCalc = RsDemu.Rows[0]["dcalc"]
-        WkDateY = CmfDateFmt((datetime.strptime(GDemurg["FreeTime"], "%Y/%m/%d") + relativedelta(days=1)).strftime("%Y/%m/%d"),
-                             "%Y")
-        WkDateM = CmfDateFmt((datetime.strptime(GDemurg["FreeTime"], "%Y/%m/%d") + relativedelta(days=1)).strftime("%Y/%m/%d"),
-                             "%m")
-        WkDateD = CmfDateFmt((datetime.strptime(GDemurg["FreeTime"], "%Y/%m/%d") + relativedelta(days=1)).strftime("%Y/%m/%d"),
-                             "%d")
+        WkDateY = CmfDateFmt(
+            (datetime.strptime(GDemurg["FreeTime"], "%Y/%m/%d") + relativedelta(days=1)).strftime("%Y/%m/%d"),
+            "%Y")
+        WkDateM = CmfDateFmt(
+            (datetime.strptime(GDemurg["FreeTime"], "%Y/%m/%d") + relativedelta(days=1)).strftime("%Y/%m/%d"),
+            "%m")
+        WkDateD = CmfDateFmt(
+            (datetime.strptime(GDemurg["FreeTime"], "%Y/%m/%d") + relativedelta(days=1)).strftime("%Y/%m/%d"),
+            "%d")
         WkDate = WkDateY + "/" + WkDateM + "/" + WkDateD
         WkNisu = 0
         WkEndFlg = 0
@@ -585,12 +610,15 @@ def GetDemurg2(GDemurg, strSelTbl):
             WkDateD = f"{int(WkDateD) + 1 :02}"
             if WkDateD == "32" or tbcalen[i]["daykbn"][int(WkDateD) - 2] == csDAYKBN_9:
                 WkDate = WkDateY + "/" + WkDateM + "/01"
-                WkDateY = CmfDateFmt((datetime.strptime(WkDate, "%Y/%m/%d") + relativedelta(months=1)).strftime("%Y/%m/%d"),
-                                     "%Y")
-                WkDateM = CmfDateFmt((datetime.strptime(WkDate, "%Y/%m/%d") + relativedelta(months=1)).strftime("%Y/%m/%d"),
-                                     "%m")
-                WkDateD = CmfDateFmt((datetime.strptime(WkDate, "%Y/%m/%d") + relativedelta(months=1)).strftime("%Y/%m/%d"),
-                                     "%d")
+                WkDateY = CmfDateFmt(
+                    (datetime.strptime(WkDate, "%Y/%m/%d") + relativedelta(months=1)).strftime("%Y/%m/%d"),
+                    "%Y")
+                WkDateM = CmfDateFmt(
+                    (datetime.strptime(WkDate, "%Y/%m/%d") + relativedelta(months=1)).strftime("%Y/%m/%d"),
+                    "%m")
+                WkDateD = CmfDateFmt(
+                    (datetime.strptime(WkDate, "%Y/%m/%d") + relativedelta(months=1)).strftime("%Y/%m/%d"),
+                    "%d")
                 WkDate = ""
         if WkEndFlg == 0:
             return DB_TBCALENDER_NOT_FIND
@@ -907,12 +935,15 @@ def GetDemurgKDate(OpeCd, FreeTime, strSelTbl, WkDCalc):
             WkDateD = f"{int(WkDateD) + 1 :02}"
             if WkDateD == "32" or tbcalen[i]["daykbn"][int(WkDateD) - 2] == csDAYKBN_9:
                 WkDate = WkDateY + "/" + WkDateM + "/01"
-                WkDateY = CmfDateFmt((datetime.strptime(WkDate, "%Y/%m/%d") + relativedelta(months=1)).strftime("%Y/%m/%d"),
-                                     "%Y")
-                WkDateM = CmfDateFmt((datetime.strptime(WkDate, "%Y/%m/%d") + relativedelta(months=1)).strftime("%Y/%m/%d"),
-                                     "%m")
-                WkDateD = CmfDateFmt((datetime.strptime(WkDate, "%Y/%m/%d") + relativedelta(months=1)).strftime("%Y/%m/%d"),
-                                     "%d")
+                WkDateY = CmfDateFmt(
+                    (datetime.strptime(WkDate, "%Y/%m/%d") + relativedelta(months=1)).strftime("%Y/%m/%d"),
+                    "%Y")
+                WkDateM = CmfDateFmt(
+                    (datetime.strptime(WkDate, "%Y/%m/%d") + relativedelta(months=1)).strftime("%Y/%m/%d"),
+                    "%m")
+                WkDateD = CmfDateFmt(
+                    (datetime.strptime(WkDate, "%Y/%m/%d") + relativedelta(months=1)).strftime("%Y/%m/%d"),
+                    "%d")
                 WkDate = ""
         return demurgKDate
     except Exception as e:

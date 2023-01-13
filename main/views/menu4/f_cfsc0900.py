@@ -34,6 +34,9 @@ def f_cfsc0900(request):
         elif action == "txt_aportcd_Change":
             id_show_data = txt_aportcd_Change(request)
             return Response(request).json_response_event_js_html(id_show_data)
+        elif action == "txt_aareacd_Change":
+            id_show_data = txt_aareacd_Change(request)
+            return Response(request).json_response_event_js_html(id_show_data)
     else:
         Form_Load(request)
     return render(request, 'menu/menu4/f_cfsc0900.html', request.context)
@@ -66,8 +69,8 @@ def inpdatachk2(request):
         request.context["lblMsg"] = "必須入力エラー", "ポート名称を入力して下さい。"
         request.context["gSetField"] = "txt_aportnm"
         return FATAL_ERR
-    if request.context["txt_aportnm"] < str(len(request.context["txt_aportnm"])):
-        request.context["lblMsg"] = "入力桁数エラー ", "ポート名称は", "桁以内で入力して下さい。"
+    if request.context["txt_aportnm"] < (str(request.context["txt_aportnm"])):
+        request.context["lblMsg"] = "入力桁数エラー", "ポート名称は" + str(request.context("txt_aportnm")), "桁以内で入力して下さい。"
         request.context["gSetField"] = "txt_aportnm"
         return FATAL_ERR
     return NOMAL_OK
@@ -78,7 +81,7 @@ def cmd_change_Click(request):
         if inpdatachk2(request) != NOMAL_OK:
             return
 
-        sql = "UPDATE TBPORT" + request.cfs_ini["iniUpdTbl"] + ""
+        sql = "UPDATE TBPORT" + request.cfs_ini["iniUpdTbl"]
         sql += " SET PORTNM = " + sqlStringConvert(request.context["txt_aportnm"]) + ","
         sql += " AREACD = " + sqlStringConvert(request.context["txt_aareacd"]) + ","
         sql += " UDATE = CURRENT_TIMESTAMP" + ","
@@ -90,6 +93,8 @@ def cmd_change_Click(request):
         request.context["gSetField"] = "txt_aportcd"
     except Exception as e:
         __logger.error(e)
+        #  OraError "TBPORT" & strProcTbl, sql
+        # TODO
         request.context["cmd_entry_enable"] = False
         request.context["cmd_delete_enable"] = False
 
@@ -97,13 +102,14 @@ def cmd_change_Click(request):
 def cmd_delete_Click(request):
     try:
         with transaction.atomic():
-            sql = "DELETE FROM TBPORT" + request.cfs_ini["iniUpdTbl"] + ""
+            sql = "DELETE FROM TBPORT" + request.cfs_ini["iniUpdTbl"]
             sql += " WHERE PORTCD = " + sqlStringConvert(request.context["txt_aportcd"])
             SqlExecute(sql).execute()
         init_form(request, CFSC09_MODE0)
         request.context["gSetField"] = "txt_aportcd"
     except Exception as e:
         __logger.error(e)
+        #  OraError "TBPORT" & strProcTbl, sql
         # TODO
         request.context["cmd_change_enable"] = False
         request.context["cmd_delete_enable"] = False
@@ -114,7 +120,7 @@ def cmd_entry_Click(request):
         if inpdatachk2(request) != NOMAL_OK:
             return
 
-        sql = "INSERT INTO TBPORT" + request.cfs_ini["iniUpdTbl"] + ' '
+        sql = "INSERT INTO TBPORT" + request.cfs_ini["iniUpdTbl"] + " "
         sql += "(PORTCD,PORTNM,AREACD,UDATE,UWSID) "
         sql += "VALUES("
         sql += sqlStringConvert(request.context["txt_aportcd"]) + ","
@@ -137,7 +143,7 @@ def cmd_search_Click(request):
         if inpdatachk1(request) != NOMAL_OK:
             return
         sql = "SELECT * "
-        sql += " FROM TBPORT" + request.cfs_ini["iniUpdTbl"] + ""
+        sql += " FROM TBPORT" + request.cfs_ini["iniUpdTbl"] + " "
         sql += " WHERE PORTCD = " + sqlStringConvert(request.context["txt_aportcd"])
         sql += " FOR UPDATE NOWAIT"
         RsTbPort = SqlExecute(sql).all()
@@ -170,3 +176,9 @@ def txt_aportcd_Change(request):
     return ["txt_aportcd", "cmd_entry_enable", "cmd_change_enable", "cmd_delete_enable"]
 
 
+def txt_aareacd_Change(request):
+    request.context["txt_aareacd"] = request.context["txt_aareacd"].upper()
+    request.context["cmd_entry_enable"] = False
+    request.context["cmd_change_enable"] = False
+    request.context["cmd_delete_enable"] = False
+    return ["txt_aareacd", "cmd_entry_enable", "cmd_change_enable", "cmd_delete_enable"]
