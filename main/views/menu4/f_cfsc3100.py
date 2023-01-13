@@ -4,10 +4,12 @@ from django.db import transaction
 from django.shortcuts import render
 
 from main.common.decorators import update_context, load_cfs_ini
-from main.common.function import SqlExecute
-from main.common.function.Common import sqlStringConvert
+from main.common.function import SqlExecute, Const
+from main.common.function.Common import dbField
 from main.common.function.Const import FATAL_ERR, NOMAL_OK
+from main.common.function.DspMessage import MsgDspError
 from main.common.utils import Response
+from main.middleware.exception.exceptions import PostgresException
 
 __logger = logging.getLogger(__name__)
 
@@ -59,14 +61,16 @@ def txt_aszouchicd_Change(request):
     request.context["cmd_delete_enable"] = False
     return ["txt_aszouchicd", "cmd_entry_enable", "cmd_change_enable", "cmd_delete_enable"]
 
+
 def cmd_search_Click(request):
+    sql = ""
     try:
         init_form(request, CFSC31_MODE1)
         if inpdatachk1(request) != NOMAL_OK:
             return
-        sql = "SELECT * "
+        sql += "SELECT * "
         sql += " FROM TBSZOUCHI" + request.cfs_ini["iniUpdTbl"]
-        sql += " WHERE SZOUCHICD = " + sqlStringConvert(request.context["txt_aszouchicd"])
+        sql += " WHERE SZOUCHICD = " + dbField(request.context["txt_aszouchicd"])
         sql += " FOR UPDATE NOWAIT"
         RsTbSZouchi = SqlExecute(sql).all()
         if not RsTbSZouchi.Rows:
@@ -78,10 +82,7 @@ def cmd_search_Click(request):
             request.context["cmd_delete_enable"] = True
         request.context["gSetField"] = "txt_aszouchinm"
     except Exception as e:
-        __logger.error(e)
-        raise Exception(e)
-        # TODO
-        # OraError("TBSZOUCHI" + strProcTbl, "sql")
+        raise PostgresException(Error=e, DbTbl="TBSZOUCHI" + request.cfs_ini["iniUpdTbl"], SqlStr=sql)
 
 
 def cmd_entry_Click(request):
@@ -92,18 +93,16 @@ def cmd_entry_Click(request):
             sql = "INSERT INTO TBSZOUCHI" + request.cfs_ini["iniUpdTbl"] + " "
             sql += "(SZOUCHICD,SZOUCHINM,UDATE,UWSID) "
             sql += "VALUES("
-            sql += sqlStringConvert(request.context["txt_aszouchicd"]) + ","
-            sql += sqlStringConvert(request.context["txt_aszouchinm"]) + ","
+            sql += dbField(request.context["txt_aszouchicd"]) + ","
+            sql += dbField(request.context["txt_aszouchinm"]) + ","
             sql += "CURRENT_TIMESTAMP" + ","
-            sql += sqlStringConvert(request.cfs_ini["iniWsNo"]) + ")"
+            sql += dbField(request.cfs_ini["iniWsNo"]) + ")"
             SqlExecute(sql).execute()
         init_form(request, CFSC31_MODE0)
         request.context["gSetField"] = "txt_aszouchicd"
     except Exception as e:
-        __logger.error(e)
-        # TODO
-        # OraError("TBSZOUCHI" + strProcTbl, "sql")
         request.context["cmd_entry_enable"] = False
+        raise PostgresException(Error=e, DbTbl="TBSZOUCHI" + request.cfs_ini["iniUpdTbl"], SqlStr=sql)
 
 
 def cmd_change_Click(request):
@@ -112,35 +111,31 @@ def cmd_change_Click(request):
             return
         with transaction.atomic():
             sql = "UPDATE TBSZOUCHI" + request.cfs_ini["iniUpdTbl"] + " "
-            sql += "SET SZOUCHINM = " + sqlStringConvert(request.context["txt_aszouchinm"]) + ","
+            sql += "SET SZOUCHINM = " + dbField(request.context["txt_aszouchinm"]) + ","
             sql += "UDATE = CURRENT_TIMESTAMP" + ","
-            sql += "UWSID = " + sqlStringConvert(request.cfs_ini["iniWsNo"]) + " "
-            sql += "WHERE SZOUCHICD = " + sqlStringConvert(request.context["txt_aszouchicd"])
+            sql += "UWSID = " + dbField(request.cfs_ini["iniWsNo"]) + " "
+            sql += "WHERE SZOUCHICD = " + dbField(request.context["txt_aszouchicd"])
             SqlExecute(sql).execute()
         init_form(request, CFSC31_MODE0)
         request.context["gSetField"] = "txt_aszouchicd"
     except Exception as e:
-        __logger.error(e)
-        # TODO
-        # OraError("TBSZOUCHI" + strProcTbl, "sql")
         request.context["cmd_change_enable"] = False
         request.context["cmd_delete_enable"] = False
+        raise PostgresException(Error=e, DbTbl="TBSZOUCHI" + request.cfs_ini["iniUpdTbl"], SqlStr=sql)
 
 
 def cmd_delete_Click(request):
     try:
         with transaction.atomic():
             sql = "DELETE FROM TBSZOUCHI" + request.cfs_ini["iniUpdTbl"] + " "
-            sql += "WHERE SZOUCHICD = " + sqlStringConvert(request.context["txt_aszouchicd"])
+            sql += "WHERE SZOUCHICD = " + dbField(request.context["txt_aszouchicd"])
             SqlExecute(sql).execute()
         init_form(request, CFSC31_MODE0)
         request.context["gSetField"] = "txt_aszouchicd"
     except Exception as e:
-        __logger.error(e)
-        # TODO
-        # OraError("TBSZOUCHI" + strProcTbl, "sql")
         request.context["cmd_change_enable"] = False
         request.context["cmd_delete_enable"] = False
+        raise PostgresException(Error=e, DbTbl="TBSZOUCHI" + request.cfs_ini["iniUpdTbl"], SqlStr=sql)
 
 
 def cmd_cancel_Click(request):
@@ -160,7 +155,7 @@ def init_form(request, intMode):
 
 def inpdatachk1(request):
     if request.context["txt_aszouchicd"] == "":
-        request.context["lblMsg"] = "必須入力エラー倉庫内蔵置場所コードを入力して下さい。"
+        MsgDspError(request, Const.MSG_DSP_WARN, "必須入力エラー", "倉庫内蔵置場所コードを入力して下さい。")
         request.context["gSetField"] = "txt_aszouchicd"
         return FATAL_ERR
     return NOMAL_OK
@@ -168,11 +163,10 @@ def inpdatachk1(request):
 
 def inpdatachk2(request):
     if request.context["txt_aszouchinm"] == "":
-        request.context["lblMsg"] = "必須入力エラー倉庫内蔵置場所名称を入力して下さい。"
+        MsgDspError(request, Const.MSG_DSP_WARN, "必須入力エラー", "倉庫内蔵置場所名称を入力して下さい。")
         request.context["gSetField"] = "txt_aszouchinm"
         return FATAL_ERR
     if 20 < len(request.context["txt_aszouchinm"]):
-        request.context["lblMsg"] = "入力桁数エラー倉庫内蔵置場所名称は" + "20" + "桁以内で入力して下さい。"
-        request.context["gSetField"] = "txt_aszouchinm"
+        MsgDspError(request, Const.MSG_DSP_WARN, "入力桁数エラー", "倉庫内蔵置場所名称は" + "20" + "桁以内で入力して下さい。")
         return FATAL_ERR
     return NOMAL_OK
