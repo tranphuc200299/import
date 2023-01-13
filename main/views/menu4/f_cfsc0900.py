@@ -4,10 +4,12 @@ from django.db import transaction
 from django.shortcuts import render
 
 from main.common.decorators import update_context, load_cfs_ini
-from main.common.function import SqlExecute
+from main.common.function import SqlExecute, Const
 from main.common.function.Common import sqlStringConvert, DbDataChange
-from main.common.function.Const import FATAL_ERR, NOMAL_OK
+from main.common.function.Const import FATAL_ERR, NOMAL_OK, MSG_DSP_ERROR
+from main.common.function.DspMessage import MsgDspError
 from main.common.utils import Response
+from main.middleware.exception.exceptions import PostgresException
 
 __logger = logging.getLogger(__name__)
 
@@ -58,7 +60,7 @@ def init_form(request, intMode):
 
 def inpdatachk1(request):
     if request.context["txt_aportcd"] == "":
-        request.context["lblMsg"] = "必須入力エラー", "ポートコードを入力して下さい。"
+        MsgDspError(request, Const.MSG_DSP_WARN, "必須入力エラー", "ポート名称を入力して下さい。")
         request.context["gSetField"] = "txt_aportcd"
         return FATAL_ERR
     return NOMAL_OK
@@ -66,22 +68,23 @@ def inpdatachk1(request):
 
 def inpdatachk2(request):
     if request.context["txt_aportnm"] == "":
-        request.context["lblMsg"] = "必須入力エラー", "ポート名称を入力して下さい。"
+        MsgDspError(request, Const.MSG_DSP_WARN, "必須入力エラー", "ポート名称を入力して下さい。")
         request.context["gSetField"] = "txt_aportnm"
         return FATAL_ERR
-    if request.context["txt_aportnm"] < (str(request.context["txt_aportnm"])):
-        request.context["lblMsg"] = "入力桁数エラー", "ポート名称は" + str(request.context("txt_aportnm")), "桁以内で入力して下さい。"
+    if len(request.context["txt_aportnm"]) > 25:
+        MsgDspError(request, Const.MSG_DSP_WARN, "入力桁数エラー", "ポート名称は" + "25" + "桁以内で入力して下さい。")
         request.context["gSetField"] = "txt_aportnm"
         return FATAL_ERR
     return NOMAL_OK
 
 
 def cmd_change_Click(request):
+    sql = ""
     try:
         if inpdatachk2(request) != NOMAL_OK:
             return
 
-        sql = "UPDATE TBPORT" + request.cfs_ini["iniUpdTbl"]
+        sql += "UPDATE TBPORT" + request.cfs_ini["iniUpdTbl"]
         sql += " SET PORTNM = " + sqlStringConvert(request.context["txt_aportnm"]) + ","
         sql += " AREACD = " + sqlStringConvert(request.context["txt_aareacd"]) + ","
         sql += " UDATE = CURRENT_TIMESTAMP" + ","
@@ -92,11 +95,9 @@ def cmd_change_Click(request):
         init_form(request, CFSC09_MODE0)
         request.context["gSetField"] = "txt_aportcd"
     except Exception as e:
-        __logger.error(e)
-        #  OraError "TBPORT" & strProcTbl, sql
-        # TODO
         request.context["cmd_entry_enable"] = False
         request.context["cmd_delete_enable"] = False
+        raise PostgresException(Error=e, DbTbl="TBPORT" + request.cfs_ini["iniUpdTbl"], SqlStr=sql)
 
 
 def cmd_delete_Click(request):
@@ -108,19 +109,18 @@ def cmd_delete_Click(request):
         init_form(request, CFSC09_MODE0)
         request.context["gSetField"] = "txt_aportcd"
     except Exception as e:
-        __logger.error(e)
-        #  OraError "TBPORT" & strProcTbl, sql
-        # TODO
         request.context["cmd_change_enable"] = False
         request.context["cmd_delete_enable"] = False
+        raise PostgresException(Error=e, DbTbl="TBPORT" + request.cfs_ini["iniUpdTbl"], SqlStr=sql)
 
 
 def cmd_entry_Click(request):
+    sql = ""
     try:
         if inpdatachk2(request) != NOMAL_OK:
             return
 
-        sql = "INSERT INTO TBPORT" + request.cfs_ini["iniUpdTbl"] + " "
+        sql += "INSERT INTO TBPORT" + request.cfs_ini["iniUpdTbl"] + " "
         sql += "(PORTCD,PORTNM,AREACD,UDATE,UWSID) "
         sql += "VALUES("
         sql += sqlStringConvert(request.context["txt_aportcd"]) + ","
@@ -133,17 +133,17 @@ def cmd_entry_Click(request):
         init_form(request, CFSC09_MODE0)
         request.context["gSetField"] = "txt_aportcd"
     except Exception as e:
-        #  OraError "TBPORT" & strProcTbl, sql
-        __logger.error(e)
         request.context["cmd_entry_enable"] = False
+        raise PostgresException(Error=e, DbTbl="TBPORT" + request.cfs_ini["iniUpdTbl"], SqlStr=sql)
 
 
 def cmd_search_Click(request):
+    sql = ""
     try:
         init_form(request, CFSC09_MODE1)
         if inpdatachk1(request) != NOMAL_OK:
             return
-        sql = "SELECT * "
+        sql += "SELECT * "
         sql += " FROM TBPORT" + request.cfs_ini["iniUpdTbl"] + " "
         sql += " WHERE PORTCD = " + sqlStringConvert(request.context["txt_aportcd"])
         sql += " FOR UPDATE NOWAIT"
@@ -158,8 +158,7 @@ def cmd_search_Click(request):
 
         request.context["gSetField"] = "txt_aportnm"
     except Exception as e:
-        #  OraError "TBPORT" & strProcTbl, sql
-        __logger.error(e)
+        raise PostgresException(Error=e, DbTbl="TBPORT" + request.cfs_ini["iniUpdTbl"], SqlStr=sql)
 
 
 def cmd_cancel_Click(request):
@@ -180,7 +179,4 @@ def txt_aportcd_Change(request):
 
 def txt_aareacd_Change(request):
     request.context["txt_aareacd"] = request.context["txt_aareacd"].upper()
-    request.context["cmd_entry_enable"] = False
-    request.context["cmd_change_enable"] = False
-    request.context["cmd_delete_enable"] = False
-    return ["txt_aareacd", "cmd_entry_enable", "cmd_change_enable", "cmd_delete_enable"]
+    return "txt_aareacd"
