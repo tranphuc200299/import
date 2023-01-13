@@ -5,7 +5,7 @@ from django.shortcuts import render
 
 from main.common.decorators import update_context, load_cfs_ini
 from main.common.function import SqlExecute, Const
-from main.common.function.Common import sqlStringConvert, DbDataChange
+from main.common.function.Common import dbField, DbDataChange, dbField
 from main.common.function.Const import FATAL_ERR, NOMAL_OK, MSG_DSP_ERROR
 from main.common.function.DspMessage import MsgDspError
 from main.common.utils import Response
@@ -85,11 +85,11 @@ def cmd_change_Click(request):
             return
 
         sql += "UPDATE TBPORT" + request.cfs_ini["iniUpdTbl"]
-        sql += " SET PORTNM = " + sqlStringConvert(request.context["txt_aportnm"]) + ","
-        sql += " AREACD = " + sqlStringConvert(request.context["txt_aareacd"]) + ","
+        sql += " SET PORTNM = " + dbField(request.context["txt_aportnm"]) + ","
+        sql += " AREACD = " + dbField(request.context["txt_aareacd"]) + ","
         sql += " UDATE = CURRENT_TIMESTAMP" + ","
-        sql += " UWSID = " + sqlStringConvert(request.cfs_ini["iniWsNo"]) + " "
-        sql += " WHERE PORTCD = " + sqlStringConvert(request.context["txt_aportcd"])
+        sql += " UWSID = " + dbField(request.cfs_ini["iniWsNo"]) + " "
+        sql += " WHERE PORTCD = " + dbField(request.context["txt_aportcd"])
         with transaction.atomic():
             SqlExecute(sql).execute()
         init_form(request, CFSC09_MODE0)
@@ -104,7 +104,7 @@ def cmd_delete_Click(request):
     try:
         with transaction.atomic():
             sql = "DELETE FROM TBPORT" + request.cfs_ini["iniUpdTbl"]
-            sql += " WHERE PORTCD = " + sqlStringConvert(request.context["txt_aportcd"])
+            sql += " WHERE PORTCD = " + dbField(request.context["txt_aportcd"])
             SqlExecute(sql).execute()
         init_form(request, CFSC09_MODE0)
         request.context["gSetField"] = "txt_aportcd"
@@ -123,11 +123,11 @@ def cmd_entry_Click(request):
         sql += "INSERT INTO TBPORT" + request.cfs_ini["iniUpdTbl"] + " "
         sql += "(PORTCD,PORTNM,AREACD,UDATE,UWSID) "
         sql += "VALUES("
-        sql += sqlStringConvert(request.context["txt_aportcd"]) + ","
-        sql += sqlStringConvert(request.context["txt_aportnm"]) + ","
-        sql += sqlStringConvert(request.context["txt_aareacd"]) + ","
+        sql += dbField(request.context["txt_aportcd"]) + ","
+        sql += dbField(request.context["txt_aportnm"]) + ","
+        sql += dbField(request.context["txt_aareacd"]) + ","
         sql += "CURRENT_TIMESTAMP" + ","
-        sql += sqlStringConvert(request.cfs_ini["iniWsNo"]) + ')'
+        sql += dbField(request.cfs_ini["iniWsNo"]) + ')'
         with transaction.atomic():
             SqlExecute(sql).execute()
         init_form(request, CFSC09_MODE0)
@@ -145,7 +145,7 @@ def cmd_search_Click(request):
             return
         sql += "SELECT * "
         sql += " FROM TBPORT" + request.cfs_ini["iniUpdTbl"] + " "
-        sql += " WHERE PORTCD = " + sqlStringConvert(request.context["txt_aportcd"])
+        sql += " WHERE PORTCD = " + dbField(request.context["txt_aportcd"])
         sql += " FOR UPDATE NOWAIT"
         RsTbPort = SqlExecute(sql).all()
         if len(RsTbPort.Rows) == 0:

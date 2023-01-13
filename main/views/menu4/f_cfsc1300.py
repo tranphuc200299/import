@@ -2,10 +2,12 @@ import logging
 from django.db import transaction
 from django.shortcuts import render
 from main.common.decorators import update_context, load_cfs_ini
-from main.common.function import SqlExecute
-from main.common.function.Common import sqlStringConvert, DbDataChange
+from main.common.function import SqlExecute, Const
+from main.common.function.Common import dbField, DbDataChange
 from main.common.function.Const import NOMAL_OK, FATAL_ERR
+from main.common.function.DspMessage import MsgDspError
 from main.common.utils import Response
+from main.middleware.exception.exceptions import PostgresException
 
 __logger = logging.getLogger(__name__)
 
@@ -39,7 +41,6 @@ def f_cfsc1300(request):
 
 def Form_Load(request):
     init_form(request, CFSC13_MODE0)
-
     request.context["cmd_entry_enable"] = False
     request.context["cmd_change_enable"] = False
     request.context["cmd_delete_enable"] = False
@@ -54,17 +55,18 @@ def txt_afwdcd_Change(request):
 
 
 def cmd_search_Click(request):
+    sql = ""
     try:
         init_form(request, CFSC13_MODE1)
         if inpdatachk1(request) != NOMAL_OK:
             return
-        sql = 'SELECT * '
+        sql += 'SELECT * '
         sql += 'FROM TBFORWARD' + request.cfs_ini["iniUpdTbl"] + ' '
-        sql += 'WHERE FWDCD = ' + sqlStringConvert(request.context["txt_afwdcd"])
+        sql += 'WHERE FWDCD = ' + dbField(request.context["txt_afwdcd"])
         sql += ' FOR UPDATE NOWAIT'
 
         RsTbForward = SqlExecute(sql).all()
-        if not RsTbForward.Rows:
+        if len(RsTbForward.Rows) == 0:
             request.context["cmd_entry_enable"] = True
         else:
             request.context["txt_afwdnm"] = DbDataChange(RsTbForward.Rows[0]["fwdnm"])
@@ -75,74 +77,68 @@ def cmd_search_Click(request):
             request.context["cmd_delete_enable"] = True
         request.context["gSetField"] = "txt_afwdnm"
     except Exception as e:
-        __logger.error(e)
-        # TODO
-        # OraError "TBFORWARD" & strProcTbl, sql
+        raise PostgresException(Error=e, DbTbl="TBFORWARD" + request.cfs_ini["iniUpdTbl"], SqlStr=sql)
 
 
 def cmd_entry_Click(request):
+    sql = ""
     try:
         if inpdatachk2(request) != NOMAL_OK:
             return
 
-        sql = 'INSERT INTO TBFORWARD' + request.cfs_ini["iniUpdTbl"] + ' '
+        sql += 'INSERT INTO TBFORWARD' + request.cfs_ini["iniUpdTbl"] + ' '
         sql += '(FWDCD,FWDNM,FWDTANNM,FWDTEL,FWDFAX,UDATE,UWSID) '
         sql += 'VALUES('
-        sql += sqlStringConvert(request.context["txt_afwdcd"]) + ','
-        sql += sqlStringConvert(request.context["txt_afwdnm"]) + ','
-        sql += sqlStringConvert(request.context["txt_afwdtannm"]) + ','
-        sql += sqlStringConvert(request.context["txt_afwdtel"]) + ','
-        sql += sqlStringConvert(request.context["txt_afwdfax"]) + ','
+        sql += dbField(request.context["txt_afwdcd"]) + ','
+        sql += dbField(request.context["txt_afwdnm"]) + ','
+        sql += dbField(request.context["txt_afwdtannm"]) + ','
+        sql += dbField(request.context["txt_afwdtel"]) + ','
+        sql += dbField(request.context["txt_afwdfax"]) + ','
         sql += 'CURRENT_TIMESTAMP' + ','
-        sql += sqlStringConvert(request.cfs_ini["iniWsNo"]) + ')'
+        sql += dbField(request.cfs_ini["iniWsNo"]) + ')'
         with transaction.atomic():
             SqlExecute(sql).execute()
         init_form(request, CFSC13_MODE0)
         request.context["gSetField"] = "txt_afwdcd"
     except Exception as e:
-        __logger.error(e)
         request.context["cmd_entry_enable"] = False
-        # TODO
-        # OraError "TBFORWARD" & strProcTbl, sql
+        raise PostgresException(Error=e, DbTbl="TBFORWARD" + request.cfs_ini["iniUpdTbl"], SqlStr=sql)
 
 
 def cmd_change_Click(request):
+    sql = ""
     try:
-        sql = 'UPDATE TBFORWARD' + request.cfs_ini["iniUpdTbl"] + ' '
-        sql += 'SET FWDNM = ' + sqlStringConvert(request.context["txt_afwdnm"]) + ','
-        sql += 'FWDTANNM = ' + sqlStringConvert(request.context["txt_afwdtannm"]) + ','
-        sql += 'FWDTEL = ' + sqlStringConvert(request.context["txt_afwdtel"]) + ','
-        sql += 'FWDFAX = ' + sqlStringConvert(request.context["txt_afwdfax"]) + ','
+        sql += 'UPDATE TBFORWARD' + request.cfs_ini["iniUpdTbl"] + ' '
+        sql += 'SET FWDNM = ' + dbField(request.context["txt_afwdnm"]) + ','
+        sql += 'FWDTANNM = ' + dbField(request.context["txt_afwdtannm"]) + ','
+        sql += 'FWDTEL = ' + dbField(request.context["txt_afwdtel"]) + ','
+        sql += 'FWDFAX = ' + dbField(request.context["txt_afwdfax"]) + ','
         sql += 'UDATE = CURRENT_TIMESTAMP' + ','
-        sql += 'UWSID = ' + sqlStringConvert(request.cfs_ini["iniWsNo"]) + ' '
-        sql += 'WHERE FWDCD = ' + sqlStringConvert(request.context["txt_afwdcd"])
+        sql += 'UWSID = ' + dbField(request.cfs_ini["iniWsNo"]) + ' '
+        sql += 'WHERE FWDCD = ' + dbField(request.context["txt_afwdcd"])
         with transaction.atomic():
             SqlExecute(sql).execute()
         init_form(request, CFSC13_MODE0)
         request.context["gSetField"] = "txt_afwdcd"
 
     except Exception as e:
-        __logger.error(e)
         request.context["cmd_change_enable"] = False
         request.context["cmd_delete_enable"] = False
-        # TODO
-        # OraError "TBFORWARD" & strProcTbl, sql
+        raise PostgresException(Error=e, DbTbl="TBFORWARD" + request.cfs_ini["iniUpdTbl"], SqlStr=sql)
 
 
 def cmd_delete_Click(request):
     sql = 'DELETE FROM TBFORWARD' + request.cfs_ini["iniUpdTbl"] + ' '
-    sql += 'WHERE FWDCD = ' + sqlStringConvert(request.context["txt_afwdcd"])
+    sql += 'WHERE FWDCD = ' + dbField(request.context["txt_afwdcd"])
     try:
         with transaction.atomic():
             SqlExecute(sql).execute()
         init_form(request, CFSC13_MODE0)
         request.context["gSetField"] = "txt_afwdcd"
     except Exception as e:
-        __logger.error(e)
         request.context["cmd_change_enable"] = False
         request.context["cmd_delete_enable"] = False
-        # TODO
-        # OraError "TBFORWARD" & strProcTbl, sql
+        raise PostgresException(Error=e, DbTbl="TBFORWARD" + request.cfs_ini["iniUpdTbl"], SqlStr=sql)
 
 
 def cmd_cancel_Click(request):
@@ -165,7 +161,7 @@ def init_form(request, intMode):
 
 def inpdatachk1(request):
     if not request.context["txt_afwdcd"]:
-        request.context["lblMsg"] = '必須入力エラー海貨業者コードを入力して下さい。'
+        MsgDspError(request, Const.MSG_DSP_WARN, "必須入力エラー", "海貨業者コードを入力して下さい。")
         request.context["gSetField"] = "txt_afwdcd"
         return FATAL_ERR
     return NOMAL_OK
@@ -173,15 +169,15 @@ def inpdatachk1(request):
 
 def inpdatachk2(request):
     if request.context["txt_afwdnm"] == '':
-        request.context["lblMsg"] = '必須入力エラー海貨業者名称を入力して下さい。'
+        MsgDspError(request, Const.MSG_DSP_WARN, "必須入力エラー", "海貨業者名称を入力して下さい。")
         request.context["gSetField"] = "txt_afwdnm"
         return FATAL_ERR
     if len(request.context["txt_afwdnm"]) > 60:
-        request.context["lblMsg"] = '入力桁数エラー', '海貨業者名称は' + '60' + '桁以内で入力して下さい。'
+        MsgDspError(request, Const.MSG_DSP_WARN, "入力桁数エラー", "海貨業者名称は" + "60" + "桁以内で入力して下さい。")
         request.context["gSetField"] = "txt_afwdnm"
         return FATAL_ERR
     if len(request.context["txt_afwdtannm"]) > 10:
-        request.context["lblMsg"] = '入力桁数エラー', '海貨業者担当者名称は' + '10' + '桁以内で入力して下さい。'
+        MsgDspError(request, Const.MSG_DSP_WARN, "入力桁数エラー", "海貨業者担当者名称は" + "10" + "桁以内で入力して下さい。")
         request.context["gSetField"] = "txt_afwdtannm"
         return FATAL_ERR
     return NOMAL_OK
