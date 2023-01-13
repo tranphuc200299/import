@@ -6,7 +6,6 @@ from django.db import transaction
 from dateutil.relativedelta import relativedelta
 from main.common.function import SqlExecute
 from main.common.function.Const import *
-from main.common.function.DspMessage import *
 from main.middleware.exception.exceptions import PostgresException
 
 _logger = logging.getLogger(__name__)
@@ -28,6 +27,11 @@ def pfncDataSessionGet(request, strSessionNM: str):
     except Exception as e:
         _logger.error(e)
 
+def pfncDataSessionSet(request, strSessionNM: str, objData):
+    try:
+        request.session[strSessionNM] = objData
+    except Exception as e:
+        _logger.error(e)
 
 def ValidChr(strIn: int) -> bool:
     strValid = "1234567890 ABCDEFGHIJKLMNOPQRSTUVWXYZ-/.()"
