@@ -31,4 +31,9 @@
         <option value="1" {% if cmb_afcalc == "1" %}selected{% endif %}>土日祝除く</option>
         <option value="2" {% if cmb_afcalc == "2" %}selected{% endif %}>全て含む</option>
     </select>
+{% elif id == "cmb_asyubtkbn" %}
+<select tabindex="{{ tabIndex }}" class="{{ CssClass }} w-100" name="cmb_afcalc" id="cmb_afcalc">
+    <option value="0" {% if cmb_asyubtkbn == "0" %}selected{% endif %}>重量表示 </option>
+    <option value="1" {% if cmb_asyubtkbn == "1" %}selected{% endif %}>容積表示 </option>
+</select>
 {% endif %}

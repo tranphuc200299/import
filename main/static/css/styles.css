@@ -764,3 +764,21 @@ ul.breadcrumb li a:hover {
     text-decoration: underline;
 }
 /*end css*/
+.form_extral {
+ width:100%;
+}
+
+.input_container input {
+    width: 40%!important;
+}
+.form_dropdown{
+    width: 100%;
+}
+.form_dropdown select{
+    width: 20%!important;
+    margin:0px 42px;
+}
+
+.input_transfer {
+    margin:0px 35px;
+}
