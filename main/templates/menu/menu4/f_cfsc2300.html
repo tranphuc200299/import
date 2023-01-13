@@ -26,32 +26,31 @@
                 </div>
             </div>
             <div class="form-inline">
-                <div class="form-group ">
+                <div class="form-group">
                     <label for="txt_azworknm" class="label-form-group mr-3" tabIndex=4>単価 <span
-                            class="required">*</span>
-                    </label>
-                    {% include "includes/textbox.html" with class="form-control" id="txt_azworknm" name="txt_azworknm" tabIndex=4  MaxLength=3  Change="True" Title="必須入力" %}
+                            class="required">*</span></label>
+                    {% include "includes/textbox.html" with class="form-control" id="txt_azworknm" name="txt_azworknm" tabIndex=4  MaxLength=3 width="300" Change="True" Title="必須入力" %}
+
                 </div>
             </div>
-            <div class="col-lg-5">
-                <div class="form-group d-flex">
-                    <label for="cmb_ataxkbn" tabindex="13">課税区分
-                        <span class="required">*</span></label>
-                    <div class="col-4">
-                        {% include 'includes/dropdownlist.html' with id="cmb_ataxkbn" class="form-control" tabIndex=14 %}
-                    </div>
+            <div class="form-inline d-flex form-group col-lg-12">
+                <label for="txt_azworknm" class="label-form-group mr-3" tabIndex=4>課税区分 <span
+                        class="required">*</span>
+                </label>
+                {% include "includes/dropdownlist.html" with class="form-control col-lg-1" id="cmb_ataxkbn" name="cmb_ataxkbn" tabIndex=4  MaxLength=3  Change="True" Title="必須入力" %}
+            </div>
+            <div class="form-inline mb-2">
+                <div class="form-group">
+                    <label for="txt_azworknm" class="label-form-group mr-3" tabIndex=4>回数表示 <span
+                            class="required">*</span></label>
+                    {% include "includes/textbox.html" with class="form-control" id="txt_azworknm" name="txt_azworknm" tabIndex=4  MaxLength=3 width="300" Change="True" Title="必須入力" %}
+
                 </div>
             </div>
 
-            <div class="form-inline">
-                <div class="form-group ">
-                    <label for="txt_azworknm" class="label-form-group mr-3" tabIndex=4>回数表示 <span
-                            class="required">*</span>
-                    </label>
-                    {% include "includes/textbox.html" with class="form-control" id="txt_azworknm" name="txt_azworknm" tabIndex=4  MaxLength=3 width="300" Change="True" Title="必須入力" %}
-                </div>
-            </div>
+
         </div>
+
 
     </form>
 
