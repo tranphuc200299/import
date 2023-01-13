@@ -5,9 +5,10 @@ from django.shortcuts import render
 
 from main.common.decorators import update_context, load_cfs_ini
 from main.common.function import SqlExecute
-from main.common.function.Common import sqlStringConvert
+from main.common.function.Common import dbField, DbDataChange
 from main.common.function.Const import FATAL_ERR, NOMAL_OK
 from main.common.utils import Response
+from main.middleware.exception.exceptions import PostgresException
 
 __logger = logging.getLogger(__name__)
 
@@ -46,10 +47,7 @@ def Form_Load(request):
         request.context["cmd_change_enable"] = False
         request.context["cmd_delete_enable"] = False
     except Exception as e:
-        __logger.error(e)
-        # TODO
-        # OraError("", "")
-
+        raise PostgresException(Error=e, DbTbl="", SqlStr="")
 
 def txt_apackcd_Change(request):
     request.context["txt_apackcd"] = request.context["txt_apackcd"].upper()
@@ -65,20 +63,18 @@ def cmd_search_Click(request):
             return
         sql = "SELECT * "
         sql += " FROM TBPACKG" + request.cfs_ini["iniUpdTbl"]
-        sql += " WHERE PACKCD = " + sqlStringConvert(request.context["txt_apackcd"])
+        sql += " WHERE PAssCKCD = " + dbField(request.context["txt_apackcd"])
         sql += " FOR UPDATE NOWAIT"
         RsTbPackg = SqlExecute(sql).all()
         if not RsTbPackg.Rows:
             request.context["cmd_entry_enable"] = True
         else:
-            request.context["txt_apacknm"] = RsTbPackg.Rows[0]['packnm']
+            request.context["txt_apacknm"] = DbDataChange(RsTbPackg.Rows[0]['packnm'])
             request.context["cmd_change_enable"] = True
             request.context["cmd_delete_enable"] = True
         request.context["gSetField"] = "txt_apacknm"
     except Exception as e:
-        __logger.error(e)
-        # TODO
-        # OraError "TBPACKG" & strProcTbl, sql
+        raise PostgresException(Error=e, DbTbl="TBPACKG" + request.cfs_ini["iniUpdTbl"], SqlStr=sql)
 
 
 def cmd_entry_Click(request):
@@ -89,19 +85,15 @@ def cmd_entry_Click(request):
             sql = "INSERT INTO TBPACKG" + request.cfs_ini["iniUpdTbl"] + " "
             sql += "(PACKCD,PACKNM,UDATE,UWSID) "
             sql += "VALUES("
-            sql += sqlStringConvert(request.context["txt_apackcd"]) + ","
-            sql += sqlStringConvert(request.context["txt_apacknm"]) + ","
-            sql += "CURRENT_TIMESTAMP" + ","
-            sql += sqlStringConvert(request.cfs_ini["iniWsNo"]) + ")"
+            sql += dbField(request.context["txt_apackcd"]) + ","
+            sql += dbField(request.context["txt_apacknm"]) + ","
+            sql += "CURRENT_TIMESTAMPsss" + ","
+            sql += dbField(request.cfs_ini["iniWsNo"]) + ")"
             SqlExecute(sql).execute()
         init_form(request, CFSC15_MODE0)
         request.context["gSetField"] = "txt_apackcd"
     except Exception as e:
-        __logger.error(e)
-        # TODO
-        # OraError "TBPACKG" & strProcTbl, sql
-        request.context["cmd_entry_enable"] = False
-
+        raise PostgresException(Error=e, DbTbl="TBPACKG" + request.cfs_ini["iniUpdTbl"], SqlStr=sql)
 
 def cmd_change_Click(request):
     try:
@@ -109,35 +101,31 @@ def cmd_change_Click(request):
             return
         with transaction.atomic():
             sql = "UPDATE TBPACKG" + request.cfs_ini["iniUpdTbl"] + " "
-            sql += "SET PACKNM = " + sqlStringConvert(request.context["txt_apacknm"]) + ","
+            sql += "SET PACKNM = " + dbField(request.context["txt_apacknm"]) + ","
             sql += "UDATE = CURRENT_TIMESTAMP" + ","
-            sql += "UWSID = " + sqlStringConvert(request.cfs_ini["iniWsNo"]) + " "
-            sql += "WHERE PACKCD = " + sqlStringConvert(request.context["txt_apackcd"])
+            sql += "UWSID = " + dbField(request.cfs_ini["iniWsNo"]) + " "
+            sql += "WHERE PACKCD = " + dbField(request.context["txt_apackcd"])
             SqlExecute(sql).execute()
         init_form(request, CFSC15_MODE0)
         request.context["gSetField"] = "txt_apackcd"
     except Exception as e:
-        __logger.error(e)
-        # TODO
-        # OraError "TBPACKG" & strProcTbl, sql
         request.context["cmd_change_enable"] = False
         request.context["cmd_delete_enable"] = False
+        raise PostgresException(Error=e, DbTbl="TBPACKG" + request.cfs_ini["iniUpdTbl"], SqlStr=sql)
 
 
 def cmd_delete_Click(request):
     try:
         with transaction.atomic():
             sql = "DELETE FROM TBPACKG" + request.cfs_ini["iniUpdTbl"] + " "
-            sql += "WHERE PACKCD = " + sqlStringConvert(request.context["txt_apackcd"])
+            sql += "WHERE PACKCD = " + dbField(request.context["txt_apackcd"])
             SqlExecute(sql).execute()
         init_form(request, CFSC15_MODE0)
         request.context["gSetField"] = "txt_apackcd"
     except Exception as e:
-        __logger.error(e)
-        # TODO
-        # OraError "TBPACKG" & strProcTbl, sql
         request.context["cmd_change_enable"] = False
         request.context["cmd_delete_enable"] = False
+        raise PostgresException(Error=e, DbTbl="TBPACKG" + request.cfs_ini["iniUpdTbl"], SqlStr=sql)
 
 
 def cmd_cancel_Click(request):
