@@ -126,13 +126,14 @@ def cmd_entry_Click(request):
         sql += sqlStringConvert(request.context["txt_aportcd"]) + ","
         sql += sqlStringConvert(request.context["txt_aportnm"]) + ","
         sql += sqlStringConvert(request.context["txt_aareacd"]) + ","
-        sql += 'CURRENT_TIMESTAMP' + ","
+        sql += "CURRENT_TIMESTAMP" + ","
         sql += sqlStringConvert(request.cfs_ini["iniWsNo"]) + ')'
         with transaction.atomic():
             SqlExecute(sql).execute()
         init_form(request, CFSC09_MODE0)
         request.context["gSetField"] = "txt_aportcd"
     except Exception as e:
+        #  OraError "TBPORT" & strProcTbl, sql
         __logger.error(e)
         request.context["cmd_entry_enable"] = False
 
@@ -157,6 +158,7 @@ def cmd_search_Click(request):
 
         request.context["gSetField"] = "txt_aportnm"
     except Exception as e:
+        #  OraError "TBPORT" & strProcTbl, sql
         __logger.error(e)
 
 
