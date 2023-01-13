@@ -5,7 +5,7 @@ from main.common.utils import FileDirUtil
 from main.middleware.exception.exceptions import (
     RuntimeException,
     BondAreaNameException,
-    postgresException
+    PostgresException
 )
 from main.common.function.DspMessage import MsgDspError
 
@@ -23,7 +23,7 @@ class ExceptionHandleMiddleware(object):
         self.__write_logging(request, exception)
         if isinstance(exception, RuntimeException):
             request.context["lblMsg"] = exception.get_message()
-        elif isinstance(exception, postgresException):
+        elif isinstance(exception, PostgresException):
             MsgDspError(request, exception.DbTbl, exception.get_message())
         elif isinstance(exception, BondAreaNameException):
             request.context["lblMsg"] = str(exception)

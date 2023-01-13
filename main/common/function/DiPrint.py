@@ -22,7 +22,8 @@ def DiPrtCntl(request, PrtMode, CtDat, NaDat, KyokaDat, ChgDat, MinTonDat):
         MarkCnt, HinmokuCnt, TempRemark, TempMark, TempHinmoku, page_data_clr = MultiLineControl(CtDat, NaDat, MinTonDat)
         LastPage = PageComp(MarkCnt, HinmokuCnt, MaxMark, MaxSagyo, ChgCnt, KyoCnt, MaxKyoka, NaCNT)
         page_data_clr = ChgFree(ChgDat, page_data_clr)
-        dataDiPrtCntl = MakeDI(request, CtDat, NaDat, KyokaDat, ChgDat, LastPage, MaxMark, MarkCnt, TempMark, HinmokuCnt, TempHinmoku,
+        dataDiPrtCntl = MakeDI(request, CtDat, NaDat, KyokaDat, ChgDat, LastPage, MaxMark, MarkCnt, TempMark, HinmokuCnt,
+                               TempHinmoku,
                                TempRemark, MaxSagyo, ChgCnt, MaxKyoka, KyoCnt, page_data_clr)
         if not dataDiPrtCntl:
             return "", dataDiPrtCntl
@@ -42,37 +43,37 @@ def MultiLineControl(CtDat, NaDat, MinTonDat):
     page_data_clr = PageDataClr()
     HinmokuCnt = 0
     MarkCnt = 0
-    if CtDat.Mark != "":
-        TempMark = CtDat.Mark.split("\n")
+    if CtDat["Mark"] != "":
+        TempMark = CtDat["Mark"].split("\n")
         MarkCnt = len(TempMark)
-    if CtDat.Hinmoku != "":
-        TempHinmoku = CtDat.Hinmoku.split("\n")
+    if CtDat["Hinmoku"] != "":
+        TempHinmoku = CtDat["Hinmoku"].split("\n")
         HinmokuCnt = len(TempHinmoku) - 1
-    page_data_clr["PrtKPackg"] = NaDat[0].KPackg
-    page_data_clr["PrtWPackg"] = NaDat[0].WPackg
-    page_data_clr["PrtMPackg"] = NaDat[0].MPackg
-    page_data_clr["PrtRPackg"] = NaDat[0].RPackg
-    WkStr = CtDat.Biko35 + "\n\n"
+    page_data_clr["PrtKPackg"] = NaDat[0]["KPackg"]
+    page_data_clr["PrtWPackg"] = NaDat[0]["WPackg"]
+    page_data_clr["PrtMPackg"] = NaDat[0]["MPackg"]
+    page_data_clr["PrtRPackg"] = NaDat[0]["RPackg"]
+    WkStr = CtDat["Biko35"] + "\n\n"
     for ix in range(len(NaDat)):
-        if NaDat[ix].Remark != "":
-            WkStr += NaDat[ix].Remark + "\n\n"
-        page_data_clr["PrtKosu"] += NaDat[ix].Kosu
-        if NaDat[ix].KPackg != page_data_clr["PrtKPackg"]:
+        if NaDat[ix]["Remark"] != "":
+            WkStr += NaDat[ix]["Remark"] + "\n\n"
+        page_data_clr["PrtKosu"] += NaDat[ix]["Kosu"]
+        if NaDat[ix]["KPackg"] != page_data_clr["PrtKPackg"]:
             page_data_clr["PrtKPackg"] = "PKG"
-        page_data_clr["PrtWeight"] += NaDat[ix].Weight
-        if NaDat[ix].WPackg != page_data_clr["PrtWPackg"]:
+        page_data_clr["PrtWeight"] += NaDat[ix]["Weight"]
+        if NaDat[ix]["WPackg"] != page_data_clr["PrtWPackg"]:
             page_data_clr["PrtWPackg"] = "PKG"
-        page_data_clr["PrtMeasur"] += NaDat[ix].Measur
-        if NaDat[ix].MPackg != page_data_clr["PrtMPackg"]:
+        page_data_clr["PrtMeasur"] += NaDat[ix]["Measur"]
+        if NaDat[ix]["MPackg"] != page_data_clr["PrtMPackg"]:
             page_data_clr["PrtMPackg"] = "PKG"
-        page_data_clr["PrtRynTon"] += NaDat[ix].RynTon
-        if NaDat[ix].RPackg != page_data_clr["PrtRPackg"]:
+        page_data_clr["PrtRynTon"] += NaDat[ix]["RynTon"]
+        if NaDat[ix]["RPackg"] != page_data_clr["PrtRPackg"]:
             page_data_clr["PrtRPackg"] = "PKG"
-        page_data_clr["PrtMotoKosu"] += NaDat[ix].HKosu
-        if NaDat[ix].HKPackg != page_data_clr["PrtMotoKpackg"]:
-            page_data_clr["PrtMotoKpackg"] = NaDat[ix].HKPackg
-    if page_data_clr["PrtRynTon"] < MinTonDat.MinTon:
-        page_data_clr["PrtRynTon"] = MinTonDat.MinTon
+        page_data_clr["PrtMotoKosu"] += NaDat[ix]["HKosu"]
+        if NaDat[ix]["HKPackg"] != page_data_clr["PrtMotoKpackg"]:
+            page_data_clr["PrtMotoKpackg"] = NaDat[ix]["HKPackg"]
+    if page_data_clr["PrtRynTon"] < MinTonDat["MinTon"]:
+        page_data_clr["PrtRynTon"] = MinTonDat["MinTon"]
     if len(WkStr) > 4:
         WkStr = WkStr[: len(WkStr) - 4]
     if WkStr != "":
@@ -117,9 +118,9 @@ def PageComp(MarkCnt, HinmokuCnt, MaxMark, MaxSagyo, ChgCnt, KyoCnt, MaxKyoka, N
 
 def ChgFree(ChDat, page_data_clr):
     for ix in range(len(ChDat)):
-        if ChDat[ix].Nissu > 0:
-            page_data_clr["PrtDays"] = ChDat[ix].Nissu
-        page_data_clr["PrtTotal"] += ChDat[ix].Kingaku
+        if ChDat[ix]["Nissu"] > 0:
+            page_data_clr["PrtDays"] = ChDat[ix]["Nissu"]
+        page_data_clr["PrtTotal"] += ChDat[ix]["Kingaku"]
     return page_data_clr
 
 
@@ -141,32 +142,32 @@ def MakeDI(request, CtDat, NaDat, KyokaDat, ChDat, LastPage, MaxMark, MarkCnt, T
         intEnd = MaxSagyo * pcnt + MaxSagyo - 1
         for ix in range(intStart, intEnd):
             if ChgCnt >= ix:
-                page_data_clr["PrtZWorkNm"] += ChDat[ix].ZWorkNm + "\n"
-                page_data_clr["PrtNissu"] += str(round(ChDat[ix].Nissu)) + "\n"
-                page_data_clr["PrtQuantity"] += f"{ChDat[ix].Quantity:,.3f}" + " " + ChDat[ix].QPackg + " " * (
-                        5 - len(ChDat[ix].QPackg)) + "\n"
-                if ChDat[ix].ZWorkNm == "":
+                page_data_clr["PrtZWorkNm"] += ChDat[ix]["ZWorkNm"] + "\n"
+                page_data_clr["PrtNissu"] += str(round(ChDat[ix]["Nissu"])) + "\n"
+                page_data_clr["PrtQuantity"] += f"{ChDat[ix]['Quantity']:,.3f}" + " " + ChDat[ix]["QPackg"] + " " * (
+                        5 - len(ChDat[ix]["QPackg"])) + "\n"
+                if ChDat[ix]["ZWorkNm"] == "":
                     page_data_clr["PrtTanka"] += "\n"
                     page_data_clr["PrtKingaku"] += "\n"
                 else:
-                    page_data_clr["PrtTanka"] += "\\" + f"{ChDat[ix].TANKA:,}" + "\n"
-                    page_data_clr["PrtKingaku"] += "\\" + f"{ChDat[ix].Kingaku:,}" + "\n"
-                page_data_clr["PrtSubTtl"] += ChDat[ix].Kingaku
+                    page_data_clr["PrtTanka"] += "\\" + f"{ChDat[ix]['TANKA']:,}" + "\n"
+                    page_data_clr["PrtKingaku"] += "\\" + f"{ChDat[ix]['Kingaku']:,}" + "\n"
+                page_data_clr["PrtSubTtl"] += ChDat[ix]["Kingaku"]
         intStart = MaxKyoka * pcnt
         intEnd = MaxKyoka * pcnt + MaxKyoka - 1
         for ix in range(intStart, intEnd):
             if KyoCnt >= ix:
-                page_data_clr["PrtNaBlNo"] += KyokaDat[ix].NaBlNo + "\n"
-                page_data_clr["PrtPrmSybt"] += KyokaDat[ix].OutPrmSybt + "\n"
-                page_data_clr["PrtPrmNo"] += KyokaDat[ix].OutPrmNo + "\n"
-                page_data_clr["PrtPrmDate"] += KyokaDat[ix].OutPrmDate + "\n"
+                page_data_clr["PrtNaBlNo"] += KyokaDat[ix]["NaBlNo"] + "\n"
+                page_data_clr["PrtPrmSybt"] += KyokaDat[ix]["OutPrmSybt"] + "\n"
+                page_data_clr["PrtPrmNo"] += KyokaDat[ix]["OutPrmNo"] + "\n"
+                page_data_clr["PrtPrmDate"] += KyokaDat[ix]["OutPrmDate"] + "\n"
         if KyoCnt == 0:
             PrtNaBlNo = ""
             intStart = MaxKyoka * pcnt
             intEnd = MaxKyoka * pcnt + MaxKyoka - 1
             for ix in range(intStart, intEnd):
                 if len(NaDat) > ix:
-                    PrtNaBlNo = PrtNaBlNo + NaDat[ix].NaBlNo + "\n"
+                    PrtNaBlNo = PrtNaBlNo + NaDat[ix]["NaBlNo"] + "\n"
         if page_data_clr["PrtMotoKosu"] == 0:
             page_data_clr["PrtMotoKosu"] = page_data_clr["PrtKosu"]
             page_data_clr["PrtMotoKpackg"] = page_data_clr["PrtKPackg"]
@@ -182,23 +183,23 @@ def MakeDI(request, CtDat, NaDat, KyokaDat, ChDat, LastPage, MaxMark, MarkCnt, T
 def InsDI(request, CtDat, page_data_clr, count):
     try:
         result = {
-            "sVesselNm": CtDat.VesselNm,
-            "sVoyNo": dbField(CtDat.VoyNo),
-            "sCtBlNo": dbField(CtDat.CtBlNo),
+            "sVesselNm": CtDat["VesselNm"],
+            "sVoyNo": dbField(CtDat["VoyNo"]),
+            "sCtBlNo": dbField(CtDat["CtBlNo"]),
             "nSeq": count,
-            "sFwdNm": dbField(CtDat.FwdNm),
-            "sBillNo": dbField(CtDat.BillNo),
-            "sAllRDate": dbField(CtDat.InDate),
-            "sZPlace": dbField(CtDat.ZPlace),
-            "sAPortCd": dbField(CtDat.PodNm),
+            "sFwdNm": dbField(CtDat["FwdNm"]),
+            "sBillNo": dbField(CtDat["BillNo"]),
+            "sAllRDate": dbField(CtDat["InDate"]),
+            "sZPlace": dbField(CtDat["ZPlace"]),
+            "sAPortCd": dbField(CtDat["PodNm"]),
             "sMarks": dbField(page_data_clr["PrtMark"]),
             "sHinmoku": dbField(page_data_clr["PrtHinmoku"]),
             "sRemark": dbField(page_data_clr["PrtRemark"]),
             "nKosu": page_data_clr["PrtKosu"],
             "sKPackg": dbField(page_data_clr["PrtKPackg"]),
-            "sATA": dbField(CtDat.Arrive),
-            "sFreeNdDt": dbField(CtDat.FreeEndDate),
-            "sOutDate": dbField(CtDat.DelvDate),
+            "sATA": dbField(CtDat["Arrive"]),
+            "sFreeNdDt": dbField(CtDat["FreeEndDate"]),
+            "sOutDate": dbField(CtDat["DelvDate"]),
             "nOverDay": dbField(page_data_clr["PrtDays"]),
             "nWeight": page_data_clr["PrtWeight"],
             "sWPackg": dbField(page_data_clr["PrtWPackg"]),
@@ -215,9 +216,9 @@ def InsDI(request, CtDat, page_data_clr, count):
             "sOutPrmSybt": dbField(page_data_clr["PrtPrmSybt"]),
             "sOutPrmNo": dbField(page_data_clr["PrtPrmNo"]),
             "sOutPrmDate": dbField(page_data_clr["PrtPrmDate"]),
-            "sCompanyNm": dbField(CtDat.Company),
-            "sBranchNm": dbField(CtDat.Branch),
-            "sJimusyoNm": dbField(CtDat.Jimusyo),
+            "sCompanyNm": dbField(CtDat["Company"]),
+            "sBranchNm": dbField(CtDat["Branch"]),
+            "sJimusyoNm": dbField(CtDat["Jimusyo"]),
             "sMotoKosu": page_data_clr["PrtMotoKosu"],
             "sMotoPackg": dbField(page_data_clr["PrtMotoKpackg"]),
             "nSubTTL": page_data_clr["PrtSubTtl"],

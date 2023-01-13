@@ -6,7 +6,7 @@ from django.db import transaction
 from main.common.function.Const import *
 from main.common.function.Common import TbCfsSysSELECT, dbField
 from main.common.function import SqlExecute
-from main.middleware.exception.exceptions import postgresException
+from main.middleware.exception.exceptions import PostgresException
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
 
@@ -48,7 +48,7 @@ def NacUniqGet(strUProGId, SystemData, strSelTbl, iniUpdCd, iniWsNo, strSelHozCd
 
         return NOMAL_OK, strIoJNo, strUnqFileNm
     except psycopg2.OperationalError as e:
-        raise postgresException(Error=e, DbTbl="TBCFSSYS" + strSelTbl, SqlStr=sql)
+        raise PostgresException(Error=e, DbTbl="TBCFSSYS" + strSelTbl, SqlStr=sql)
 
 
 def NacHdrSet(strNacGymCd, strUserCd, strIdCd, strUserPswd, strIoJNo):

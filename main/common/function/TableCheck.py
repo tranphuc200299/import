@@ -2,7 +2,7 @@ import logging
 import psycopg2
 from main.common.function import SqlExecute, Common
 from main.common.function.Const import DB_NOT_FIND, DB_NOMAL_OK
-from main.middleware.exception.exceptions import postgresException
+from main.middleware.exception.exceptions import PostgresException
 
 _logger = logging.getLogger(__name__)
 
@@ -20,7 +20,7 @@ def TbVessel_TableCheck(strVesselCd, strSelTbl):
             return DB_NOMAL_OK
     except psycopg2.OperationalError as e:
         _logger.error(e)
-        raise postgresException(Error=e, DbTbl="TBVESSEL" + strSelTbl, SqlStr=sql)
+        raise PostgresException(Error=e, DbTbl="TBVESSEL" + strSelTbl, SqlStr=sql)
 
 
 def TbOpe_TableCheck(strOpeCd, strSelTbl):
@@ -36,7 +36,7 @@ def TbOpe_TableCheck(strOpeCd, strSelTbl):
             return DB_NOMAL_OK
     except psycopg2.OperationalError as e:
         _logger.error(e)
-        raise postgresException(Error=e, DbTbl="TBOPE" + strSelTbl, SqlStr=sql)
+        raise PostgresException(Error=e, DbTbl="TBOPE" + strSelTbl, SqlStr=sql)
 
 
 def TbPort_TableCheck(strPortCd, strSelTbl):
@@ -52,7 +52,7 @@ def TbPort_TableCheck(strPortCd, strSelTbl):
             return DB_NOMAL_OK
     except psycopg2.OperationalError as e:
         _logger.error(e)
-        raise postgresException(Error=e, DbTbl="TBPORT" + strSelTbl, SqlStr=sql)
+        raise PostgresException(Error=e, DbTbl="TBPORT" + strSelTbl, SqlStr=sql)
 
 
 def TbPackg_TableCheck(strPackCd, strSelTbl):
@@ -68,7 +68,7 @@ def TbPackg_TableCheck(strPackCd, strSelTbl):
             return DB_NOMAL_OK
     except psycopg2.OperationalError as e:
         _logger.error(e)
-        raise postgresException(Error=e, DbTbl="TBPACKG" + strSelTbl, SqlStr=sql)
+        raise PostgresException(Error=e, DbTbl="TBPACKG" + strSelTbl, SqlStr=sql)
 
 
 def TbSTani_TableCheck(strSTaniCd, strSyubtKbn, strSelTbl):
@@ -85,7 +85,7 @@ def TbSTani_TableCheck(strSTaniCd, strSyubtKbn, strSelTbl):
             return DB_NOMAL_OK
     except psycopg2.OperationalError as e:
         _logger.error(e)
-        raise postgresException(Error=e, DbTbl="TBSTANI" + strSelTbl, SqlStr=sql)
+        raise PostgresException(Error=e, DbTbl="TBSTANI" + strSelTbl, SqlStr=sql)
 
 
 def TbZWork_TableCheck(strZWorkCd, strSelTbl):
@@ -101,7 +101,7 @@ def TbZWork_TableCheck(strZWorkCd, strSelTbl):
             return DB_NOMAL_OK
     except psycopg2.OperationalError as e:
         _logger.error(e)
-        raise postgresException(Error=e, DbTbl="TBZWORK" + strSelTbl, SqlStr=sql)
+        raise PostgresException(Error=e, DbTbl="TBZWORK" + strSelTbl, SqlStr=sql)
 
 
 def TbForward_TableCheck(strFwdCd, strSelTbl):
@@ -117,7 +117,7 @@ def TbForward_TableCheck(strFwdCd, strSelTbl):
             return DB_NOMAL_OK
     except psycopg2.OperationalError as e:
         _logger.error(e)
-        raise postgresException(Error=e, DbTbl="TBFORWARD" + strSelTbl, SqlStr=sql)
+        raise PostgresException(Error=e, DbTbl="TBFORWARD" + strSelTbl, SqlStr=sql)
 
 
 def TbInland_TableCheck(strInlandCd, strSelTbl):
@@ -133,4 +133,4 @@ def TbInland_TableCheck(strInlandCd, strSelTbl):
             return DB_NOMAL_OK
     except psycopg2.OperationalError as e:
         _logger.error(e)
-        raise postgresException(Error=e, DbTbl="TBINLAND" + strSelTbl, SqlStr=sql)
+        raise PostgresException(Error=e, DbTbl="TBINLAND" + strSelTbl, SqlStr=sql)

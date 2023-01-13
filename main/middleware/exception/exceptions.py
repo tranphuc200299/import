@@ -26,7 +26,7 @@ class BondAreaNameException(Exception):
         return f"Request screen doesn't exists in bond area name: {format(self.bond_area_name)}"
 
 
-class postgresException(Exception):
+class PostgresException(Exception):
     def __init__(self, *args, **kwargs):
         self.DbTbl = kwargs.pop('DbTbl', '')
         self.SqlStr = kwargs.pop('SqlStr', '')
@@ -43,7 +43,7 @@ class postgresException(Exception):
         return f'ERROR_CODE = {self.Error.pgcode}, MESSAGE = {self.get_message()}'
 
 
-class dataErrException(Exception):
+class DataErrException(Exception):
     def __init__(self, *args, **kwargs):
         self.ErrData = kwargs.pop('ErrData', '')
         self.ErrCd = kwargs.pop('ErrCd', '')

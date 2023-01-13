@@ -7,7 +7,7 @@ from dateutil.relativedelta import relativedelta
 from main.common.function import SqlExecute
 from main.common.function.Const import *
 from main.common.function.DspMessage import *
-from main.middleware.exception.exceptions import postgresException
+from main.middleware.exception.exceptions import PostgresException
 
 _logger = logging.getLogger(__name__)
 
@@ -258,7 +258,7 @@ def GetFreeTime(OpeCd, AreaCd, KDate, strSelTbl):
         WkKDateD = CmfDateFmt((datetime.strptime(WkKDate, "%Y/%m/%d") + relativedelta(days=1)).strftime("%Y/%m/%d"), "%d")
         WkFreeTime = ""
         WkFCnt = 0
-        for i in range(len(RsFreeTm.Rows)):
+        for i in range(tbcalen_cnt):
             if WkFreeTime != "":
                 break
             if tbcalen[i]["ymdate"] == WkKDateY + "/" + WkKDateM:
@@ -313,7 +313,7 @@ def VanDigit_Check(strVanNo):
         if strVanNo[i] not in vntVanChr[:-1]:
             return FATAL_ERR
     for i in range(4, 11):
-        if strVanNo[i] not in vntVanNum[:-1]:
+        if not IsNumeric(strVanNo[i]):
             return FATAL_ERR
     intKeisuu = 1
     lngGoukei = 0
@@ -339,12 +339,12 @@ def HomePortGet(strSelTbl, strSelHozCd):
         sql += f"FROM TBCFSSYS{strSelTbl} "
         sql += f"WHERE HOZEICD = {dbField(strSelHozCd)}"
         RsTbCfsSys = SqlExecute(sql).all()
-        if not RsTbCfsSys.Rows:
+        if not RsTbCfsSys.Rows or RsTbCfsSys.Rows[0]["hportcd"] == chr(0):
             return ""
         else:
             return RsTbCfsSys.Rows[0]["hportcd"]
     except psycopg2.OperationalError as e:
-        raise postgresException(Error=e, DbTbl="TBCFSSYS" + strSelTbl, SqlStr=sql)
+        raise PostgresException(Error=e, DbTbl="TBCFSSYS" + strSelTbl, SqlStr=sql)
 
 
 def GetDemurg(GDemurg, strSelTbl):
@@ -662,34 +662,30 @@ def GetSeikyuNo(ProgramId, SystemData, iniUpdCd, iniWsNo):
 
         if GetFlg == 0:
             return DB_LOCK
-        SeikyuHead = SystemData.SEIKYUHNO[:6]
+        SeikyuHead = SystemData["SEIKYUHNO"][:6]
         if SeikyuHead == NowDate[:6]:
-            SeikyuSeq = round(float(SystemData.SEIKYUHNO[6:11])) + 1
+            SeikyuSeq = round(float(SystemData["SEIKYUHNO"][6:11])) + 1
         else:
             SeikyuHead = NowDate[:6]
             SeikyuSeq = 1
-        SystemData.SEIKYUHNO = SeikyuHead + f"{SeikyuSeq:04}"
-        SeikyuNo = SystemData.SEIKYUHNO
+        SystemData["SEIKYUHNO"] = SeikyuHead + f"{SeikyuSeq:04}"
+        SeikyuNo = SystemData["SEIKYUHNO"]
         with transaction.atomic():
             SqlStr = "UPDATE TBCFSSYS{strSelTbl} SET "
-            SqlStr += f"SEIKYUHNO = {dbField(SystemData.SEIKYUHNO)}, "
+            SqlStr += f"SEIKYUHNO = {dbField(SystemData['SEIKYUHNO'])}, "
             SqlStr += "UDATE = CURRENT_TIMESTAMP, "
             SqlStr += f"UPROGID = {dbField(ProgramId)}, "
             SqlStr += f"UWSID = {dbField(iniWsNo)}"
-            SqlStr += f" WHERE HOZEICD = {dbField(SystemData.HOZEICD)}"
+            SqlStr += f" WHERE HOZEICD = {dbField(SystemData['HOZEICD'])}"
             SqlExecute(SqlStr).execute()
         return DB_NOMAL_OK, SeikyuNo
     except psycopg2.OperationalError as e:
-        raise postgresException(Error=e, DbTbl="CFSシステムテーブル", SqlStr=SqlStr)
+        raise PostgresException(Error=e, DbTbl="CFSシステムテーブル", SqlStr=SqlStr)
 
 
 def TbCfsSysSELECT(SystemData, LockKbn, iniUpdCd):
     SqlStr = ""
-    WkTblKbn = ""
     try:
-        for i in range(len(iniUpdCd)):
-            if iniUpdCd[i] == SystemData.HOZEICD:
-                WkTblKbn = iniUpdCd[i]
         SqlStr += "SELECT "
         SqlStr += "HOZEICD, "
         SqlStr += "COMPANYNM, "
@@ -731,59 +727,59 @@ def TbCfsSysSELECT(SystemData, LockKbn, iniUpdCd):
         SqlStr += "GENGOCHG, "
         SqlStr += "SEIKYUHNO, "
         SqlStr += "TO_CHAR(CURRENT_TIMESTAMP,'YYYYMMDD') AS NOWDATE "
-        SqlStr += f"FROM TBCFSSYS{WkTblKbn}"
+        SqlStr += f"FROM TBCFSSYS{iniUpdCd}"
         SqlStr += " WHERE "
-        SqlStr += f"HOZEICD = {dbField(SystemData.HOZEICD)}"
+        SqlStr += f"HOZEICD = {dbField(SystemData['HOZEICD'])}"
         if LockKbn == csLOCK_ON:
             SqlStr += " FOR UPDATE NOWAIT"
         RsSys = SqlExecute(SqlStr).all()
         if not RsSys.Rows:
             return DB_NOT_FIND
-        SystemData.COMPANYNM = DbDataChange(RsSys.Rows[0]["companynm"])
-        SystemData.BRANCHNM = DbDataChange(RsSys.Rows[0]["branchnm"])
-        SystemData.JIMUSYCD = DbDataChange(RsSys.Rows[0]["jimusycd"])
-        SystemData.JIMUSYNM = DbDataChange(RsSys.Rows[0]["jimusynm"])
-        SystemData.JIMUSYADR = DbDataChange(RsSys.Rows[0]["jimusyadr"])
-        SystemData.JIMUSYTEL = DbDataChange(RsSys.Rows[0]["jimusytel"])
-        SystemData.JIMUSYFAX = DbDataChange(RsSys.Rows[0]["jimusyfax"])
-        SystemData.KEIJIMSG = DbDataChange(RsSys.Rows[0]["keijimsg"])
-        SystemData.HPORTCD = DbDataChange(RsSys.Rows[0]["hportcd"])
-        SystemData.HOZEINM = DbDataChange(RsSys.Rows[0]["hozeinm"])
-        SystemData.GWSKBN = DbDataChange(RsSys.Rows[0]["gwskbn"])
-        SystemData.GW1IP = DbDataChange(RsSys.Rows[0]["gw1ip"])
-        SystemData.GW1USERID = DbDataChange(RsSys.Rows[0]["gw1userid"])
-        SystemData.GW1PASSWD = DbDataChange(RsSys.Rows[0]["gw1passwd"])
-        SystemData.GW1NAME = DbDataChange(RsSys.Rows[0]["gw1name"])
-        SystemData.GW1SDIR = DbDataChange(RsSys.Rows[0]["gw1sdir"])
-        SystemData.GW2IP = DbDataChange(RsSys.Rows[0]["gw2ip"])
-        SystemData.GW2USERID = DbDataChange(RsSys.Rows[0]["gw2userid"])
-        SystemData.GW2PASSWD = DbDataChange(RsSys.Rows[0]["gw2passwd"])
-        SystemData.GW2NAME = DbDataChange(RsSys.Rows[0]["gw2name"])
-        SystemData.GW2SDIR = DbDataChange(RsSys.Rows[0]["gw2sdir"])
-        SystemData.USERCD = DbDataChange(RsSys.Rows[0]["usercd"])
-        SystemData.IDCD1 = DbDataChange(RsSys.Rows[0]["idcd1"])
-        SystemData.USERPSWD1 = DbDataChange(RsSys.Rows[0]["userpswd1"])
-        SystemData.IDCD2 = DbDataChange(RsSys.Rows[0]["idcd2"])
-        SystemData.USERPSWD2 = DbDataChange(RsSys.Rows[0]["userpswd2"])
-        SystemData.IOJNOHEAD = DbDataChange(RsSys.Rows[0]["iojnohead"])
-        SystemData.IOJNOMIN = DbDataChange(RsSys.Rows[0]["iojnomin"])
-        SystemData.IOJNOMAX = DbDataChange(RsSys.Rows[0]["iojnomax"])
-        SystemData.IOJNONOW = DbDataChange(RsSys.Rows[0]["iojnonow"])
-        SystemData.UNQFILENM = DbDataChange(RsSys.Rows[0]["unqfilenm"])
-        SystemData.TAXNEW = DbDataChange(RsSys.Rows[0]["taxnew"])
-        SystemData.TAXOLD = DbDataChange(RsSys.Rows[0]["taxold"])
-        SystemData.TAXCHG = DbDataChange(RsSys.Rows[0]["taxchg"])
-        SystemData.GENGONEW = DbDataChange(RsSys.Rows[0]["gengonew"])
-        SystemData.GENGOOLD = DbDataChange(RsSys.Rows[0]["gengoold"])
-        SystemData.GENGOCHG = DbDataChange(RsSys.Rows[0]["gengochg"])
-        SystemData.SEIKYUHNO = DbDataChange(RsSys.Rows[0]["seikyuhno"])
+        SystemData["COMPANYNM"] = DbDataChange(RsSys.Rows[0]["companynm"])
+        SystemData["BRANCHNM"] = DbDataChange(RsSys.Rows[0]["branchnm"])
+        SystemData["JIMUSYCD"] = DbDataChange(RsSys.Rows[0]["jimusycd"])
+        SystemData["JIMUSYNM"] = DbDataChange(RsSys.Rows[0]["jimusynm"])
+        SystemData["JIMUSYADR"] = DbDataChange(RsSys.Rows[0]["jimusyadr"])
+        SystemData["JIMUSYTEL"] = DbDataChange(RsSys.Rows[0]["jimusytel"])
+        SystemData["JIMUSYFAX"] = DbDataChange(RsSys.Rows[0]["jimusyfax"])
+        SystemData["KEIJIMSG"] = DbDataChange(RsSys.Rows[0]["keijimsg"])
+        SystemData["HPORTCD"] = DbDataChange(RsSys.Rows[0]["hportcd"])
+        SystemData["HOZEINM"] = DbDataChange(RsSys.Rows[0]["hozeinm"])
+        SystemData["GWSKBN"] = DbDataChange(RsSys.Rows[0]["gwskbn"])
+        SystemData["GW1IP"] = DbDataChange(RsSys.Rows[0]["gw1ip"])
+        SystemData["GW1USERID"] = DbDataChange(RsSys.Rows[0]["gw1userid"])
+        SystemData["GW1PASSWD"] = DbDataChange(RsSys.Rows[0]["gw1passwd"])
+        SystemData["GW1NAME"] = DbDataChange(RsSys.Rows[0]["gw1name"])
+        SystemData["GW1SDIR"] = DbDataChange(RsSys.Rows[0]["gw1sdir"])
+        SystemData["GW2IP"] = DbDataChange(RsSys.Rows[0]["gw2ip"])
+        SystemData["GW2USERID"] = DbDataChange(RsSys.Rows[0]["gw2userid"])
+        SystemData["GW2PASSWD"] = DbDataChange(RsSys.Rows[0]["gw2passwd"])
+        SystemData["GW2NAME"] = DbDataChange(RsSys.Rows[0]["gw2name"])
+        SystemData["GW2SDIR"] = DbDataChange(RsSys.Rows[0]["gw2sdir"])
+        SystemData["USERCD"] = DbDataChange(RsSys.Rows[0]["usercd"])
+        SystemData["IDCD1"] = DbDataChange(RsSys.Rows[0]["idcd1"])
+        SystemData["USERPSWD1"] = DbDataChange(RsSys.Rows[0]["userpswd1"])
+        SystemData["IDCD2"] = DbDataChange(RsSys.Rows[0]["idcd2"])
+        SystemData["USERPSWD2"] = DbDataChange(RsSys.Rows[0]["userpswd2"])
+        SystemData["IOJNOHEAD"] = DbDataChange(RsSys.Rows[0]["iojnohead"])
+        SystemData["IOJNOMIN"] = DbDataChange(RsSys.Rows[0]["iojnomin"])
+        SystemData["IOJNOMAX"] = DbDataChange(RsSys.Rows[0]["iojnomax"])
+        SystemData["IOJNONOW"] = DbDataChange(RsSys.Rows[0]["iojnonow"])
+        SystemData["UNQFILENM"] = DbDataChange(RsSys.Rows[0]["unqfilenm"])
+        SystemData["TAXNEW"] = DbDataChange(RsSys.Rows[0]["taxnew"])
+        SystemData["TAXOLD"] = DbDataChange(RsSys.Rows[0]["taxold"])
+        SystemData["TAXCHG"] = DbDataChange(RsSys.Rows[0]["taxchg"])
+        SystemData["GENGONEW"] = DbDataChange(RsSys.Rows[0]["gengonew"])
+        SystemData["GENGOOLD"] = DbDataChange(RsSys.Rows[0]["gengoold"])
+        SystemData["GENGOCHG"] = DbDataChange(RsSys.Rows[0]["gengochg"])
+        SystemData["SEIKYUHNO"] = DbDataChange(RsSys.Rows[0]["seikyuhno"])
         NowDate = DbDataChange(RsSys.Rows[0]["nowdate"])
         return DB_NOMAL_OK, NowDate
     except psycopg2.OperationalError as e:
         if e.pgcode == "55P03":
             return DB_LOCK, None
         else:
-            raise postgresException(Error=e, DbTbl="CFSシステムテーブル", SqlStr=SqlStr)
+            raise PostgresException(Error=e, DbTbl="CFSシステムテーブル", SqlStr=SqlStr)
 
 
 def DbDataChange(DbStr):
@@ -843,7 +839,7 @@ def GetRevenue(OpeCd, KGWeight, M3Measur, RynDataCnt, RynData, strSelTbl):
             RynTon = CompRynTon(f"{M3Measur :,.3f}")
         return DB_NOMAL_OK, RynTon, MinTon
     except psycopg2.OperationalError as e:
-        raise postgresException(Error=e, DbTbl="", SqlStr=SqlStr)
+        raise PostgresException(Error=e, DbTbl="", SqlStr=SqlStr)
 
 
 def sqlStringConvert(strSQL):
@@ -932,7 +928,7 @@ def Cm_TbOpeChk(strProcTbl, strOpeCd):
         sql += f"WHERE OPECD = {dbField(strOpeCd)}"
         return SqlExecute(sql)
     except psycopg2.OperationalError as e:
-        raise postgresException(Error=e, DbTbl="TBOPE" + strProcTbl, SqlStr=sql)
+        raise PostgresException(Error=e, DbTbl="TBOPE" + strProcTbl, SqlStr=sql)
 
 
 def Cm_TbVesselChk(strProcTbl, strVesselCd):
@@ -943,7 +939,7 @@ def Cm_TbVesselChk(strProcTbl, strVesselCd):
         sql += f"WHERE VESSELCD = {dbField(strVesselCd)}"
         return SqlExecute(sql)
     except psycopg2.OperationalError as e:
-        raise postgresException(Error=e, DbTbl="TBVESSEL" + strProcTbl, SqlStr=sql)
+        raise PostgresException(Error=e, DbTbl="TBVESSEL" + strProcTbl, SqlStr=sql)
 
 
 def Cm_TbDemurgChk(strProcTbl, strOpeCd):
@@ -954,7 +950,7 @@ def Cm_TbDemurgChk(strProcTbl, strOpeCd):
         sql += f"WHERE OPECD = {dbField(strOpeCd)}"
         return SqlExecute(sql)
     except psycopg2.OperationalError as e:
-        raise postgresException(Error=e, DbTbl="TBDEMURG" + strProcTbl, SqlStr=sql)
+        raise PostgresException(Error=e, DbTbl="TBDEMURG" + strProcTbl, SqlStr=sql)
 
 
 def Cm_TbForwardChk(strProcTbl, strFwdCd):
@@ -965,7 +961,7 @@ def Cm_TbForwardChk(strProcTbl, strFwdCd):
         sql += f"WHERE FWDCD = {dbField(strFwdCd)}"
         return SqlExecute(sql)
     except psycopg2.OperationalError as e:
-        raise postgresException(Error=e, DbTbl="TBFORWARD" + strProcTbl, SqlStr=sql)
+        raise PostgresException(Error=e, DbTbl="TBFORWARD" + strProcTbl, SqlStr=sql)
 
 
 def Cm_TbZWorkChk(strProcTbl, strZWorkCd):
@@ -976,7 +972,7 @@ def Cm_TbZWorkChk(strProcTbl, strZWorkCd):
         sql += f"WHERE ZWORKCD = {dbField(strZWorkCd)}"
         return SqlExecute(sql)
     except psycopg2.OperationalError as e:
-        raise postgresException(Error=e, DbTbl="TBZWORK" + strProcTbl, SqlStr=sql)
+        raise PostgresException(Error=e, DbTbl="TBZWORK" + strProcTbl, SqlStr=sql)
 
 
 def TxtOutSkCd_CodeCheck(request, TbInlandData, strProcTbl):
@@ -1006,7 +1002,7 @@ def TxtOutSkCd_CodeCheck(request, TbInlandData, strProcTbl):
             outInlandData["InlandNm"] = DbDataChange(RsInland.Rows[0]["inlandnm"])
         return True
     except psycopg2.OperationalError as e:
-        raise postgresException(Error=e, DbTbl="搬入出先テーブル", SqlStr=SqlStr)
+        raise PostgresException(Error=e, DbTbl="搬入出先テーブル", SqlStr=SqlStr)
 
 
 def Cm_TbShipSchChk(strProcTbl, strVesselCd, strVoyNo):
@@ -1018,7 +1014,7 @@ def Cm_TbShipSchChk(strProcTbl, strVesselCd, strVoyNo):
         sql += f" AND VOYNO = {dbField(strVoyNo)}"
         return SqlExecute(sql)
     except psycopg2.OperationalError as e:
-        raise postgresException(Error=e, DbTbl="TBSHIPSCH" + strProcTbl, SqlStr=sql)
+        raise PostgresException(Error=e, DbTbl="TBSHIPSCH" + strProcTbl, SqlStr=sql)
 
 
 def inpdatechk(strDate, format="%Y/%m/%d"):
