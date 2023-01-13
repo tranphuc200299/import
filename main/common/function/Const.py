@@ -223,3 +223,7 @@ rtnOraLock = -5  # '該当データロック中
 rtnOraDupErr = -6  # '該当データ重複エラー
 csOraConC = 1  # 'オラクルコネクト済み
 csOraConD = 0  # 'オラクル未コネクト
+
+MSG_DSP_ERROR = "Err"
+MSG_DSP_INFO = "Info"
+MSG_DSP_WARN = "Warn"
