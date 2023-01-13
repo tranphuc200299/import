@@ -1,11 +1,15 @@
 import logging
 import traceback
 from django.shortcuts import render
+
+from main.common.function import Const
 from main.common.utils import FileDirUtil
 from main.middleware.exception.exceptions import (
     RuntimeException,
-    BondAreaNameException
+    BondAreaNameException,
+    PostgresException
 )
+from main.common.function.DspMessage import MsgDspError
 
 logger = logging.getLogger(__name__)
 
@@ -21,11 +25,13 @@ class ExceptionHandleMiddleware(object):
         self.__write_logging(request, exception)
         if isinstance(exception, RuntimeException):
             request.context["lblMsg"] = exception.get_message()
+        elif isinstance(exception, PostgresException):
+            MsgDspError(request, Const.MSG_DSP_ERROR, exception.DbTbl, exception.get_message())
         elif isinstance(exception, BondAreaNameException):
             request.context["lblMsg"] = str(exception)
             return render(request, "home.html", request.context)
         else:
-            request.context["lblMsg"] = f"Server error: {str(exception)}"
+            MsgDspError(request, Const.MSG_DSP_ERROR, "システムエラー", f"システムエラーが発生しました。\n\n : {str(exception)}")
         url_name = request.resolver_match.url_name
         return render(request, FileDirUtil.get_html_dir_by_url_name(url_name), request.context)
 
