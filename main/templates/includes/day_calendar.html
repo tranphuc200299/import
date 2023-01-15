@@ -1,0 +1,14 @@
+{% load core_tags %}
+<button
+        id="txt_adaytp{{ sequence }}"
+        name="action"
+        value="txt_adaytp{{ sequence }}"
+        tabindex="{{tabIndex}}"
+        style="background-color: {{ sequence|sq2any:'BackColor'|id2contextvalue:request }};{% if sequence|sq2any:'Enabled'|id2contextvalue:request == False %} cursor: default {% endif %}"
+        {% if sequence|sq2any:'Enabled'|id2contextvalue:request == False %} disabled {% endif %}
+>
+{{ sequence|sq2any:'DateNum'|id2contextvalue:request }}<br><span id="{{sequence|sq2any:'DateText'}}_Span">{{ sequence|sq2any:'DateText'|id2contextvalue:request }}</span></button>
+<input type="hidden" id="{{sequence|sq2any:'DateNum'}}" name="{{sequence|sq2any:'DateNum'}}" value="{{ sequence|sq2any:'DateNum'|id2contextvalue:request }}"/>
+<input type="hidden" id="{{sequence|sq2any:'DateText'}}" name="{{sequence|sq2any:'DateText'}}" value="{{ sequence|sq2any:'DateText'|id2contextvalue:request }}"/>
+<input type="hidden" id="{{sequence|sq2any:'BackColor'}}" name="{{sequence|sq2any:'BackColor'}}" value="{{ sequence|sq2any:'BackColor'|id2contextvalue:request }}"/>
+<input type="hidden" id="{{sequence|sq2any:'Enabled'}}" name="{{sequence|sq2any:'Enabled'}}" value="{{ sequence|sq2any:'Enabled'|id2contextvalue:request }}"/>
