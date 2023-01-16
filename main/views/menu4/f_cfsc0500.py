@@ -4,12 +4,14 @@ from django.db import transaction
 from django.shortcuts import render
 
 from main.common.decorators import update_context, load_cfs_ini
-from main.common.function import SqlExecute, Common
-from main.common.function.Common import sqlStringConvert
+from main.common.function import SqlExecute, Common, Const
+from main.common.function.Common import dbField
 from main.common.function.Const import \
     FATAL_ERR, NOMAL_OK, csFKISANKBN_1, csFKISANKBN_2, csFCALC_1, csFCALC_2, csFCALC_3, DB_NOT_FIND
+from main.common.function.DspMessage import MsgDspError
 from main.common.function.TableCheck import TbOpe_TableCheck
 from main.common.utils import Response
+from main.middleware.exception.exceptions import PostgresException
 
 __logger = logging.getLogger(__name__)
 
@@ -67,12 +69,12 @@ def init_form(request, intMode):
 
 def inpdatachk1(request):
     if request.context["txt_aopecd"] == "":
-        request.context["lblMsg"] = "必須入力エラー", "オペレータコードを入力して下さい。"
+        MsgDspError(request, Const.MSG_DSP_WARN, "必須入力エラー", "オペレータコードを入力して下さい。")
         request.context["gSetField"] = "txt_aopecd"
         return FATAL_ERR
     intRtn = TbOpe_TableCheck(request.context["txt_aopecd"], request.cfs_ini["iniUpdTbl"])
     if intRtn == DB_NOT_FIND:
-        request.context["lblMsg"] = "コード未登録エラー", "Operator Code Tableが登録されていません。"
+        MsgDspError(request, Const.MSG_DSP_WARN, "コード未登録エラー", "Operator Code Tableが登録されていません。")
         request.context["gSetField"] = "txt_aopecd"
         return FATAL_ERR
     elif intRtn == FATAL_ERR:
@@ -83,14 +85,15 @@ def inpdatachk1(request):
 
 
 def cmd_search_Click(request):
+    sql = ""
     try:
         init_form(request, CFSC05_MODE1)
         if inpdatachk1(request) != NOMAL_OK:
             return
-        sql = "SELECT * "
+        sql += "SELECT * "
         sql += " FROM TBFREETM" + request.cfs_ini["iniUpdTbl"]
-        sql += " WHERE OPECD = " + sqlStringConvert(request.context['txt_aopecd'])
-        sql += " AND FREEKBN = " + sqlStringConvert(request.context['txt_afreekbn'])
+        sql += " WHERE OPECD = " + dbField(request.context['txt_aopecd'])
+        sql += " AND FREEKBN = " + dbField(request.context['txt_afreekbn'])
         sql += " FOR UPDATE NOWAIT"
         RsTbFreeTm = SqlExecute(sql).all()
         if len(RsTbFreeTm.Rows) == 0:
@@ -113,42 +116,41 @@ def cmd_search_Click(request):
         request.context["gSetField"] = "cmb_afksankbn"
 
     except Exception as e:
-        __logger.error(e)
-        # TODO
-        # OraError "TBSFREETM" & strProcTbl, sql
+        raise PostgresException(Error=e, DbTbl="TBFREETM" + request.cfs_ini["iniUpdTbl"], SqlStr=sql)
 
 
 def inpdatachk2(request):
     if request.context["txt_ifdays"] == "":
-        request.context["lblMsg"] = "必須入力エラー", "フリータイム日数を入力して下さい。"
+        MsgDspError(request, Const.MSG_DSP_WARN, "必須入力エラー", "フリータイム日数を入力して下さい。")
         request.context["gSetField"] = "txt_ifdays"
         return FATAL_ERR
     if not Common.IsNumeric(request.context["txt_ifdays"]):
-        request.context["lblMsg"] = "入力整合性エラー", "フリータイム日数は整数(ZZ9形式)で入力して下さい。"
+        MsgDspError(request, Const.MSG_DSP_WARN, "入力整合性エラー", "フリータイム日数は整数(ZZ9形式)で入力して下さい。")
         request.context["gSetField"] = "txt_ifdays"
         return FATAL_ERR
     if CFSC05_FDAYS_MIN > len(request.context["txt_ifdays"]) or CFSC05_FDAYS_MAX < len(request.context["txt_ifdays"]):
-        request.context["lblMsg"] = "入力整合性エラー", "フリータイム日数は" + str(CFSC05_FDAYS_MIN) + "から" + str(
-            CFSC05_FDAYS_MAX) + "以内で入力して下さい。"
+        MsgDspError(request, Const.MSG_DSP_WARN, "入力整合性エラー",
+                    "フリータイム日数は" + str(CFSC05_FDAYS_MIN) + str(CFSC05_FDAYS_MAX) + "以内で入力して下さい。")
         request.context["gSetField"] = "txt_ifdays"
         return FATAL_ERR
     return NOMAL_OK
 
 
 def cmd_delete_Click(request):
+    sql = ""
     try:
         with transaction.atomic():
-            sql = "DELETE FROM TBFREETM" + request.cfs_ini["iniUpdTbl"] + ""
-            sql += " WHERE OPECD = " + sqlStringConvert(request.context["txt_aopecd"])
-            sql += " AND FREEKBN = " + sqlStringConvert(request.context["txt_afreekbn"])
+            sql += "DELETE FROM TBFREETM" + request.cfs_ini["iniUpdTbl"] + ""
+            sql += " WHERE OPECD = " + dbField(request.context["txt_aopecd"])
+            sql += " AND FREEKBN = " + dbField(request.context["txt_afreekbn"])
             SqlExecute(sql).execute()
         init_form(request, CFSC05_MODE0)
         request.context["gSetField"] = "txt_aopecd"
 
     except Exception as e:
-        __logger.error(e)
         request.context["cmd_change_enable"] = False
         request.context["cmd_delete_enable"] = False
+        raise PostgresException(Error=e, DbTbl="TBFREETM" + request.cfs_ini["iniUpdTbl"], SqlStr=sql)
 
 
 def cmd_change_Click(request):
@@ -158,59 +160,61 @@ def cmd_change_Click(request):
         with transaction.atomic():
             sql = "UPDATE TBFREETM" + request.cfs_ini["iniUpdTbl"] + ""
             if request.context["cmb_afksankbn"] == "0":
-                sql += " SET FKISANKBN = " + sqlStringConvert("1") + ","
+                sql += " SET FKISANKBN = " + dbField("1") + ","
             if request.context["cmb_afksankbn"] == "1":
-                sql += " SET FKISANKBN = " + sqlStringConvert("2") + ","
+                sql += " SET FKISANKBN = " + dbField("2") + ","
             sql += "FDAYS = " + request.context["txt_ifdays"] + ","
             if request.context["cmb_afcalc"] == "0":
-                sql += " FCALC = " + sqlStringConvert("1") + ","
+                sql += " FCALC = " + dbField("1") + ","
             elif request.context["cmb_afcalc"] == "1":
-                sql += " FCALC = " + sqlStringConvert("2") + ","
+                sql += " FCALC = " + dbField("2") + ","
             elif request.context["cmb_afcalc"] == "2":
-                sql += " FCALC = " + sqlStringConvert("3") + ","
+                sql += " FCALC = " + dbField("3") + ","
             sql += " UDATE = CURRENT_TIMESTAMP" + ","
-            sql += "UWSID = " + sqlStringConvert(request.cfs_ini["iniWsNo"]) + " "
-            sql += " WHERE OPECD = " + sqlStringConvert(request.context["txt_aopecd"])
-            sql += " AND FREEKBN = " + sqlStringConvert(request.context["txt_afreekbn"])
+            sql += "UWSID = " + dbField(request.cfs_ini["iniWsNo"]) + " "
+            sql += " WHERE OPECD = " + dbField(request.context["txt_aopecd"])
+            sql += " AND FREEKBN = " + dbField(request.context["txt_afreekbn"])
             SqlExecute(sql).execute()
             init_form(request, CFSC05_MODE0)
             request.context["gSetField"] = "txt_aopecd"
     except Exception as e:
-        __logger.error(e)
         request.context["cmd_change_enable"] = False
         request.context["cmd_delete_enable"] = False
+        raise PostgresException(Error=e, DbTbl="TBFREETM" + request.cfs_ini["iniUpdTbl"], SqlStr=sql)
 
 
 def cmd_entry_Click(request):
+    sql = ""
     try:
         if inpdatachk2(request) != NOMAL_OK:
             return
         with transaction.atomic():
-            sql = "INSERT INTO TBFREETM" + request.cfs_ini["iniUpdTbl"] + ""
+            sql += "INSERT INTO TBFREETM" + request.cfs_ini["iniUpdTbl"] + ""
             sql += " (OPECD,FREEKBN,FKISANKBN,FDAYS,FCALC,UDATE,UWSID) "
             sql += " VALUES ("
-            sql += sqlStringConvert(request.context["txt_aopecd"]) + ","
-            sql += sqlStringConvert(request.context["txt_afreekbn"]) + ","
+            sql += dbField(request.context["txt_aopecd"]) + ","
+            sql += dbField(request.context["txt_afreekbn"]) + ","
             if str(request.context["cmb_afksankbn"]) == "0":
-                sql += sqlStringConvert("1") + ","
+                sql += dbField("1") + ","
             elif str(request.context["cmb_afksankbn"]) == "1":
-                sql += sqlStringConvert("2") + ","
-            sql += sqlStringConvert(request.context['txt_ifdays']) + ","
+                sql += dbField("2") + ","
+            sql += dbField(request.context['txt_ifdays']) + ","
             if request.context["cmb_afcalc"] == "0":
-                sql += sqlStringConvert("1") + ","
+                sql += dbField("1") + ","
             elif request.context["cmb_afcalc"] == "1":
-                sql += sqlStringConvert("2") + ","
+                sql += dbField("2") + ","
             elif request.context["cmb_afcalc"] == "2":
-                sql += sqlStringConvert("3") + ","
+                sql += dbField("3") + ","
             sql += "CURRENT_TIMESTAMP" + ","
-            sql += sqlStringConvert(request.cfs_ini["iniWsNo"]) + ")"
+            sql += dbField(request.cfs_ini["iniWsNo"]) + ")"
             SqlExecute(sql).execute()
             init_form(request, CFSC05_MODE0)
             request.context["gSetField"] = "txt_aopecd"
 
-    except Exception as a:
-        __logger.error(a)
+    except Exception as e:
+
         request.context["cmd_entry_enable"] = False
+        raise PostgresException(Error=e, DbTbl="TBFREETM" + request.cfs_ini["iniUpdTbl"], SqlStr=sql)
 
 
 def cmd_cancel_Click(request):
