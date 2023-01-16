@@ -601,27 +601,6 @@ width:100px;
     margin-right: 15px;
 }
 
-.calendar_form {
-    display: flex;
-    flex: 3.5;
-}
-
-.calendar_form label {
-    line-height: 44px;
-    font-family: 'Poppins';
-    font-style: normal;
-    font-weight: 400;
-    font-size: 14px;
-    color: #3E3E4C;
-}
-
-.calendar_form input{
-    width: 80px;
-}
-
-.calendar{
-    width:34%;
-}
 .form_calendar {
     height : 100%;
 }
