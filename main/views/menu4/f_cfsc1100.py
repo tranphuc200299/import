@@ -1,14 +1,16 @@
 import logging
-
-from django.db import transaction
+from django.db import IntegrityError, transaction
 from django.shortcuts import render
-
 from main.common.decorators import update_context, load_cfs_ini
 from main.common.function import SqlExecute
 from main.common.function.Common import DbDataChange, sqlStringConvert, dbField
-from main.common.function.Const import NOMAL_OK, FATAL_ERR, DB_NOT_FIND, DB_FATAL_ERR, DB_NOMAL_OK
+from main.common.function.DspMessage import MsgDspError
+from main.common.function.Const import NOMAL_OK, FATAL_ERR, DB_NOT_FIND, DB_FATAL_ERR, MSG_DSP_ERROR, MSG_DSP_WARN
 from main.common.function.TableCheck import TbOpe_TableCheck, TbPort_TableCheck
 from main.common.utils import Response
+from main.middleware.exception.exceptions import (
+    PostgresException
+)
 
 __logger = logging.getLogger(__name__)
 
@@ -68,13 +70,12 @@ def init_form(request, intMode):
 def txt_aportcd_LostFocus(request):
     RsTbPort = Cm_TbPortChk(request, request.context["txt_aportcd"])
     if not RsTbPort.Rows:
-        # TODO
-        # MsgDspWarning "コード未登録エラー", "Port Code Tableが存在しません。"
+        MsgDspError(request, MSG_DSP_ERROR, "コード未登録エラー", "Port Code Tableが存在しません。")
         request.context["gSetField"] = "txt_aportcd"
         return request.context["gSetField"]
     else:
-        request.context["lbl_aportnm"] = DbDataChange(RsTbPort.Rows[0]["PORTNM"])
-        return request.context["lbl_aopenm"]
+        request.context["lbl_aportnm"] = DbDataChange(RsTbPort.Rows[0]["portnm"])
+        return "lbl_aportnm"
 
 
 def txt_asportcd_Change(request):
@@ -99,40 +100,25 @@ def txt_aportcd_Change(request):
 
 
 def Cm_TbPortChk(request, strPortCd):
+    sql = ""
     try:
         sql = "SELECT PORTNM "
         sql += "FROM TBPORT" + request.cfs_ini["iniUpdTbl"] + " "
         sql += "WHERE PORTCD = " + sqlStringConvert(strPortCd)
         return SqlExecute(sql).all()
-    except Exception as e:
+    except IntegrityError as e:
         __logger.error(e)
-        raise Exception(e)
-        # TODO
-        # OraError "TBPORT" + strProcTbl, sql
-
-
-def Cm_TbOpeChk(request, strOpeCd):
-    try:
-        sql = "SELECT OPENM "
-        sql += "FROM TBOPE" + request.cfs_ini["iniUpdTbl"] + " "
-        sql += "WHERE OPECD = " + sqlStringConvert(strOpeCd)
-        return SqlExecute(sql).all()
-    except Exception as e:
-        __logger.error(e)
-        raise Exception(e)
-        # TODO
-        # OraError "TBOPE" + strProcTbl, sql
+        raise PostgresException(Error=e, DbTbl="TBPORT" + request.cfs_ini["iniUpdTbl"], SqlStr=sql)
 
 
 def inpdatachk1(request):
     if not request.context["txt_aopecd"]:
-        # TODO
-        # MsgDspWarning "必須入力エラー", "オペレータコードを入力して下さい。"
+        MsgDspError(request, MSG_DSP_WARN, "必須入力エラー", "オペレータコードを入力して下さい。")
         request.context["gSetField"] = "txt_aopecd"
         return FATAL_ERR
-    intRtn = TbOpe_TableCheck(request, request.context["txt_aopecd"])
+    intRtn = TbOpe_TableCheck(request.context["txt_aopecd"], request.cfs_ini["iniUpdTbl"])
     if intRtn == DB_NOT_FIND:
-        # MsgDspWarning "コード未登録エラー", "Operator Code Tableが登録されていません。"
+        MsgDspError(request, MSG_DSP_WARN, "コード未登録エラー", "Operator Code Tableが登録されていません。")
         request.context["gSetField"] = "txt_aopecd"
         return FATAL_ERR
     elif intRtn == DB_FATAL_ERR:
@@ -142,6 +128,7 @@ def inpdatachk1(request):
 
 
 def cmd_search_Click(request):
+    sql = ""
     try:
         init_form(request, CFSC11_MODE1)
         if inpdatachk1(request) != NOMAL_OK:
@@ -157,28 +144,24 @@ def cmd_search_Click(request):
         else:
             request.context["txt_aportcd"] = DbDataChange(RsTbSPort.Rows[0]["portcd"])
             RsTbPort = Cm_TbPortChk(request, request.context["txt_aportcd"])
-            if not RsTbPort.Rows:
+            if RsTbPort.Rows:
                 request.context["lbl_aportnm"] = DbDataChange(RsTbPort.Rows[0]["portnm"])
-        request.context["cmd_change_enable"] = False
-        request.context["cmd_delete_enable"] = False
+        request.context["cmd_change_enable"] = True
+        request.context["cmd_delete_enable"] = True
         request.context["gSetField"] = "txt_aportcd"
-    except Exception as e:
+    except IntegrityError as e:
         __logger.error(e)
-        raise Exception(e)
-        # TODO
-        # OraError "TBSPORT" + strProcTbl, sql
+        raise PostgresException(Error=e, DbTbl="TBSPORT" + request.cfs_ini["iniUpdTbl"], SqlStr=sql)
 
 
 def inpdatachk2(request):
     if request.context["txt_aportcd"] == '':
-        # TODO
-        # MsgDspWarning "必須入力エラー", "ポートコードを入力して下さい。"
+        MsgDspError(request, MSG_DSP_WARN, "必須入力エラー", "ポートコードを入力して下さい。")
         request.context["gSetField"] = "txt_aportcd"
         return FATAL_ERR
-    intRtn = TbPort_TableCheck(request, request.context["txt_aportcd"])
+    intRtn = TbPort_TableCheck(request.context["txt_aportcd"],  request.cfs_ini["iniUpdTbl"])
     if intRtn == DB_NOT_FIND:
-        # TODO
-        # MsgDspWarning "コード未登録エラー", "Port Code Tableが登録されていません。"
+        MsgDspError(request, MSG_DSP_WARN, "コード未登録エラー", "Port Code Tableが登録されていません。")
         request.context["gSetField"] = "txt_aportcd"
         return FATAL_ERR
     elif intRtn == DB_FATAL_ERR:
@@ -188,6 +171,7 @@ def inpdatachk2(request):
 
 
 def cmd_entry_Click(request):
+    sql = ""
     try:
         if inpdatachk2(request) != NOMAL_OK:
             return
@@ -198,20 +182,23 @@ def cmd_entry_Click(request):
         sql += dbField(request.context["txt_asportcd"]) + ","
         sql += dbField(request.context["txt_aportcd"]) + ","
         sql += "CURRENT_TIMESTAMP,"
-        sql += dbField(+ request.cfs_ini["iniWsNo"]) + ")"
+        sql += dbField(request.cfs_ini["iniWsNo"]) + ")"
         with transaction.atomic():
             SqlExecute(sql).execute()
         init_form(request, CFSC11_MODE0)
         request.context["gSetField"] = "txt_aopecd"
+    except IntegrityError as e:
+        request.context["cmd_entry_enable"] = False
+        __logger.error(e)
+        raise PostgresException(Error=e, DbTbl="TBSPORT" + request.cfs_ini["iniUpdTbl"], SqlStr=sql)
     except Exception as e:
         __logger.error(e)
         request.context["cmd_entry_enable"] = False
         raise Exception(e)
-        # TODO
-        # OraError "TBSPORT" + strProcTbl, sql
 
 
 def cmd_change_Click(request):
+    sql = ""
     try:
         if inpdatachk2(request) != NOMAL_OK:
             return
@@ -225,14 +212,17 @@ def cmd_change_Click(request):
             SqlExecute(sql).execute()
         init_form(request, CFSC11_MODE0)
         request.context["gSetField"] = "txt_aopecd"
+    except IntegrityError as e:
+        request.context["cmd_change_enable"] = False
+        request.context["cmd_delete_enable"] = False
+        __logger.error(e)
+        raise PostgresException(Error=e, DbTbl="TBSPORT" + request.cfs_ini["iniUpdTbl"], SqlStr=sql)
 
     except Exception as e:
         __logger.error(e)
         request.context["cmd_change_enable"] = False
         request.context["cmd_delete_enable"] = False
         raise Exception(e)
-        # TODO
-        # OraError "TBSPORT" + strProcTbl, sql
 
 
 def cmd_delete_Click(request):
@@ -244,13 +234,16 @@ def cmd_delete_Click(request):
             SqlExecute(sql).execute()
         init_form(request, CFSC11_MODE0)
         request.context["gSetField"] = "txt_aopecd"
+    except IntegrityError as e:
+        request.context["cmd_change_enable"] = False
+        request.context["cmd_delete_enable"] = False
+        __logger.error(e)
+        raise PostgresException(Error=e, DbTbl="TBSPORT" + request.cfs_ini["iniUpdTbl"], SqlStr=sql)
     except Exception as e:
         __logger.error(e)
         request.context["cmd_change_enable"] = False
         request.context["cmd_delete_enable"] = False
         raise Exception(e)
-        # TODO
-        # OraError "TBVESSEL" + strProcTbl, sql
 
 
 def cmd_cancel_Click(request):

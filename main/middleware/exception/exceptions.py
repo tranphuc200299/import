@@ -33,7 +33,7 @@ class PostgresException(Exception):
         self.Error = kwargs.pop('Error ', '')
 
     def get_message(self):
-        if self.Error.pgcode == "55P03":
+        if self.Error.__cause__.pgcode == "55P03":
             message = "ＤＢ読み込みエラー発生\n\n該当データは他で使用中です。"
         else:
             message = "ＤＢエラー発生\n\n" + str(self.Error) + "\n" + self.SqlStr

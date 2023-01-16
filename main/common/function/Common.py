@@ -66,7 +66,7 @@ def ValidDate(strIn: int) -> bool:
 
 
 def dbField(strIn: str) -> str:
-    strIn = strIn.replace("'", "''")
+    strIn = str(strIn).replace("'", "''")
     if strIn == "":
         return "Chr(00)"
     else:
