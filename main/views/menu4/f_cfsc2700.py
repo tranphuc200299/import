@@ -4,10 +4,12 @@ from django.db import transaction
 from django.shortcuts import render
 
 from main.common.decorators import update_context, load_cfs_ini
-from main.common.function import SqlExecute
+from main.common.function import SqlExecute, Const
 from main.common.function.Common import dbField, DbDataChange
 from main.common.function.Const import FATAL_ERR, NOMAL_OK
+from main.common.function.DspMessage import MsgDspError
 from main.common.utils import Response
+from main.middleware.exception.exceptions import PostgresException
 
 __logger = logging.getLogger(__name__)
 
@@ -46,10 +48,7 @@ def Form_Load(request):
         request.context["cmd_change_enable"] = False
         request.context["cmd_delete_enable"] = False
     except Exception as e:
-        __logger.error(e)
-        # TODO
-        # OraError("", "")
-
+        raise PostgresException(Error=e, DbTbl="", SqlStr="")
 
 def txt_ainlandcd_Change(request):
     request.context["txt_ainlandcd"] = request.context["txt_ainlandcd"].upper()
@@ -76,10 +75,7 @@ def cmd_search_Click(request):
             request.context["cmd_delete_enable"] = True
         request.context["gSetField"] = "txt_ainlandnm"
     except Exception as e:
-        __logger.error(e)
-        # TODO
-        # OraError "TBINLAND" & strProcTbl, sql
-
+        raise PostgresException(Error=e, DbTbl="TBINLAND" + request.cfs_ini["iniUpdTbl"], SqlStr=sql)
 
 def cmd_entry_Click(request):
     try:
@@ -97,10 +93,8 @@ def cmd_entry_Click(request):
         init_form(request, CFSC27_MODE0)
         request.context["gSetField"] = "txt_ainlandcd"
     except Exception as e:
-        __logger.error(e)
-        # TODO
-        # OraError "TBINLAND" & strProcTbl, sql
         request.context["cmd_entry_enable"] = False
+        raise PostgresException(Error=e, DbTbl="TBINLAND" + request.cfs_ini["iniUpdTbl"], SqlStr=sql)
 
 
 def cmd_change_Click(request):
@@ -117,11 +111,9 @@ def cmd_change_Click(request):
         init_form(request, CFSC27_MODE0)
         request.context["gSetField"] = "txt_ainlandcd"
     except Exception as e:
-        __logger.error(e)
-        # TODO
-        # OraError "TBPACKG" & strProcTbl, sql
         request.context["cmd_change_enable"] = False
         request.context["cmd_delete_enable"] = False
+        raise PostgresException(Error=e, DbTbl="TBINLAND" + request.cfs_ini["iniUpdTbl"], SqlStr=sql)
 
 
 def cmd_delete_Click(request):
@@ -133,11 +125,9 @@ def cmd_delete_Click(request):
         init_form(request, CFSC27_MODE0)
         request.context["gSetField"] = "txt_ainlandcd"
     except Exception as e:
-        __logger.error(e)
-        # TODO
-        # OraError "TBPACKG" & strProcTbl, sql
         request.context["cmd_change_enable"] = False
         request.context["cmd_delete_enable"] = False
+        raise PostgresException(Error=e, DbTbl="TBINLAND" + request.cfs_ini["iniUpdTbl"], SqlStr=sql)
 
 
 def cmd_cancel_Click(request):
@@ -157,7 +147,7 @@ def init_form(request, intMode):
 
 def inpdatachk1(request):
     if request.context["txt_ainlandcd"] == "":
-        request.context["lblMsg"] = "必須入力エラー搬入出先コードを入力して下さい。"
+        MsgDspError(request, Const.MSG_DSP_WARN, "必須入力エラー", "搬入出先コードを入力して下さい。")
         request.context["gSetField"] = "txt_ainlandcd"
         return FATAL_ERR
     return NOMAL_OK
@@ -165,11 +155,11 @@ def inpdatachk1(request):
 
 def inpdatachk2(request):
     if request.context["txt_ainlandnm"] == "":
-        request.context["lblMsg"] = "必須入力エラー搬入出先名称を入力して下さい。"
+        MsgDspError(request, Const.MSG_DSP_WARN, "必須入力エラー", "搬入出先名称を入力して下さい。")
         request.context["gSetField"] = "txt_ainlandnm"
         return FATAL_ERR
     if 30 < len(request.context["txt_ainlandnm"]):
-        request.context["lblMsg"] = "入力桁数エラー", "搬入出先名称は30桁以内で入力して下さい。"
+        MsgDspError(request, Const.MSG_DSP_WARN, "入力桁数エラー", "搬入出先名称は30桁以内で入力して下さい。")
         request.context["gSetField"] = "txt_ainlandnm"
         return FATAL_ERR
     return NOMAL_OK
