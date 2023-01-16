@@ -89,7 +89,7 @@ $(function () {
                     value = responseData[key]
                     if (key.startsWith("cmd")) {
                         key = key.replace("_enable", "")
-                        if (value == false) {
+                        if (value == "False") {
                             $(`#${key}`).attr("disabled", "disabled");
                             $(`#${key}`).addClass("inactive")
                         } else {

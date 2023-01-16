@@ -636,6 +636,7 @@ width:100px;
     border: 1px solid #e0e0e0;
     width: calc(100%/7);
 }
+
 .calendar_table_row td button {
     font-family: 'Inter';
     font-style: normal;
@@ -646,8 +647,18 @@ width:100px;
     cursor: pointer;
     color: #3E3E4C;
     width: 100%;
-    height: 100%
+    height: 100%;
+    text-align: left;
 }
+
+.calendar_table_row td button div{
+    text-align: center;
+}
+
+.btn-hover:hover {
+    background-color: #7abaff !important;
+}
+
 .calendar_about {
     width:100%;
 }

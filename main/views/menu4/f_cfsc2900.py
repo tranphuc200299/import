@@ -17,16 +17,18 @@ PROGID = "cfsm2900"
 CFSC29_MODE0 = 0
 CFSC29_MODE1 = 1
 CFSC29_LBL_MAX = 42
-CFSC29_DAYKBN_OUT_BOUND = "No"
+CFSC29_DAYKBN_OUT_BOUND = ""
 CFSC29_DAYKBN_WEK = ""
 CFSC29_DAYKBN_SAT = "土曜"
 CFSC29_DAYKBN_SUN = "日曜"
 CFSC29_DAYKBN_HOL = "祝日"
-CFSC29_DAYKBN_COL_OUT_BOUND = "#FFFFFF"
-CFSC29_DAYKBN_COL_WEK = "#FFC0C0"
-CFSC29_DAYKBN_COL_SAT = "#FF8080"
-CFSC29_DAYKBN_COL_SUN = "#8080FF"
-CFSC29_DAYKBN_COL_HOL = "#8080FF"
+CFSC29_DAYKBN_COL_OUT_BOUND = "#BBBBC3"
+CFSC29_DAYKBN_COL_WEK = "#FFFFFF"
+CFSC29_DAYKBN_COL_SAT = "#BFCEF2"
+CFSC29_DAYKBN_COL_SUN = "#FAC5CB"
+CFSC29_DAYKBN_COL_HOL = "#FE98A3"
+CFSC29_DAYKBN_TEXT_IN_MONTH_COL = "#000000"
+CFSC29_DAYKBN_TEXT_OUT_MONTH_COL = "#FFFFFF"
 CFSC29_YEAR_MIN = 1
 CFSC29_YEAR_MAX = 12
 
@@ -162,7 +164,8 @@ def cmd_search_Click(request):
             request.context[f"txt_adaytp{i}_DateNum"] = total_date_previous_month - reversed_index + 1
             request.context[f"txt_adaytp{i}_DateText"] = CFSC29_DAYKBN_OUT_BOUND
             request.context[f"txt_adaytp{i}_BackColor"] = CFSC29_DAYKBN_COL_OUT_BOUND
-            request.context[f"txt_adaytp{i}_Enabled"] = False
+            request.context[f"txt_adaytp{i}_Enabled"] = "False"
+            request.context[f"txt_adaytp{i}_TextColor"] = CFSC29_DAYKBN_TEXT_OUT_MONTH_COL
             reversed_index -= 1
 
         # get day in next month
@@ -172,7 +175,8 @@ def cmd_search_Click(request):
             request.context[f"txt_adaytp{i}_DateNum"] = increase_index
             request.context[f"txt_adaytp{i}_DateText"] = CFSC29_DAYKBN_OUT_BOUND
             request.context[f"txt_adaytp{i}_BackColor"] = CFSC29_DAYKBN_COL_OUT_BOUND
-            request.context[f"txt_adaytp{i}_Enabled"] = False
+            request.context[f"txt_adaytp{i}_Enabled"] = "False"
+            request.context[f"txt_adaytp{i}_TextColor"] = CFSC29_DAYKBN_TEXT_OUT_MONTH_COL
             increase_index += 1
 
         if not RsTbCalender.Rows:
@@ -188,8 +192,10 @@ def cmd_search_Click(request):
                 else:
                     request.context[f"txt_adaytp{i}_DateText"] = CFSC29_DAYKBN_WEK
                     request.context[f"txt_adaytp{i}_BackColor"] = CFSC29_DAYKBN_COL_WEK
+                request.context[f"txt_adaytp{i}_ThisMonth"] = "True"
+                request.context[f"txt_adaytp{i}_TextColor"] = CFSC29_DAYKBN_TEXT_IN_MONTH_COL
                 request.context[f"txt_adaytp{i}_DateNum"] = i - intStrLbl + 1
-                request.context[f"txt_adaytp{i}_Enabled"] = True
+                request.context[f"txt_adaytp{i}_Enabled"] = "True"
             HolidaySet_proc(request, intStrLbl, total_date_need_of_current_month)
             request.context["cmd_entry_enable"] = "True"
         else:
@@ -223,8 +229,10 @@ def cmd_search_Click(request):
                 elif stype_strDay == Const.csDAYKBN_9:
                     request.context[f"txt_adaytp{id_html}_DateText"] = CFSC29_DAYKBN_OUT_BOUND
                     request.context[f"txt_adaytp{id_html}_BackColor"] = CFSC29_DAYKBN_COL_OUT_BOUND
+                request.context[f"txt_adaytp{id_html}_ThisMonth"] = "True"
+                request.context[f"txt_adaytp{id_html}_TextColor"] = CFSC29_DAYKBN_TEXT_IN_MONTH_COL
                 request.context[f"txt_adaytp{id_html}_DateNum"] = date_num
-                request.context[f"txt_adaytp{id_html}_Enabled"] = True
+                request.context[f"txt_adaytp{id_html}_Enabled"] = "True"
                 date_num += 1
             request.context["cmd_change_enable"] = "True"
             request.context["cmd_delete_enable"] = "True"
@@ -250,8 +258,6 @@ def cmd_entry_Click(request):
                 strDayKbn += Const.csDAYKBN_3
             elif txt_adaytp == CFSC29_DAYKBN_HOL:
                 strDayKbn += Const.csDAYKBN_4
-            elif txt_adaytp == CFSC29_DAYKBN_OUT_BOUND:
-                strDayKbn += Const.csDAYKBN_9
 
         sql += "INSERT INTO TBCALENDER" + request.cfs_ini["iniUpdTbl"] + " "
         sql += "(YMDATE,DAYKBN,UDATE,UWSID) "
@@ -264,6 +270,9 @@ def cmd_entry_Click(request):
             Common.SqlExecute(sql).execute()
         init_form(request, CFSC29_MODE0)
         request.context["gSetField"] = "txt_ayear"
+        request.context["cmd_entry_enable"] = "False"
+        request.context["cmd_change_enable"] = "False"
+        request.context["cmd_delete_enable"] = "False"
     except Exception as e:
         request.context["cmd_entry_enable"] = False
         raise PostgresException(Error=str(e), DbTbl="TBCALENDER" + request.cfs_ini["iniUpdTbl"], SqlStr=sql)
@@ -299,6 +308,9 @@ def cmd_change_Click(request):
             Common.SqlExecute(sql).execute()
         init_form(request, CFSC29_MODE0)
         request.context["gSetField"] = "txt_ayear"
+        request.context["cmd_entry_enable"] = "False"
+        request.context["cmd_change_enable"] = "False"
+        request.context["cmd_delete_enable"] = "False"
     except Exception as e:
         request.context["cmd_change_enable"] = "False"
         request.context["cmd_delete_enable"] = "False"
@@ -315,6 +327,9 @@ def cmd_delete_Click(request):
             Common.SqlExecute(sql).execute()
         init_form(request, CFSC29_MODE0)
         request.context["gSetField"] = "txt_ayear"
+        request.context["cmd_entry_enable"] = "False"
+        request.context["cmd_change_enable"] = "False"
+        request.context["cmd_delete_enable"] = "False"
     except Exception as e:
         request.context["cmd_change_enable"] = "False"
         request.context["cmd_delete_enable"] = "False"
@@ -338,7 +353,8 @@ def init_form(request, intMode):
         request.context[f"txt_adaytp{intCnt}_BackColor"] = CFSC29_DAYKBN_COL_WEK
         request.context[f"txt_adaytp{intCnt}_DateNum"] = ""
         request.context[f"txt_adaytp{intCnt}_DateText"] = ""
-        request.context[f"txt_adaytp{intCnt}_Enabled"] = True
+        request.context[f"txt_adaytp{intCnt}_Enabled"] = "False"
+        request.context[f"txt_adaytp{intCnt}_ThisMonth"] = "False"
 
 
 def inpdatachk1(request):
