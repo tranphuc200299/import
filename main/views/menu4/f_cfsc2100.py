@@ -1,6 +1,6 @@
 import logging
 
-from django.db import transaction
+from django.db import transaction, IntegrityError
 from django.shortcuts import render
 
 from main.common.decorators import update_context, load_cfs_ini
@@ -51,7 +51,6 @@ def Form_Load(request):
     request.context["cmd_delete_enable"] = False
 
 
-
 def txt_anacgymcd_Change(request):
     request.context["txt_anacgymcd"] = request.context["txt_anacgymcd"].upper()
     request.context["cmd_entry_enable"] = False
@@ -85,7 +84,7 @@ def cmd_search_Click(request):
             request.context["cmd_change_enable"] = True
             request.context["cmd_delete_enable"] = True
         request.context["gSetField"] = "txt_aprmsybt"
-    except Exception as e:
+    except IntegrityError as e:
         raise PostgresException(Error=e, DbTbl="TBPRMSYBTH" + request.cfs_ini["iniUpdTbl"], SqlStr=sql)
 
 
@@ -107,7 +106,7 @@ def cmd_entry_Click(request):
             SqlExecute(sql).execute()
         init_form(request, CFSC21_MODE0)
         request.context["gSetField"] = "txt_anacgymcd"
-    except Exception as e:
+    except IntegrityError as e:
         request.context["cmd_entry_enable"] = False
         raise PostgresException(Error=e, DbTbl="TBPRMSYBTH" + request.cfs_ini["iniUpdTbl"], SqlStr=sql)
 
@@ -115,21 +114,10 @@ def cmd_entry_Click(request):
 def cmd_change_Click(request):
     sql = ""
     try:
-        sql += "UPDATE TBVESSEL" + request.cfs_ini["iniUpdTbl"] + " "
-        sql += "SET VESSELNM = " + dbField(request.context["txt_avesselnm"]) + ","
-        sql += "CALLSIGN = " + dbField(request.context["txt_acallsign"]) + ","
-        sql += "OPECD = " + dbField(request.context["txt_aopecd"]) + ","
-        sql += "LPORTCD = " + dbField(request.context["txt_alportcd"]) + ","
-        sql += "BERTHNM = " + dbField(request.context["txt_aberthnm"]) + ","
-        sql += "LINE = " + dbField(request.context["txt_aline"]) + ","
-        sql += "UDATE = CURRENT_TIMESTAMP" + ","
-        sql += "UWSID = " + dbField(request.cfs_ini["iniWsNo"]) + " "
-        sql += "WHERE VESSELCD = " + dbField(request.context["txt_avesselcd"])
-
         sql = "UPDATE TBPRMSYBTH" + request.cfs_ini["iniUpdTbl"] + " "
         sql += "SET PRMSYBT = " + dbField(request.context["txt_aprmsybt"]) + ","
         sql += "PRMSYBTNM = " + dbField(request.context["txt_aprmsybtnm"]) + ","
-        sql += "UDATE = SYSDATE" + ","
+        sql += "UDATE = CURRENT_TIMESTAMP" + ","
         sql += "UWSID = " + dbField(request.cfs_ini["iniWsNo"]) + " "
         sql += "WHERE NACGYMCD = " + dbField(request.context["txt_anacgymcd"])
         with transaction.atomic():
@@ -137,7 +125,7 @@ def cmd_change_Click(request):
         init_form(request, CFSC21_MODE0)
         request.context["gSetField"] = "txt_anacgymcd"
 
-    except Exception as e:
+    except IntegrityError as e:
         request.context["cmd_change_enable"] = False
         request.context["cmd_delete_enable"] = False
         raise PostgresException(Error=e, DbTbl="TBPRMSYBTH" + request.cfs_ini["iniUpdTbl"], SqlStr=sql)
@@ -151,7 +139,7 @@ def cmd_delete_Click(request):
             SqlExecute(sql).execute()
         init_form(request, CFSC21_MODE0)
         request.context["gSetField"] = "txt_anacgymcd"
-    except Exception as e:
+    except IntegrityError as e:
         request.context["cmd_change_enable"] = False
         request.context["cmd_delete_enable"] = False
         raise PostgresException(Error=e, DbTbl="TBPRMSYBTH" + request.cfs_ini["iniUpdTbl"], SqlStr=sql)
@@ -189,8 +177,7 @@ def inpdatachk2(request):
 
     if request.context["txt_aprmsybtnm"] != "":
         if len(request.context["txt_aprmsybtnm"]) > 25:
-            MsgDspError(request, Const.MSG_DSP_WARN,"入力桁数エラー", "申告種別名称は25桁以内で入力して下さい。")
+            MsgDspError(request, Const.MSG_DSP_WARN, "入力桁数エラー", "申告種別名称は25桁以内で入力して下さい。")
             request.context["gSetField"] = "txt_aprmsybtnm"
             return FATAL_ERR
     return NOMAL_OK
-
