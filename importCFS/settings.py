@@ -103,8 +103,8 @@ SESSION_ENGINE = "django.contrib.sessions.backends.file"
 # ==============================================================================
 
 LOG_PATH = Path(BASE_DIR).joinpath("logs")
-SERVER_NAME = socket.gethostname()
-SERVER_IP = socket.gethostbyname(socket.gethostname())
+# SERVER_NAME = socket.gethostname()
+SERVER_IP = "127.0.0.1"
 FILE_NAME_LOG_INFO = SERVER_IP + '_import.log'
 LOGGING = {
     'version': 1,

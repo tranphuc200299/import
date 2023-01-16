@@ -4,9 +4,10 @@ from django.db import transaction
 from django.shortcuts import render
 
 from main.common.decorators import update_context, load_cfs_ini
-from main.common.function import SqlExecute
+from main.common.function import SqlExecute, Const
 from main.common.function.Common import dbField, DbDataChange
 from main.common.function.Const import FATAL_ERR, NOMAL_OK
+from main.common.function.DspMessage import MsgDspError
 from main.common.utils import Response
 from main.middleware.exception.exceptions import PostgresException
 
@@ -63,7 +64,7 @@ def cmd_search_Click(request):
             return
         sql = "SELECT * "
         sql += " FROM TBPACKG" + request.cfs_ini["iniUpdTbl"]
-        sql += " WHERE PAssCKCD = " + dbField(request.context["txt_apackcd"])
+        sql += " WHERE PACKCD = " + dbField(request.context["txt_apackcd"])
         sql += " FOR UPDATE NOWAIT"
         RsTbPackg = SqlExecute(sql).all()
         if not RsTbPackg.Rows:
@@ -87,7 +88,7 @@ def cmd_entry_Click(request):
             sql += "VALUES("
             sql += dbField(request.context["txt_apackcd"]) + ","
             sql += dbField(request.context["txt_apacknm"]) + ","
-            sql += "CURRENT_TIMESTAMPsss" + ","
+            sql += "CURRENT_TIMESTAMP" + ","
             sql += dbField(request.cfs_ini["iniWsNo"]) + ")"
             SqlExecute(sql).execute()
         init_form(request, CFSC15_MODE0)
@@ -145,7 +146,7 @@ def init_form(request, intMode):
 
 def inpdatachk1(request):
     if request.context["txt_apackcd"] == "":
-        request.context["lblMsg"] = "必須入力エラー荷姿コードを入力して下さい。"
+        MsgDspError(request, Const.MSG_DSP_WARN, "必須入力エラー", "荷姿コードを入力して下さい。")
         request.context["gSetField"] = "txt_apackcd"
         return FATAL_ERR
     return NOMAL_OK
@@ -153,11 +154,11 @@ def inpdatachk1(request):
 
 def inpdatachk2(request):
     if request.context["txt_apacknm"] == "":
-        request.context["lblMsg"] = "必須入力エラー荷姿名称を入力して下さい。"
+        MsgDspError(request, Const.MSG_DSP_WARN, "必須入力エラー", "荷姿名称を入力して下さい。")
         request.context["gSetField"] = "txt_apacknm"
         return FATAL_ERR
     if 25 < len(request.context["txt_apacknm"]):
-        request.context["lblMsg"] = "入力桁数エラー荷姿名称は25桁以内で入力して下さい。"
+        MsgDspError(request, Const.MSG_DSP_WARN, "入力桁数エラー", "荷姿名称は25桁以内で入力して下さい。")
         request.context["gSetField"] = "txt_apacknm"
         return FATAL_ERR
     return NOMAL_OK
