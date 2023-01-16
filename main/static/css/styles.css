@@ -38,7 +38,6 @@
     text-decoration: none;
     outline: none;
     border: none;
-    text-transform: capitalize;
     transition: all .2s linear;
 }
 
@@ -390,6 +389,7 @@ h1 {
 .inactive {
     background: #BBBBC3 !important;
     border: none;
+    cursor: default;
 }
 
 .control_button {
@@ -825,6 +825,8 @@ ul.breadcrumb li a:hover {
     color: #01447e;
     text-decoration: underline;
 }
+
+
 .fs-14 {
     font-size: 16px;
 }
