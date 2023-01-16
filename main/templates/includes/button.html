@@ -1,10 +1,11 @@
+{% load core_tags %}
 <button
   id="{{ id }}"
-  class="{{ class }} {% if IsEnable == False or not IsEnable %} inactive {% endif %}"
+  class="{{ class }} {% if IsEnable == 'False' %} inactive {% endif %}"
   value="{{ id }}"
   name="{{ name }}"
-  tabindex={{tabIndex}}
-  {% if IsEnable == False or not IsEnable  %}  disabled {% endif %}
+  tabindex="{{tabIndex}}"
+  {% if IsEnable == 'False' %} disabled {% endif %}
   >
     {% if htmlText %}
         {{ htmlText }}
@@ -12,3 +13,4 @@
         {{ Text }}
     {% endif %}
 </button>
+<input type="hidden" id="{{ id|id2stbutton }}" name="{{ id|id2stbutton }}" value="{{ id|id2stbutton|id2contextvalue:request }}"/>
