@@ -1,7 +1,8 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load core_tags %}
 
-{% block title %}海貨業者コード登録{% endblock title %}
+{% block title %}カレンダ登録{% endblock title %}
 
 {% block main %}
 <form id="f_cfsc2900" method="post">
@@ -10,18 +11,18 @@
         <div class="form-inline">
              <div class="col-12 d-flex">
                 <div class="form-group form-group-seach d-flex">
-                    <label for="txt_ayear" class="mr-3" tabIndex=4>年月 <span
+                    <label for="txt_ayear" class="mr-3" tabindex=3 >年月 <span
                             class="required">*</span></label>
                 </div>
                 <div class="form-group mr-5 d-flex">
-                    {% include "includes/textbox.html" with id="txt_ayear" class="form-control" MaxLength=8 Change="True" LostFocus="True" %}
-                    <span class="ml-2 fs-14">年</span>
+                    {% include "includes/textbox.html" with id="txt_ayear" class="form-control" MaxLength=4 Change="True" LostFocus="True" Title="必須入力" tabIndex="4" %}
+                    <span class="ml-2 fs-14" tabindex=5>年</span>
                 </div>
                 <div class="form-group mr-5 d-flex">
-                    {% include "includes/textbox.html" with id="txt_amonth" class="form-control" MaxLength=8 Change="True" LostFocus="True" %}
-                    <span class="ml-2 fs-14">月</span>
+                    {% include "includes/textbox.html" with id="txt_amonth" class="form-control" MaxLength=2 Change="True" LostFocus="True" Title="必須入力" tabIndex="6" %}
+                    <span class="ml-2 fs-14" tabindex=7>月</span>
                 </div>
-                {% include "includes/button.html" with name="action" id="cmd_search" class="btn btn-primary btn-search" TabIndex=7 htmlText='<i class="fa fa-search"></i> 検索' %}
+                {% include "includes/button.html" with name="action" id="cmd_search" class="btn btn-primary btn-search" tabIndex="8" htmlText='<i class="fa fa-search"></i> 検索' %}
             </div>
         </div>
     </div>
@@ -31,174 +32,45 @@
                 <thead>
                     <tr class="calendar_table_row calendar_alphabet">
                         <td>
-                            <label>日</label>
+                            <label tabindex="9">日</label>
                         </td>
                         <td>
-                            <label>月</label>
+                            <label tabindex="10">月</label>
                         </td>
                         <td>
-                            <label>火</label>
+                            <label tabindex="11">火</label>
                         </td>
                         <td>
-                            <label>水</label>
+                            <label tabindex="12">水</label>
                         </td>
                         <td>
-                            <label>木</label>
+                            <label tabindex="13">木</label>
                         </td>
                         <td>
-                            <label>金</label>
+                            <label tabindex="14">金</label>
                         </td>
                         <td>
-                            <label>土</label>
+                            <label tabindex="15">土</label>
                         </td>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr class="calendar_table_row">
-                        <td>
-                            {% include "includes/day_calendar.html" with sequence=0 %}
-                        </td>
-                        <td>
-                            {% include "includes/day_calendar.html" with sequence=1 %}
-                        </td>
-                        <td>
-                            {% include "includes/day_calendar.html" with sequence=2 %}
-                        </td>
-                        <td>
-                            {% include "includes/day_calendar.html" with sequence=3 %}
-                        </td>
-                        <td>
-                            {% include "includes/day_calendar.html" with sequence=4 %}
-                        </td>
-                        <td>
-                            {% include "includes/day_calendar.html" with sequence=5 %}
-                        </td>
-                        <td>
-                            {% include "includes/day_calendar.html" with sequence=6 %}
-                        </td>
-                    </tr>
-                    <tr class="calendar_table_row">
-                        <td>
-                            {% include "includes/day_calendar.html" with sequence=7 %}
-                        </td>
-                        <td>
-                            {% include "includes/day_calendar.html" with sequence=8 %}
-                        </td>
-                        <td>
-                            {% include "includes/day_calendar.html" with sequence=9 %}
-                        </td>
-                        <td>
-                            {% include "includes/day_calendar.html" with sequence=10 %}
-                        </td>
-                        <td>
-                            {% include "includes/day_calendar.html" with sequence=11 %}
-                        </td>
-                        <td>
-                            {% include "includes/day_calendar.html" with sequence=12 %}
-                        </td>
-                        <td>
-                            {% include "includes/day_calendar.html" with sequence=13 %}
-                        </td>
-                    </tr>
-                    <tr class="calendar_table_row">
-                        <td>
-                            {% include "includes/day_calendar.html" with sequence=14 %}
-                        </td>
-                        <td>
-                            {% include "includes/day_calendar.html" with sequence=15 %}
-                        </td>
-                        <td>
-                            {% include "includes/day_calendar.html" with sequence=16 %}
-                        </td>
-                        <td>
-                            {% include "includes/day_calendar.html" with sequence=17 %}
-                        </td>
-                        <td>
-                            {% include "includes/day_calendar.html" with sequence=18 %}
-                        </td>
-                        <td>
-                            {% include "includes/day_calendar.html" with sequence=19 %}
-                        </td>
-                        <td>
-                            {% include "includes/day_calendar.html" with sequence=20 %}
-                        </td>
-                    </tr>
-                    <tr class="calendar_table_row">
-                        <td>
-                            {% include "includes/day_calendar.html" with sequence=21 %}
-                        </td>
-                        <td>
-                            {% include "includes/day_calendar.html" with sequence=22 %}
-                        </td>
-                        <td>
-                            {% include "includes/day_calendar.html" with sequence=23 %}
-                        </td>
-                        <td>
-                            {% include "includes/day_calendar.html" with sequence=24 %}
-                        </td>
-                        <td>
-                            {% include "includes/day_calendar.html" with sequence=25 %}
-                        </td>
-                        <td>
-                            {% include "includes/day_calendar.html" with sequence=26 %}
-                        </td>
-                        <td>
-                            {% include "includes/day_calendar.html" with sequence=27 %}
-                        </td>
-                    </tr>
-                    <tr class="calendar_table_row">
-                        <td>
-                            {% include "includes/day_calendar.html" with sequence=28 %}
-                        </td>
-                        <td>
-                            {% include "includes/day_calendar.html" with sequence=29 %}
-                        </td>
-                        <td>
-                            {% include "includes/day_calendar.html" with sequence=30 %}
-                        </td>
-                        <td>
-                            {% include "includes/day_calendar.html" with sequence=31 %}
-                        </td>
-                        <td>
-                            {% include "includes/day_calendar.html" with sequence=32 %}
-                        </td>
-                        <td>
-                            {% include "includes/day_calendar.html" with sequence=33 %}
-                        </td>
-                        <td>
-                            {% include "includes/day_calendar.html" with sequence=34 %}
-                        </td>
-                    </tr>
-                    <tr class="calendar_table_row">
-                        <td>
-                            {% include "includes/day_calendar.html" with sequence=35 %}
-                        </td>
-                        <td>
-                            {% include "includes/day_calendar.html" with sequence=36 %}
-                        </td>
-                        <td>
-                            {% include "includes/day_calendar.html" with sequence=37 %}
-                        </td>
-                        <td>
-                            {% include "includes/day_calendar.html" with sequence=38 %}
-                        </td>
-                        <td>
-                            {% include "includes/day_calendar.html" with sequence=39 %}
-                        </td>
-                        <td>
-                            {% include "includes/day_calendar.html" with sequence=40 %}
-                        </td>
-                        <td>
-                            {% include "includes/day_calendar.html" with sequence=41 %}
-                        </td>
-                    </tr>
+                    {% for cale in calendar %}
+                        <tr class="calendar_table_row">
+                            {% for cal in cale %}
+                                <td>
+                                    {% include "includes/day_calendar.html" with sequence=cal tabIndex=cal|addTabIndex:16 %}
+                                </td>
+                            {% endfor %}
+                        </tr>
+                    {% endfor %}
                 </tbody>
             </table>
             <div class="control_button">
-                {% include "includes/button.html" with name="action" id="cmd_entry" class="btn-register" Text="登録" IsEnable=cmd_entry_enable %}
-                {% include "includes/button.html" with name="action" id="cmd_change" class="btn-register" Text="変更" IsEnable=cmd_change_enable %}
-                {% include "includes/button.html" with name="action" id="cmd_delete" class="btn-register" Text="削除" IsEnable=cmd_delete_enable %}
-                {% include "includes/button.html" with name="action" id="cmd_cancel" class="btn-register" Text="取消" %}
+                {% include "includes/button.html" with name="action" id="cmd_entry" class="btn-register" Text="登録" IsEnable=cmd_entry_enable tabIndex="58" %}
+                {% include "includes/button.html" with name="action" id="cmd_change" class="btn-register" Text="変更" IsEnable=cmd_change_enable tabIndex="59" %}
+                {% include "includes/button.html" with name="action" id="cmd_delete" class="btn-register" Text="削除" IsEnable=cmd_delete_enable tabIndex="60" %}
+                {% include "includes/button.html" with name="action" id="cmd_cancel" class="btn-register" Text="取消" tabIndex="61" %}
             </div>
         </div>
     </div>

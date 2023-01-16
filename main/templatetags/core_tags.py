@@ -51,6 +51,12 @@ def name2url(name_url):
 def sq2any(sequence, type):
     return f"txt_adaytp{sequence}_{type}"
 
+
 @register.filter(name="id2stbutton")
 def id2stbutton(id):
     return f"{id}_enable"
+
+
+@register.filter(name="addTabIndex")
+def addTabIndex(id, plus):
+    return id + plus
