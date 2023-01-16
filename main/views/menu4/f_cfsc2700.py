@@ -5,7 +5,7 @@ from django.shortcuts import render
 
 from main.common.decorators import update_context, load_cfs_ini
 from main.common.function import SqlExecute
-from main.common.function.Common import sqlStringConvert
+from main.common.function.Common import dbField, DbDataChange
 from main.common.function.Const import FATAL_ERR, NOMAL_OK
 from main.common.utils import Response
 
@@ -65,13 +65,13 @@ def cmd_search_Click(request):
             return
         sql = "SELECT * "
         sql += " FROM TBINLAND" + request.cfs_ini["iniUpdTbl"]
-        sql += " WHERE INLANDCD = " + sqlStringConvert(request.context["txt_ainlandcd"])
+        sql += " WHERE INLANDCD = " + dbField(request.context["txt_ainlandcd"])
         sql += " FOR UPDATE NOWAIT"
         RsTbPackg = SqlExecute(sql).all()
         if not RsTbPackg.Rows:
             request.context["cmd_entry_enable"] = True
         else:
-            request.context["txt_ainlandnm"] = RsTbPackg.Rows[0]["inlandnm"]
+            request.context["txt_ainlandnm"] = DbDataChange(RsTbPackg.Rows[0]["inlandnm"])
             request.context["cmd_change_enable"] = True
             request.context["cmd_delete_enable"] = True
         request.context["gSetField"] = "txt_ainlandnm"
@@ -89,10 +89,10 @@ def cmd_entry_Click(request):
             sql = "INSERT INTO TBINLAND" + request.cfs_ini["iniUpdTbl"] + " "
             sql += "(INLANDCD,INLANDNM,UDATE,UWSID) "
             sql += "VALUES("
-            sql += sqlStringConvert(request.context["txt_ainlandcd"]) + ","
-            sql += sqlStringConvert(request.context["txt_ainlandnm"]) + ","
+            sql += dbField(request.context["txt_ainlandcd"]) + ","
+            sql += dbField(request.context["txt_ainlandnm"]) + ","
             sql += "CURRENT_TIMESTAMP" + ","
-            sql += sqlStringConvert(request.cfs_ini["iniWsNo"]) + ")"
+            sql += dbField(request.cfs_ini["iniWsNo"]) + ")"
             SqlExecute(sql).execute()
         init_form(request, CFSC27_MODE0)
         request.context["gSetField"] = "txt_ainlandcd"
@@ -109,10 +109,10 @@ def cmd_change_Click(request):
             return
         with transaction.atomic():
             sql = "UPDATE TBINLAND" + request.cfs_ini["iniUpdTbl"] + " "
-            sql += "SET INLANDNM = " + sqlStringConvert(request.context["txt_ainlandnm"]) + ","
+            sql += "SET INLANDNM = " + dbField(request.context["txt_ainlandnm"]) + ","
             sql += "UDATE = CURRENT_TIMESTAMP" + ","
-            sql += "UWSID = " + sqlStringConvert(request.cfs_ini["iniWsNo"]) + " "
-            sql += "WHERE INLANDCD = " + sqlStringConvert(request.context["txt_ainlandcd"])
+            sql += "UWSID = " + dbField(request.cfs_ini["iniWsNo"]) + " "
+            sql += "WHERE INLANDCD = " + dbField(request.context["txt_ainlandcd"])
             SqlExecute(sql).execute()
         init_form(request, CFSC27_MODE0)
         request.context["gSetField"] = "txt_ainlandcd"
@@ -128,7 +128,7 @@ def cmd_delete_Click(request):
     try:
         with transaction.atomic():
             sql = "DELETE FROM TBINLAND" + request.cfs_ini["iniUpdTbl"] + " "
-            sql += "WHERE INLANDCD = " + sqlStringConvert(request.context["txt_ainlandcd"])
+            sql += "WHERE INLANDCD = " + dbField(request.context["txt_ainlandcd"])
             SqlExecute(sql).execute()
         init_form(request, CFSC27_MODE0)
         request.context["gSetField"] = "txt_ainlandcd"
