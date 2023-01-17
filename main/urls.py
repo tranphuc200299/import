@@ -11,4 +11,5 @@ urlpatterns = [
     path("f_cfsc0500/", views.menu4.f_cfsc0500, name="f_cfsc0500"),
     path("f_cfsc0900/", views.menu4.f_cfsc0900, name="f_cfsc0900"),
     path("f_cfsc1500/", views.menu4.f_cfsc1500, name="f_cfsc1500"),
+    path("f_cfsc2700/", views.menu4.f_cfsc2700, name="f_cfsc2700"),
 ]
