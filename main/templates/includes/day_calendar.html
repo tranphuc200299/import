@@ -1,0 +1,17 @@
+{% load core_tags %}
+<button
+        id="txt_adaytp{{ sequence }}"
+        name="action"
+        value="txt_adaytp{{ sequence }}"
+        tabindex="{{tabIndex}}"
+        class="{% if sequence|sq2any:'ThisMonth'|id2contextvalue:request == 'True' %} btn-hover {% endif %} "
+        style="background-color: {{ sequence|sq2any:'BackColor'|id2contextvalue:request }};{% if sequence|sq2any:'Enabled'|id2contextvalue:request == 'False' %} cursor: default {% endif %}; color: {{ sequence|sq2any:'TextColor'|id2contextvalue:request }}"
+        {% if sequence|sq2any:'Enabled'|id2contextvalue:request == 'False' %} disabled {% endif %}
+>
+{{ sequence|sq2any:'DateNum'|id2contextvalue:request }}<br><div><span id="{{sequence|sq2any:'DateText'}}_Span">{% if sequence|sq2any:'DateText'|id2contextvalue:request != "" %} {{ sequence|sq2any:'DateText'|id2contextvalue:request }} {% else %} &nbsp; {% endif %} </span></div></button>
+<input type="hidden" id="{{sequence|sq2any:'DateNum'}}" name="{{sequence|sq2any:'DateNum'}}" value="{{ sequence|sq2any:'DateNum'|id2contextvalue:request }}"/>
+<input type="hidden" id="{{sequence|sq2any:'DateText'}}" name="{{sequence|sq2any:'DateText'}}" value="{{ sequence|sq2any:'DateText'|id2contextvalue:request }}"/>
+<input type="hidden" id="{{sequence|sq2any:'BackColor'}}" name="{{sequence|sq2any:'BackColor'}}" value="{{ sequence|sq2any:'BackColor'|id2contextvalue:request }}"/>
+<input type="hidden" id="{{sequence|sq2any:'Enabled'}}" name="{{sequence|sq2any:'Enabled'}}" value="{{ sequence|sq2any:'Enabled'|id2contextvalue:request }}"/>
+<input type="hidden" id="{{sequence|sq2any:'ThisMonth'}}" name="{{sequence|sq2any:'ThisMonth'}}" value="{{ sequence|sq2any:'ThisMonth'|id2contextvalue:request }}"/>
+<input type="hidden" id="{{sequence|sq2any:'TextColor'}}" name="{{sequence|sq2any:'TextColor'}}" value="{{ sequence|sq2any:'TextColor'|id2contextvalue:request }}"/>
