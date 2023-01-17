@@ -100,6 +100,14 @@ class ConfigIni(object):
                 request.cfs_ini["iniDispNam"] = iniDispNam[index_bond_area]
                 request.cfs_ini["iniDispCd"] = iniDispCd[index_bond_area]
                 request.cfs_ini["iniDispTbl"] = iniDispTbl[index_bond_area]
+            if request.resolver_match.url_name == 'f_cfsc2900':
+                request.context["calendar"] = []
+                arr = []
+                for i in range(42):
+                    arr.append(i)
+                    if (i + 1) % 7 == 0:
+                        request.context["calendar"].append(arr)
+                        arr = []
         bond_area_name_select = request.GET.get('bond_area_name_select', None)
         if bond_area_name_select is None:
             bond_area_name_select = Common.pfncDataSessionGet(request, "bond_area_name")

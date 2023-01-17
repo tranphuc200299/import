@@ -1,0 +1,82 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load core_tags %}
+
+{% block title %}カレンダ登録{% endblock title %}
+
+{% block main %}
+<form id="f_cfsc2900" method="post">
+    {% csrf_token %}
+    <div class="card">
+        <div class="form-inline">
+             <div class="col-12 d-flex">
+                <div class="form-group form-group-seach d-flex">
+                    <label for="txt_ayear" class="mr-3" tabindex=3 >年月 <span
+                            class="required">*</span></label>
+                </div>
+                <div class="form-group mr-5 d-flex">
+                    {% include "includes/textbox.html" with id="txt_ayear" class="form-control" MaxLength=4 Change="True" LostFocus="True" Title="必須入力" tabIndex="4" %}
+                    <span class="ml-2 fs-14" tabindex=5>年</span>
+                </div>
+                <div class="form-group mr-5 d-flex">
+                    {% include "includes/textbox.html" with id="txt_amonth" class="form-control" MaxLength=2 Change="True" LostFocus="True" Title="必須入力" tabIndex="6" %}
+                    <span class="ml-2 fs-14" tabindex=7>月</span>
+                </div>
+                {% include "includes/button.html" with name="action" id="cmd_search" class="btn btn-primary btn-search" tabIndex="8" htmlText='<i class="fa fa-search"></i> 検索' %}
+            </div>
+        </div>
+    </div>
+    <div class="card">
+        <div class="form_about form_calendar">
+            <table class="calendar_about">
+                <thead>
+                    <tr class="calendar_table_row calendar_alphabet">
+                        <td>
+                            <label tabindex="9">日</label>
+                        </td>
+                        <td>
+                            <label tabindex="10">月</label>
+                        </td>
+                        <td>
+                            <label tabindex="11">火</label>
+                        </td>
+                        <td>
+                            <label tabindex="12">水</label>
+                        </td>
+                        <td>
+                            <label tabindex="13">木</label>
+                        </td>
+                        <td>
+                            <label tabindex="14">金</label>
+                        </td>
+                        <td>
+                            <label tabindex="15">土</label>
+                        </td>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for cale in calendar %}
+                        <tr class="calendar_table_row">
+                            {% for cal in cale %}
+                                <td>
+                                    {% include "includes/day_calendar.html" with sequence=cal tabIndex=cal|addTabIndex:16 %}
+                                </td>
+                            {% endfor %}
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <div class="control_button">
+                {% include "includes/button.html" with name="action" id="cmd_entry" class="btn-register" Text="登録" IsEnable=cmd_entry_enable tabIndex="58" %}
+                {% include "includes/button.html" with name="action" id="cmd_change" class="btn-register" Text="変更" IsEnable=cmd_change_enable tabIndex="59" %}
+                {% include "includes/button.html" with name="action" id="cmd_delete" class="btn-register" Text="削除" IsEnable=cmd_delete_enable tabIndex="60" %}
+                {% include "includes/button.html" with name="action" id="cmd_cancel" class="btn-register" Text="取消" tabIndex="61" %}
+            </div>
+        </div>
+    </div>
+</form>
+{% endblock main %}
+
+{% block js %}
+
+{% endblock js %}
