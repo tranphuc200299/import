@@ -90,14 +90,15 @@ def inpdatachk2(request):
 
 def Form_Load(request):
     init_form(request, CFSC23_MODE0)
-    request.context["cmd_entry_enable"] = False
-    request.context["cmd_change_enable"] = False
-    request.context["cmd_delete_enable"] = False
+    request.context["cmd_entry_enable"] = "False"
+    request.context["cmd_change_enable"] = "False"
+    request.context["cmd_delete_enable"] = "False"
 
 
 def cmd_search_Click(request):
     sql = ""
     try:
+
         init_form(request, CFSC23_MODE1)
         if inpdatachk1(request) != NOMAL_OK:
             return
@@ -107,7 +108,7 @@ def cmd_search_Click(request):
         sql += " FOR UPDATE NOWAIT"
         RsTbZWork = SqlExecute(sql).all()
         if len(RsTbZWork.Rows) == 0:
-            request.context["cmd_entry_enable"] = True
+            request.context["cmd_entry_enable"] = "True"
         else:
             request.context["txt_azworknm"] = DbDataChange(RsTbZWork.Rows[0]["zworknm"])
             request.context["txt_itanka"] = f'{DbDataChange(float(RsTbZWork.Rows[0]["tanka"]))}'.replace(".", ",")
@@ -118,8 +119,8 @@ def cmd_search_Click(request):
             elif DbDataChange(DbDataChange(RsTbZWork.Rows[0]["taxkbn"])) == "2":
                 request.context["cmb_ataxkbn"] = "2"
             request.context["txt_akaisu"] = DbDataChange(RsTbZWork.Rows[0]["kaisu"])
-            request.context["cmd_change_enable"] = True
-            request.context["cmd_delete_enable"] = True
+            request.context["cmd_change_enable"] = "True"
+            request.context["cmd_delete_enable"] = "True"
         request.context["gSetField"] = "txt_azworknm"
 
     except Exception as e:
@@ -127,6 +128,7 @@ def cmd_search_Click(request):
 
 
 def cmd_entry_Click(request):
+    request.context["txt_itanka"] = str(int(request.context['txt_itanka'].split(",")[0]))
     sql = ""
     try:
         if inpdatachk2(request) != NOMAL_OK:
@@ -151,11 +153,12 @@ def cmd_entry_Click(request):
         init_form(request, CFSC23_MODE0)
         request.context["gSetField"] = "txt_azworkcd"
     except Exception as e:
-        request.context["cmd_entry_enable"] = False
+        request.context["cmd_entry_enable"] = "False"
         raise PostgresException(Error=e, DbTbl="TBZWORK" + request.cfs_ini["iniUpdTbl"], SqlStr=sql)
 
 
 def cmd_change_Click(request):
+    request.context["txt_itanka"] = str(int(request.context['txt_itanka'].split(",")[0]))
     if inpdatachk2(request) != NOMAL_OK:
         return
     sql = ""
@@ -178,15 +181,15 @@ def cmd_change_Click(request):
         init_form(request, CFSC23_MODE0)
         request.context["gSetField"] = "txt_aopecd"
     except Exception as e:
-        request.context["cmd_change_enable"] = False
-        request.context["cmd_delete_enable"] = False
+        request.context["cmd_change_enable"] = "False"
+        request.context["cmd_delete_enable"] = "False"
         raise PostgresException(Error=e, DbTbl="TBOPE" + request.cfs_ini["iniUpdTbl"], SqlStr=sql)
 
 
 def cmd_cancel_Click(request):
-    request.context["cmd_entry_enable"] = False
-    request.context["cmd_change_enable"] = False
-    request.context["cmd_delete_enable"] = False
+    request.context["cmd_entry_enable"] = "False"
+    request.context["cmd_change_enable"] = "False"
+    request.context["cmd_delete_enable"] = "False"
 
     init_form(request, CFSC23_MODE0)
     request.context["gSetField"] = "txt_azworkcd"
@@ -202,13 +205,13 @@ def cmd_delete_Click(request):
         init_form(request, CFSC23_MODE0)
         request.context["gSetField"] = "txt_azworkcd"
     except Exception as e:
-        request.context["cmd_change_enable"] = False
-        request.context["cmd_delete_enable"] = False
+        request.context["cmd_change_enable"] = "False"
+        request.context["cmd_delete_enable"] = "False"
         raise PostgresException(Error=e, DbTbl="TBZWORK" + request.cfs_ini["iniUpdTbl"], SqlStr=sql)
 
 
 def txt_azworkcd_Change(request):
     request.context["txt_azworkcd"] = request.context["txt_azworkcd"].upper()
-    request.context["cmd_entry_enable"] = False
-    request.context["cmd_change_enable"] = False
-    request.context["cmd_delete_enable"] = False
+    request.context["cmd_entry_enable"] = "False"
+    request.context["cmd_change_enable"] = "False"
+    request.context["cmd_delete_enable"] = "False"
