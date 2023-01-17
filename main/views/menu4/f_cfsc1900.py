@@ -181,11 +181,12 @@ def cmd_change_Click(request):
             sql += "SET STANINM = " + dbField(request.context["txt_astaninm"]) + ","
             if request.context["cmb_asyubtkbn"] == "0":
                 sql += " SYUBTKBN = " + dbField("1") + ","
-            elif str(request.context["cmb_asyubtkbn"]) == "1":
+            elif request.context["cmb_asyubtkbn"] == "1":
                 sql += " SYUBTKBN = " + dbField("2") + ","
             sql += "CONVERT =" + dbField(request.context["txt_iconvert"]) + ","
             sql += " UDATE = CURRENT_TIMESTAMP" + ","
             sql += "UWSID = " + dbField(request.cfs_ini["iniWsNo"]) + " "
+            sql += " WHERE STANICD = " + dbField(request.context["txt_astanicd"])
             SqlExecute(sql).execute()
             init_form(request, CFSC19_MODE0)
             request.context["gSetField"] = "txt_astanicd"
@@ -214,7 +215,6 @@ def txt_iconvert_LostFocus(request):
         if not IsNumeric(request.context["txt_iconvert"]):
             MsgDspError(request, Const.MSG_DSP_WARN, "入力整合性エラー", "換算式は整数(ZZ,ZZZ,ZZ9.999形式)で入力して下さい。")
             request.context["gSetField"] = "txt_iconvert"
-            return FATAL_ERR
         if CFSC19_CONVERT_MIN > float(request.context["txt_iconvert"]) or CFSC19_CONVERT_MAX < float(
                 request.context["txt_iconvert"]):
             MsgDspError(request, Const.MSG_DSP_WARN, "入力整合性エラー", "換算式は" + format(CFSC19_CONVERT_MIN) + "から" + format(CFSC19_CONVERT_MAX) + "以内で入力して下さい。")

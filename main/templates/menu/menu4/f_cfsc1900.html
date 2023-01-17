@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}オペレータコード登録{% endblock title %}
+{% block title %}数量単位コード登録{% endblock title %}
 
 {% block main %}
     <form class="" id="f_cfsc1900" method="post">
@@ -20,15 +20,15 @@
         <div class="card">
             <div class="form-horizontal">
                 <div class="row">
-                        <div class="form-group form-inline form_extral">
+                        <div class="form-group form-inline col-md-12 col-lg-12">
                             <label class="control-label mr-3" for="txt_astaninm" tabindex="7">数量単位名称 <span class="required">*</span></label>
-                            <div class="col-lg-8 col-sm-4 input_container">
+                            <div class="col-lg-8 col-sm-4">
                                 {% include "includes/textbox.html" with class="form-control" id="txt_astaninm" name="txt_astaninm" MaxLength=25 Title="必須入力" tabIndex=8 %}
                             </div>
                         </div>
                 </div>
                 <div class="row">
-                        <div class="form-group form-inline form_dropdown">
+                        <div class="form-group form-inline col-md-12 col-lg-12">
                             <label class="control-label" for="cmb_asyubtkbn" tabindex="22">種別区分</label>
                             <div class="col-lg-8 col-sm-4 dropdown_container">
                                 {% include 'includes/dropdownlist.html' with id="cmb_asyubtkbn" class="form-control" tabIndex=23 Title="必須入力" tabIndex=23 %}
@@ -36,7 +36,7 @@
                         </div>
                 </div>
                  <div class="row">
-                        <div class="form-group form-inline form_extral">
+                        <div class="form-group form-inline col-md-12 col-lg-12">
                             <label class="control-label mr-3" for="txt_iconvert" tabindex="7">換算式 <span class="required">*</span></label>
                             <div class="col-lg-8 col-sm-4 input_container input_transfer">
                                 {% include "includes/textbox.html" with class="form-control" id="txt_iconvert" name="txt_iconvert" MaxLength=14 Title="必須入力" tabIndex=8 %}

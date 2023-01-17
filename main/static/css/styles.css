@@ -707,6 +707,7 @@ width:100px;
     background: #FFFFFF;
     border: 1px solid #E0E0E0;
     border-radius: 8px;
+    padding: 0px 10px;
 }
 
 .btn-footer {
@@ -806,17 +807,11 @@ ul.breadcrumb li a:hover {
 }
 
 /*end css*/
-.form_extral {
- width:100%;
-}
-
-.input_container input {
+.form-group input {
     width: 40%!important;
 }
-.form_dropdown{
-    width: 100%;
-}
-.form_dropdown select{
+
+.form-group select{
     width: 20%!important;
     margin:0px 42px;
 }
