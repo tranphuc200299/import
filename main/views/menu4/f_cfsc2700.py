@@ -44,17 +44,17 @@ def Form_Load(request):
     try:
         init_form(request, CFSC27_MODE0)
 
-        request.context["cmd_entry_enable"] = False
-        request.context["cmd_change_enable"] = False
-        request.context["cmd_delete_enable"] = False
+        request.context["cmd_entry_enable"] = 'False'
+        request.context["cmd_change_enable"] = 'False'
+        request.context["cmd_delete_enable"] = 'False'
     except Exception as e:
         raise PostgresException(Error=e, DbTbl="", SqlStr="")
 
 def txt_ainlandcd_Change(request):
     request.context["txt_ainlandcd"] = request.context["txt_ainlandcd"].upper()
-    request.context["cmd_entry_enable"] = False
-    request.context["cmd_change_enable"] = False
-    request.context["cmd_delete_enable"] = False
+    request.context["cmd_entry_enable"] = 'False'
+    request.context["cmd_change_enable"] = 'False'
+    request.context["cmd_delete_enable"] = 'False'
     return ["txt_ainlandcd", "cmd_entry_enable", "cmd_change_enable", "cmd_delete_enable"]
 
 def cmd_search_Click(request):
@@ -68,11 +68,11 @@ def cmd_search_Click(request):
         sql += " FOR UPDATE NOWAIT"
         RsTbPackg = SqlExecute(sql).all()
         if not RsTbPackg.Rows:
-            request.context["cmd_entry_enable"] = True
+            request.context["cmd_entry_enable"] = 'True'
         else:
             request.context["txt_ainlandnm"] = DbDataChange(RsTbPackg.Rows[0]["inlandnm"])
-            request.context["cmd_change_enable"] = True
-            request.context["cmd_delete_enable"] = True
+            request.context["cmd_change_enable"] = 'True'
+            request.context["cmd_delete_enable"] = 'True'
         request.context["gSetField"] = "txt_ainlandnm"
     except Exception as e:
         raise PostgresException(Error=e, DbTbl="TBINLAND" + request.cfs_ini["iniUpdTbl"], SqlStr=sql)
@@ -93,7 +93,7 @@ def cmd_entry_Click(request):
         init_form(request, CFSC27_MODE0)
         request.context["gSetField"] = "txt_ainlandcd"
     except Exception as e:
-        request.context["cmd_entry_enable"] = False
+        request.context["cmd_entry_enable"] = 'False'
         raise PostgresException(Error=e, DbTbl="TBINLAND" + request.cfs_ini["iniUpdTbl"], SqlStr=sql)
 
 
@@ -111,8 +111,8 @@ def cmd_change_Click(request):
         init_form(request, CFSC27_MODE0)
         request.context["gSetField"] = "txt_ainlandcd"
     except Exception as e:
-        request.context["cmd_change_enable"] = False
-        request.context["cmd_delete_enable"] = False
+        request.context["cmd_change_enable"] = 'False'
+        request.context["cmd_delete_enable"] = 'False'
         raise PostgresException(Error=e, DbTbl="TBINLAND" + request.cfs_ini["iniUpdTbl"], SqlStr=sql)
 
 
@@ -125,15 +125,15 @@ def cmd_delete_Click(request):
         init_form(request, CFSC27_MODE0)
         request.context["gSetField"] = "txt_ainlandcd"
     except Exception as e:
-        request.context["cmd_change_enable"] = False
-        request.context["cmd_delete_enable"] = False
+        request.context["cmd_change_enable"] = 'False'
+        request.context["cmd_delete_enable"] = 'False'
         raise PostgresException(Error=e, DbTbl="TBINLAND" + request.cfs_ini["iniUpdTbl"], SqlStr=sql)
 
 
 def cmd_cancel_Click(request):
-    request.context["cmd_entry_enable"] = False
-    request.context["cmd_change_enable"] = False
-    request.context["cmd_delete_enable"] = False
+    request.context["cmd_entry_enable"] = 'False'
+    request.context["cmd_change_enable"] = 'False'
+    request.context["cmd_delete_enable"] = 'False'
 
     init_form(request, CFSC27_MODE0)
     request.context["gSetField"] = "txt_ainlandcd"
