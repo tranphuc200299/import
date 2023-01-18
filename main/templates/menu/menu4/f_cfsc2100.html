@@ -15,28 +15,21 @@
             </div>
             {% include "includes/button.html" with name="action" id="cmd_search" class="btn btn-primary btn-search" TabIndex=5 htmlText='<i class="fa fa-search"></i> 検索' %}
         </div>
+        </div>
          <div class="card">
             <div class="form-horizontal">
-                <div class="row">
-                    <div class="col-12">
-                        <div class="form-group">
-                            <label class="control-label" for="txt_aprmsybt" tabindex="7">申告種別コード <span
-                                    class="required">*</span></label>
-                            <div class="col-6">
-                                {% include "includes/textbox.html" with class="form-control" id="txt_aprmsybt" name="txt_aprmsybt" MaxLength=3 Change="True" tabIndex=8 %}
-                            </div>
-                        </div>
+                <div class="form-group col-lg-12">
+                    <div class="col-lg-9 col-sm-12 row">
+                        <label class="col-lg-2 col-sm-8 d-flex" for="txt_aprmsybt" tabindex="7">申告種別コード <span
+                            class="required">*</span></label>
+                        <div class="col-lg-6 col-sm-8 d-flex">{% include "includes/textbox.html" with class="form-control" id="txt_aprmsybt" name="txt_aprmsybt" MaxLength=3 Change="True" tabIndex=8 %}</div>
                     </div>
                 </div>
-                <div class="row">
-                    <div class="col-12">
-                        <div class="form-group">
-                            <label class="control-label" for="txt_aprmsybtnm" tabindex="7">申告種別名称 <span
-                                    class="required">*</span></label>
-                            <div class="col-6">
-                                {% include "includes/textbox.html" with class="form-control" id="txt_aprmsybtnm" name="txt_aprmsybtnm" MaxLength=25 Title="必須入力" tabIndex=10 %}
-                            </div>
-                        </div>
+                <div class="form-group col-lg-12">
+                    <div class="col-lg-9 col-sm-12 row">
+                        <label class="col-lg-2 col-sm-8 d-flex" for="txt_aprmsybtnm" tabindex="7">申告種別名称 <span
+                            class="required">*</span></label>
+                        <div class="col-lg-6 col-sm-8 d-flex">{% include "includes/textbox.html" with class="form-control" id="txt_aprmsybtnm" name="txt_aprmsybtnm" MaxLength=25 Title="必須入力" tabIndex=10 %}</div>
                     </div>
                 </div>
                 <div class="row btn-footer">
@@ -49,7 +42,6 @@
                 </div>
             </div>
         </div>
-    </div>
 </form>
 {% endblock main %}
 

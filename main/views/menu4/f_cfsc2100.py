@@ -46,16 +46,16 @@ def f_cfsc2100(request):
 
 def Form_Load(request):
     init_form(request, CFSC21_MODE0)
-    request.context["cmd_entry_enable"] = False
-    request.context["cmd_change_enable"] = False
-    request.context["cmd_delete_enable"] = False
+    request.context["cmd_entry_enable"] = "False"
+    request.context["cmd_change_enable"] = "False"
+    request.context["cmd_delete_enable"] = "False"
 
 
 def txt_anacgymcd_Change(request):
     request.context["txt_anacgymcd"] = request.context["txt_anacgymcd"].upper()
-    request.context["cmd_entry_enable"] = False
-    request.context["cmd_change_enable"] = False
-    request.context["cmd_delete_enable"] = False
+    request.context["cmd_entry_enable"] = "False"
+    request.context["cmd_change_enable"] = "False"
+    request.context["cmd_delete_enable"] = "False"
     return ["txt_anacgymcd", "cmd_entry_enable", "cmd_change_enable", "cmd_delete_enable"]
 
 
@@ -77,15 +77,18 @@ def cmd_search_Click(request):
 
         RsTbPrmsybth = SqlExecute(sql).all()
         if not RsTbPrmsybth.Rows:
-            request.context["cmd_entry_enable"] = True
+            request.context["cmd_entry_enable"] = "True"
         else:
             request.context["txt_aprmsybt"] = DbDataChange(RsTbPrmsybth.Rows[0]["prmsybt"])
             request.context["txt_aprmsybtnm"] = DbDataChange(RsTbPrmsybth.Rows[0]["prmsybtnm"])
-            request.context["cmd_change_enable"] = True
-            request.context["cmd_delete_enable"] = True
+            request.context["cmd_change_enable"] = "True"
+            request.context["cmd_delete_enable"] = "True"
         request.context["gSetField"] = "txt_aprmsybt"
     except IntegrityError as e:
         raise PostgresException(Error=e, DbTbl="TBPRMSYBTH" + request.cfs_ini["iniUpdTbl"], SqlStr=sql)
+    except Exception as e:
+        __logger.error(e)
+        raise Exception(e)
 
 
 def cmd_entry_Click(request):
@@ -93,7 +96,6 @@ def cmd_entry_Click(request):
     try:
         if inpdatachk2(request) != NOMAL_OK:
             return
-
         sql = "INSERT INTO TBPRMSYBTH" + request.cfs_ini["iniUpdTbl"] + " "
         sql += "(NACGYMCD,PRMSYBT,PRMSYBTNM,UDATE,UWSID) "
         sql += "VALUES("
@@ -107,8 +109,12 @@ def cmd_entry_Click(request):
         init_form(request, CFSC21_MODE0)
         request.context["gSetField"] = "txt_anacgymcd"
     except IntegrityError as e:
-        request.context["cmd_entry_enable"] = False
+        request.context["cmd_entry_enable"] = "False"
         raise PostgresException(Error=e, DbTbl="TBPRMSYBTH" + request.cfs_ini["iniUpdTbl"], SqlStr=sql)
+    except Exception as e:
+        request.context["cmd_entry_enable"] = "False"
+        __logger.error(e)
+        raise Exception(e)
 
 
 def cmd_change_Click(request):
@@ -126,9 +132,14 @@ def cmd_change_Click(request):
         request.context["gSetField"] = "txt_anacgymcd"
 
     except IntegrityError as e:
-        request.context["cmd_change_enable"] = False
-        request.context["cmd_delete_enable"] = False
+        request.context["cmd_change_enable"] = "False"
+        request.context["cmd_delete_enable"] = "False"
         raise PostgresException(Error=e, DbTbl="TBPRMSYBTH" + request.cfs_ini["iniUpdTbl"], SqlStr=sql)
+    except Exception as e:
+        request.context["cmd_change_enable"] = "False"
+        request.context["cmd_delete_enable"] = "False"
+        __logger.error(e)
+        raise Exception(e)
 
 
 def cmd_delete_Click(request):
@@ -140,16 +151,20 @@ def cmd_delete_Click(request):
         init_form(request, CFSC21_MODE0)
         request.context["gSetField"] = "txt_anacgymcd"
     except IntegrityError as e:
-        request.context["cmd_change_enable"] = False
-        request.context["cmd_delete_enable"] = False
+        request.context["cmd_change_enable"] = "False"
+        request.context["cmd_delete_enable"] = "False"
         raise PostgresException(Error=e, DbTbl="TBPRMSYBTH" + request.cfs_ini["iniUpdTbl"], SqlStr=sql)
+    except Exception as e:
+        request.context["cmd_change_enable"] = "False"
+        request.context["cmd_delete_enable"] = "False"
+        __logger.error(e)
+        raise Exception(e)
 
 
 def cmd_cancel_Click(request):
-    request.context["cmd_entry_enable"] = False
-    request.context["cmd_change_enable"] = False
-    request.context["cmd_delete_enable"] = False
-
+    request.context["cmd_entry_enable"] = "False"
+    request.context["cmd_change_enable"] = "False"
+    request.context["cmd_delete_enable"] = "False"
     init_form(request, CFSC21_MODE0)
     request.context["gSetField"] = "txt_anacgymcd"
 
