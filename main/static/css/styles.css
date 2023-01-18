@@ -707,6 +707,7 @@ width:100px;
     background: #FFFFFF;
     border: 1px solid #E0E0E0;
     border-radius: 8px;
+    padding: 0px 10px;
 }
 
 .btn-footer {
@@ -805,6 +806,19 @@ ul.breadcrumb li a:hover {
     text-decoration: underline;
 }
 
+/*end css*/
+.form-group input {
+    width: 40%!important;
+}
+
+.form-group select{
+    width: 20%!important;
+    margin:0px 42px;
+}
+
+.input_transfer {
+    margin:0px 35px;
+}
 
 .fs-14 {
     font-size: 16px;

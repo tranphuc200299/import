@@ -38,4 +38,9 @@
         <option value="1" {% if cmb_ataxkbn == "1" %}selected{% endif %}>非課税</option>
         <option value="2" {% if cmb_ataxkbn == "2" %}selected{% endif %}>課税 </option>
     </select>
+{% elif id == "cmb_asyubtkbn" %}
+<select tabindex="{{ tabIndex }}" class="{{ class }} w-100" name="cmb_asyubtkbn" id="cmb_asyubtkbn">
+    <option value="0" {% if cmb_asyubtkbn == "0" %}selected{% endif %}>重量単位 </option>
+    <option value="1" {% if cmb_asyubtkbn == "1" %}selected{% endif %}>容積単位 </option>
+</select>
 {% endif %}
