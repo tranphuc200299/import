@@ -4,7 +4,7 @@ from django.shortcuts import render
 from main.common.decorators import update_context, load_cfs_ini
 from main.common.function import SqlExecute, Const, Common
 from main.common.function.Common import dbField, DbDataChange
-from main.common.function.Const import NOMAL_OK, FATAL_ERR
+from main.common.function.Const import NOMAL_OK, FATAL_ERR, csTAXKBN_0, csTAXKBN_1, csTAXKBN_2
 from main.common.function.DspMessage import MsgDspError
 from main.common.utils import Response
 from main.middleware.exception.exceptions import PostgresException
@@ -13,7 +13,7 @@ PROGID = "cfsm2300"
 CFSC23_MODE0 = 0
 CFSC23_MODE1 = 1
 CFSC23_TANKA_MIN = 0
-CFSC23_TANKA_MAX = 999
+CFSC23_TANKA_MAX = 99999999
 
 __logger = logging.getLogger(__name__)
 
@@ -33,8 +33,11 @@ def f_cfsc2300(request):
             cmd_cancel_Click(request)
         elif action == "cmd_delete":
             cmd_delete_Click(request)
-        elif action == "txt_afwdcd_Change":
+        elif action == "txt_azworkcd_Change":
             id_show_data = txt_azworkcd_Change(request)
+            return Response(request).json_response_event_js_html(id_show_data)
+        elif action == "txt_itanka_LostFocus":
+            id_show_data = txt_itanka_LostFocus(request)
             return Response(request).json_response_event_js_html(id_show_data)
     else:
         Form_Load(request)
@@ -60,10 +63,9 @@ def inpdatachk1(request):
 
 
 def inpdatachk2(request):
-
     if request.context["txt_azworknm"] == '':
         MsgDspError(request, Const.MSG_DSP_WARN, "必須入力エラー", "雑作業名称を入力して下さい。")
-        request.context["gSetField"] = "txt_afwdnm"
+        request.context["gSetField"] = "txt_azworknm"
         return FATAL_ERR
     if len(request.context["txt_azworknm"]) > 25:
         MsgDspError(request, Const.MSG_DSP_WARN, "入力桁数エラー", "雑作業名称は" + "25" + "桁以内で入力して下さい。")
@@ -77,14 +79,14 @@ def inpdatachk2(request):
         MsgDspError(request, Const.MSG_DSP_WARN, "入力整合性エラー", "単価は整数(\ZZ,ZZZ,ZZ9形式)で入力して下さい。")
         request.context["gSetField"] = "txt_itanka"
         return FATAL_ERR
-    if CFSC23_TANKA_MIN > len(request.context["txt_itanka"]) or CFSC23_TANKA_MAX < len(request.context["txt_itanka"]):
+    if CFSC23_TANKA_MIN > float(request.context["txt_itanka"].replace(',', '')) or CFSC23_TANKA_MAX < float(
+            request.context["txt_itanka"].replace(',', '')):
         MsgDspError(request, Const.MSG_DSP_WARN, "入力整合性エラー",
-                    "単価は" + f"{float(CFSC23_TANKA_MIN)}".replace(".",
-                                                                   ",") + "から" + f"{float(CFSC23_TANKA_MIN)}".replace(
-                        ".", ",") + "以内で入力して下さい。")
+                    "名古屋用加算単価は" + f"{CFSC23_TANKA_MIN :,}" + "から" + f"{CFSC23_TANKA_MAX :,}" + "以内で入力して下さい。")
         request.context["gSetField"] = "txt_itanka"
         return FATAL_ERR
-    request.context["txt_itanka"] = str(int(request.context['txt_itanka'].split(".")[0]))
+
+    request.context["txt_itanka"] = int(request.context['txt_itanka'].replace(',', ''))
     return NOMAL_OK
 
 
@@ -98,7 +100,6 @@ def Form_Load(request):
 def cmd_search_Click(request):
     sql = ""
     try:
-
         init_form(request, CFSC23_MODE1)
         if inpdatachk1(request) != NOMAL_OK:
             return
@@ -111,12 +112,15 @@ def cmd_search_Click(request):
             request.context["cmd_entry_enable"] = "True"
         else:
             request.context["txt_azworknm"] = DbDataChange(RsTbZWork.Rows[0]["zworknm"])
-            request.context["txt_itanka"] = f'{DbDataChange(float(RsTbZWork.Rows[0]["tanka"]))}'.replace(".", ",")
-            if DbDataChange(DbDataChange(RsTbZWork.Rows[0]["taxkbn"])) == "0":
+            if DbDataChange((RsTbZWork.Rows[0]["tanka"])):
+                request.context["txt_itanka"] = f'{DbDataChange(RsTbZWork.Rows[0]["tanka"]):,}'
+            else:
+                request.context["txt_itanka"] = 0
+            if DbDataChange(RsTbZWork.Rows[0]["taxkbn"]) == "0":
                 request.context["cmb_ataxkbn"] = "0"
-            elif DbDataChange(DbDataChange(RsTbZWork.Rows[0]["taxkbn"])) == "1":
+            elif DbDataChange(RsTbZWork.Rows[0]["taxkbn"]) == "1":
                 request.context["cmb_ataxkbn"] = "1"
-            elif DbDataChange(DbDataChange(RsTbZWork.Rows[0]["taxkbn"])) == "2":
+            elif DbDataChange(RsTbZWork.Rows[0]["taxkbn"]) == "2":
                 request.context["cmb_ataxkbn"] = "2"
             request.context["txt_akaisu"] = DbDataChange(RsTbZWork.Rows[0]["kaisu"])
             request.context["cmd_change_enable"] = "True"
@@ -128,7 +132,6 @@ def cmd_search_Click(request):
 
 
 def cmd_entry_Click(request):
-    request.context["txt_itanka"] = str(int(request.context['txt_itanka'].split(",")[0]))
     sql = ""
     try:
         if inpdatachk2(request) != NOMAL_OK:
@@ -138,13 +141,13 @@ def cmd_entry_Click(request):
         sql += "VALUES("
         sql += dbField(request.context["txt_azworkcd"]) + ","
         sql += dbField(request.context["txt_azworknm"]) + ","
-        sql += dbField((request.context["txt_itanka"])) + ","
+        sql += f"{request.context['txt_itanka']}" + ","
         if request.context["cmb_ataxkbn"] == "0":
-            sql += dbField("0") + ","
+            sql += dbField(csTAXKBN_0) + ","
         elif request.context["cmb_ataxkbn"] == "1":
-            sql += dbField("1") + ","
+            sql += dbField(csTAXKBN_1) + ","
         elif request.context["cmb_ataxkbn"] == "2":
-            sql += dbField("2") + ","
+            sql += dbField(csTAXKBN_2) + ","
         sql += dbField(request.context["txt_akaisu"]) + ","
         sql += 'CURRENT_TIMESTAMP' + ","
         sql += dbField(request.cfs_ini["iniWsNo"]) + ')'
@@ -158,19 +161,18 @@ def cmd_entry_Click(request):
 
 
 def cmd_change_Click(request):
-    request.context["txt_itanka"] = str(int(request.context['txt_itanka'].split(",")[0]))
     if inpdatachk2(request) != NOMAL_OK:
         return
     sql = ""
     sql += "UPDATE TBZWORK" + request.cfs_ini["iniUpdTbl"] + " "
     sql += "SET ZWORKNM = " + dbField(request.context["txt_azworknm"]) + ","
-    sql += "TANKA = " + dbField(request.context["txt_itanka"]) + ","
+    sql += f"TANKA =  {request.context['txt_itanka']},"
     if request.context["cmb_ataxkbn"] == "0":
-        sql += "TAXKBN = " + dbField("0") + ","
+        sql += "TAXKBN = " + dbField(csTAXKBN_0) + ","
     elif request.context["cmb_ataxkbn"] == "1":
-        sql += "TAXKBN = " + dbField("1") + ","
+        sql += "TAXKBN = " + dbField(csTAXKBN_1) + ","
     elif request.context["cmb_ataxkbn"] == "2":
-        sql += "TAXKBN = " + dbField("2") + ","
+        sql += "TAXKBN = " + dbField(csTAXKBN_2) + ","
     sql += "KAISU = " + dbField(request.context["txt_akaisu"]) + ","
     sql += "UDATE = CURRENT_TIMESTAMP" + ","
     sql += "UWSID = " + dbField(request.cfs_ini["iniWsNo"]) + " "
@@ -179,11 +181,11 @@ def cmd_change_Click(request):
         with transaction.atomic():
             SqlExecute(sql).execute()
         init_form(request, CFSC23_MODE0)
-        request.context["gSetField"] = "txt_aopecd"
+        request.context["gSetField"] = "txt_azworkcd"
     except Exception as e:
         request.context["cmd_change_enable"] = "False"
         request.context["cmd_delete_enable"] = "False"
-        raise PostgresException(Error=e, DbTbl="TBOPE" + request.cfs_ini["iniUpdTbl"], SqlStr=sql)
+        raise PostgresException(Error=e, DbTbl="ZWORKNM" + request.cfs_ini["iniUpdTbl"], SqlStr=sql)
 
 
 def cmd_cancel_Click(request):
@@ -215,3 +217,19 @@ def txt_azworkcd_Change(request):
     request.context["cmd_entry_enable"] = "False"
     request.context["cmd_change_enable"] = "False"
     request.context["cmd_delete_enable"] = "False"
+    return ["txt_azworkcd", "cmd_entry_enable", "cmd_change_enable", "cmd_delete_enable"]
+
+
+def txt_itanka_LostFocus(request):
+    if request.context["txt_itanka"]:
+        if not Common.IsNumeric(request.context["txt_itanka"]):
+            MsgDspError(request, Const.MSG_DSP_WARN, "入力整合性エラー", "単価は整数(\ZZ,ZZZ,ZZ9形式)で入力して下さい。")
+            request.context["gSetField"] = "txt_itanka"
+        if CFSC23_TANKA_MIN > float(request.context["txt_itanka"].replace(',', '')) or CFSC23_TANKA_MAX < float(
+                request.context["txt_itanka"].replace(',', '')):
+            MsgDspError(request, Const.MSG_DSP_WARN, "入力整合性エラー",
+                        "単価は" + f"{CFSC23_TANKA_MIN:,}" + "から" + f"{CFSC23_TANKA_MAX:,}" + "以内で入力して下さい。")
+            request.context["gSetField"] = "txt_itanka"
+            return "txt_itanka"
+        request.context["txt_itanka"] = f"{int(request.context['txt_itanka'].replace(',', '')):,}"
+    return "txt_itanka"
