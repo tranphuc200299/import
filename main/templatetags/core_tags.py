@@ -45,3 +45,18 @@ def name2url(name_url):
     except Exception as e:
         _logger.error(e)
         return ""
+
+
+@register.filter(name="sq2any")
+def sq2any(sequence, type):
+    return f"txt_adaytp{sequence}_{type}"
+
+
+@register.filter(name="id2stbutton")
+def id2stbutton(id):
+    return f"{id}_enable"
+
+
+@register.filter(name="addTabIndex")
+def addTabIndex(id, plus):
+    return id + plus
