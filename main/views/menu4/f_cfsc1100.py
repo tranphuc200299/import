@@ -107,7 +107,6 @@ def Cm_TbPortChk(request, strPortCd):
         sql += "WHERE PORTCD = " + sqlStringConvert(strPortCd)
         return SqlExecute(sql).all()
     except IntegrityError as e:
-        __logger.error(e)
         raise PostgresException(Error=e, DbTbl="TBPORT" + request.cfs_ini["iniUpdTbl"], SqlStr=sql)
 
 
