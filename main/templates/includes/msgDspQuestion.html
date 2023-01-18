@@ -1,0 +1,16 @@
+<div id="modalQuestion" class="modal">
+    <div class="form-inline">
+      <div class="modal-content">
+        <div class="modal-header">
+          <p>{{title}}</p>
+        </div>
+        <div class="modal-body">
+          <p>{{msg}}</p>
+        </div>
+        <div class="modal-footer d-flex">
+          <button type="button" class="btn btn-outline-primary" data-dismiss="modal">いいえ</button>
+          {% include "includes/button.html" with name="action" id=action class="btn btn-primary" Text="はい" %}
+        </div>
+      </div>
+    </div>
+</div>
