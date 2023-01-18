@@ -7,9 +7,8 @@ from main.common.decorators import update_context, load_cfs_ini
 from main.common.function import SqlExecute, Common, Const
 from main.common.function.Common import dbField, DbDataChange, IsNumeric
 from main.common.function.Const import \
-    FATAL_ERR, NOMAL_OK, csSYUBTKBN_1, csSYUBTKBN_2, csFCALC_1, csFCALC_2, csFCALC_3, DB_NOT_FIND
+    FATAL_ERR, NOMAL_OK, csSYUBTKBN_1, csSYUBTKBN_2
 from main.common.function.DspMessage import MsgDspError
-from main.common.function.TableCheck import TbOpe_TableCheck
 from main.common.utils import Response
 from main.middleware.exception.exceptions import PostgresException
 
@@ -51,13 +50,10 @@ def f_cfsc1900(request):
 
 
 def Form_Load(request):
-    try:
-        init_form(request, CFSC19_MODE0)
-        request.context["cmd_entry_enable"] = False
-        request.context["cmd_change_enable"] = False
-        request.context["cmd_delete_enable"] = False
-    except Exception as e:
-        __logger.error(e)
+    init_form(request, CFSC19_MODE0)
+    request.context["cmd_entry_enable"] = "False"
+    request.context["cmd_change_enable"] = "False"
+    request.context["cmd_delete_enable"] = "False"
 
 
 def init_form(request, intMode):
@@ -80,16 +76,16 @@ def cmd_search_Click(request):
         sql += " FOR UPDATE NOWAIT"
         RsTbSTani = SqlExecute(sql).all()
         if not RsTbSTani.Rows:
-            request.context["cmd_entry_enable"] = True
+            request.context["cmd_entry_enable"] = "True"
         else:
             request.context["txt_astaninm"] = DbDataChange(RsTbSTani.Rows[0]["staninm"])
             if csSYUBTKBN_1 == Common.DbDataChange(RsTbSTani.Rows[0]["syubtkbn"]):
                 request.context["cmb_asyubtkbn"] = "0"
             elif csSYUBTKBN_2 == Common.DbDataChange(RsTbSTani.Rows[0]["syubtkbn"]):
                 request.context["cmb_asyubtkbn"] = "1"
-            request.context["txt_iconvert"] = DbDataChange(RsTbSTani.Rows[0]["convert"])
-            request.context["cmd_change_enable"] = True
-            request.context["cmd_delete_enable"] = True
+            request.context["txt_iconvert"] = f'{DbDataChange(RsTbSTani.Rows[0]["convert"]):,.3f}'
+            request.context["cmd_change_enable"] = "True"
+            request.context["cmd_delete_enable"] = "True"
         request.context["gSetField"] = "txt_astaninm"
 
     except Exception as e:
@@ -106,9 +102,9 @@ def inpdatachk1(request):
 
 def txt_astanicd_Change(request):
     request.context["txt_astanicd"] = request.context["txt_astanicd"].upper()
-    request.context["cmd_entry_enable"] = False
-    request.context["cmd_change_enable"] = False
-    request.context["cmd_delete_enable"] = False
+    request.context["cmd_entry_enable"] = "False"
+    request.context["cmd_change_enable"] = "False"
+    request.context["cmd_delete_enable"] = "False"
     return ["txt_astanicd", "cmd_entry_enable", "cmd_change_enable", "cmd_delete_enable"]
 
 
@@ -123,19 +119,18 @@ def cmd_entry_Click(request):
             sql += " VALUES ("
             sql += dbField(request.context["txt_astanicd"]) + ","
             sql += dbField(request.context["txt_astaninm"]) + ","
-            if str(request.context["cmb_asyubtkbn"]) == "0":
-                sql += dbField("1") + ","
-            elif str(request.context["cmb_asyubtkbn"]) == "1":
-                sql += dbField("2") + ","
+            if request.context["cmb_asyubtkbn"] == "0":
+                sql += dbField(csSYUBTKBN_1) + ","
+            elif request.context["cmb_asyubtkbn"] == "1":
+                sql += dbField(csSYUBTKBN_2) + ","
             sql += dbField(request.context['txt_iconvert']) + ","
             sql += "CURRENT_TIMESTAMP" + ","
             sql += dbField(request.cfs_ini["iniWsNo"]) + ")"
             SqlExecute(sql).execute()
-            init_form(request, CFSC19_MODE0)
-            request.context["gSetField"] = "txt_astanicd"
-
+        init_form(request, CFSC19_MODE0)
+        request.context["gSetField"] = "txt_astanicd"
     except Exception as e:
-        request.context["cmd_entry_enable"] = False
+        request.context["cmd_entry_enable"] = "False"
         raise PostgresException(Error=e, DbTbl="TBSTANI" + request.cfs_ini["iniUpdTbl"], SqlStr=sql)
 
 
@@ -153,7 +148,7 @@ def inpdatachk2(request):
         request.context["gSetField"] = "txt_iconvert"
         return FATAL_ERR
     if not IsNumeric(request.context["txt_iconvert"]):
-        MsgDspError(request, Const.MSG_DSP_WARN, "入力整合性エラー", "換算式は整数(ZZ,ZZZ,ZZ9.999形式)で入力して下さい。。")
+        MsgDspError(request, Const.MSG_DSP_WARN, "入力整合性エラー", "換算式は整数(ZZ,ZZZ,ZZ9.999形式)で入力して下さい。")
         request.context["gSetField"] = "txt_iconvert"
         return FATAL_ERR
     if CFSC19_CONVERT_MIN > float(request.context["txt_iconvert"]) or CFSC19_CONVERT_MAX < float(request.context["txt_iconvert"]):
@@ -164,60 +159,61 @@ def inpdatachk2(request):
     return NOMAL_OK
 
 def cmd_cancel_Click(request):
-    request.context["cmd_entry_enable"] = False
-    request.context["cmd_change_enable"] = False
-    request.context["cmd_delete_enable"] = False
+    request.context["cmd_entry_enable"] = "False"
+    request.context["cmd_change_enable"] = "False"
+    request.context["cmd_delete_enable"] = "False"
     init_form(request, CFSC19_MODE0)
     request.context["gSetField"] = "txt_astanicd"
 
 
-# noinspection PyUnreachableCode
 def cmd_change_Click(request):
+    sql = ""
     try:
         if inpdatachk2(request) != NOMAL_OK:
             return
         with transaction.atomic():
-            sql = "UPDATE TBSTANI" + request.cfs_ini["iniUpdTbl"] + " "
+            sql += "UPDATE TBSTANI" + request.cfs_ini["iniUpdTbl"] + " "
             sql += "SET STANINM = " + dbField(request.context["txt_astaninm"]) + ","
             if request.context["cmb_asyubtkbn"] == "0":
-                sql += " SYUBTKBN = " + dbField("1") + ","
+                sql += " SYUBTKBN = " + dbField(csSYUBTKBN_1) + ","
             elif request.context["cmb_asyubtkbn"] == "1":
-                sql += " SYUBTKBN = " + dbField("2") + ","
+                sql += " SYUBTKBN = " + dbField(csSYUBTKBN_2) + ","
             sql += "CONVERT =" + dbField(request.context["txt_iconvert"]) + ","
             sql += " UDATE = CURRENT_TIMESTAMP" + ","
             sql += "UWSID = " + dbField(request.cfs_ini["iniWsNo"]) + " "
             sql += " WHERE STANICD = " + dbField(request.context["txt_astanicd"])
             SqlExecute(sql).execute()
-            init_form(request, CFSC19_MODE0)
-            request.context["gSetField"] = "txt_astanicd"
+        init_form(request, CFSC19_MODE0)
+        request.context["gSetField"] = "txt_astanicd"
     except Exception as e:
-        request.context["cmd_change_enable"] = False
-        request.context["cmd_delete_enable"] = False
+        request.context["cmd_change_enable"] = "False"
+        request.context["cmd_delete_enable"] = "False"
         raise PostgresException(Error=e, DbTbl="TBSTANI" + request.cfs_ini["iniUpdTbl"], SqlStr=sql)
 
 
 def cmd_delete_Click(request):
+    sql = ""
     try:
         with transaction.atomic():
-            sql = "DELETE FROM TBSTANI" + request.cfs_ini["iniUpdTbl"] + ""
-            sql += " WHERE STANICD = " + dbField(request.context["txt_astanicd"])
+            sql += "DELETE FROM TBSTANI" + request.cfs_ini["iniUpdTbl"] + " "
+            sql += "WHERE STANICD = " + dbField(request.context["txt_astanicd"])
             SqlExecute(sql).execute()
         init_form(request, CFSC19_MODE0)
-        request.context["gSetField"] = "txt_aopecd"
+        request.context["gSetField"] = "txt_astanicd"
 
     except Exception as e:
-        request.context["cmd_change_enable"] = False
-        request.context["cmd_delete_enable"] = False
+        request.context["cmd_change_enable"] = "False"
+        request.context["cmd_delete_enable"] = "False"
         raise PostgresException(Error=e, DbTbl="TBSTANI" + request.cfs_ini["iniUpdTbl"], SqlStr=sql)
 
 def txt_iconvert_LostFocus(request):
-    if request.context["txt_iconvert"] == "":
+    if request.context["txt_iconvert"]:
         if not IsNumeric(request.context["txt_iconvert"]):
             MsgDspError(request, Const.MSG_DSP_WARN, "入力整合性エラー", "換算式は整数(ZZ,ZZZ,ZZ9.999形式)で入力して下さい。")
             request.context["gSetField"] = "txt_iconvert"
-        if CFSC19_CONVERT_MIN > float(request.context["txt_iconvert"]) or CFSC19_CONVERT_MAX < float(
-                request.context["txt_iconvert"]):
+        if CFSC19_CONVERT_MIN > float(request.context["txt_iconvert"].replace(',', '')) or CFSC19_CONVERT_MAX < float(request.context["txt_iconvert"].replace(',', '')):
             MsgDspError(request, Const.MSG_DSP_WARN, "入力整合性エラー", "換算式は" + format(CFSC19_CONVERT_MIN) + "から" + format(CFSC19_CONVERT_MAX) + "以内で入力して下さい。")
             request.context["gSetField"] = "txt_iconvert"
             return FATAL_ERR
+        request.context["txt_iconvert"] = f"{float(request.context['txt_iconvert'].replace(',', '')):,.3f}"
         return NOMAL_OK
