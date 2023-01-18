@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}搬入出先コード登録{% endblock title %}
+
+{% block main %}
+    <form class="" id="f_cfsc2700" method="post">
+        {% csrf_token %}
+        <div class="card mb-4 box-shadow">
+            <div class="form-inline">
+                <div class="form-group">
+                    <label for="txt_ainlandcd" class="mr-3" tabindex="3">
+                        搬入出先コード<span class="required">*</span>
+                    </label>
+                    {% include "includes/textbox.html" with class="form-control" id="txt_ainlandcd" tabIndex=4 width="100" MaxLength=5 Change="True" Title="必須入力・搬入出先 Code" %}
+                </div>
+                {% include "includes/button.html" with  name="action" id="cmd_search" class="btn btn-primary btn-search ml-4" IsEnable=True tabIndex=5 htmlText='<i class="fa fa-search"></i> 検索' %}
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="form-horizontal pl-0 pt-0">
+                <div class="row col-12">
+                    <div class="form-group form-inline pb-0">
+                      <label for="txt_ainlandnm" tabindex="7" class="mr-3">
+                          搬入出先名称<span class="required">*</span>
+                      </label>
+                      {% include "includes/textbox.html" with class="form-control ml-4" id="txt_ainlandnm" tabIndex=8 width="300" MaxLength=30 Title="必須入力" %}
+                    </div>
+                </div>
+                <div class="row btn-footer">
+                    <div class="col-12 d-flex">
+                        {% include "includes/button.html" with name="action" id="cmd_entry" class="btn btn-primary " Text="登録" tabIndex=9 IsEnable=cmd_entry_enable %}
+                        {% include "includes/button.html" with name="action" id="cmd_change" class="btn btn-primary" Text="変更" tabIndex=10 IsEnable=cmd_change_enable %}
+                        {% include "includes/button.html" with name="action" id="cmd_delete" class="btn btn-primary" Text="削除" tabIndex=11 IsEnable=cmd_delete_enable %}
+                        {% include "includes/button.html" with name="action" id="cmd_cancel" class="btn btn-primary" Text="取消" tabIndex=12 IsEnable=True %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+{% endblock main %}
