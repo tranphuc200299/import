@@ -86,9 +86,6 @@ def cmd_search_Click(request):
         request.context["gSetField"] = "txt_aprmsybt"
     except IntegrityError as e:
         raise PostgresException(Error=e, DbTbl="TBPRMSYBTH" + request.cfs_ini["iniUpdTbl"], SqlStr=sql)
-    except Exception as e:
-        __logger.error(e)
-        raise Exception(e)
 
 
 def cmd_entry_Click(request):
@@ -113,7 +110,6 @@ def cmd_entry_Click(request):
         raise PostgresException(Error=e, DbTbl="TBPRMSYBTH" + request.cfs_ini["iniUpdTbl"], SqlStr=sql)
     except Exception as e:
         request.context["cmd_entry_enable"] = "False"
-        __logger.error(e)
         raise Exception(e)
 
 
@@ -138,7 +134,6 @@ def cmd_change_Click(request):
     except Exception as e:
         request.context["cmd_change_enable"] = "False"
         request.context["cmd_delete_enable"] = "False"
-        __logger.error(e)
         raise Exception(e)
 
 
@@ -157,7 +152,6 @@ def cmd_delete_Click(request):
     except Exception as e:
         request.context["cmd_change_enable"] = "False"
         request.context["cmd_delete_enable"] = "False"
-        __logger.error(e)
         raise Exception(e)
 
 
