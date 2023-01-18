@@ -9,67 +9,63 @@
     <div class="card">
         <div class="form-inline">
             <div class="form-group form-group-seach">
-                <label for="txt_aopecd" class="mr-3" tabindex="4">オペレータコード <span
+                <label for="txt_aopecd" class="mr-3" tabindex="3">オペレータコード <span
                         class="required">*</span></label>
-                {% include "includes/textbox.html" with class="form-control" id="txt_aopecd" tabIndex=4 MaxLength=5 Change="True" Title="必須入力・Operator Code" %}
+                {% include "includes/textbox.html" with class="form-control" id="txt_aopecd" tabIndex=4 MaxLength=5 width="80" Change="True" Title="必須入力・Operator Code" %}
             </div>
             {% include "includes/button.html" with name="action" id="cmd_search" class="btn btn-primary btn-search" TabIndex=5 htmlText='<i class="fa fa-search"></i> 検索' %}
         </div>
     </div>
     <div class="card">
         <div class="form-horizontal">
-            <div class="row">
-                <div class="form-inline">
-                    <label tabindex="4">ポートコード<span class="required">*</span></label>
-                </div>
+            <div class="form-group form-group-seach">
+                <label for="txt_aopecd" class="mr-3" tabindex="3">ポートコード <span
+                        class="required">*</span></label>
             </div>
             <div class="row">
-                <div class="col-lg-2"></div>
-                <div class="col-lg-4">
-                    {% for i in "12345" %}
-                    <div class="form-inline">
-                        <div class="form-group">
-                            <label for="txt_irank{{i}}" class="mr-3" tabindex="4">( {{i}} )<span class="required">*</span></label>
-                            {% include "includes/textbox.html" with class="form-control" id="txt_irank"|add:i tabIndex=27 MaxLength=3 %}
+                <div class="col-lg-9 col-sm-12 row">
+                    <div class="col-lg-2"></div>
+                    <div class="col-lg-3">
+                        {% for i in "12345" %}
+                        <div class="form-inline">
+                            <div class="form-group">
+                                <label for="txt_irank{{i}}" class="mr-3" tabindex="4">( {{i}} )<span class="required">*</span></label>
+                                {% include "includes/textbox.html" with class="form-control" id="txt_irank"|add:i tabIndex=27 MaxLength=3 width="80" %}
+                            </div>
                         </div>
+                        {% endfor %}
                     </div>
-                    {% endfor %}
-                </div>
-                <div class="col-lg-4">
-                    {% for i in "12345" %}
-                    <div class="form-inline">
-                        <div class="form-group">
-                            <label for="txt_itanka{{i}}" class="mr-3" tabindex="5">日まで<span class="required">*</span></label>
-                            {% include "includes/textbox.html" with class="form-control" id="txt_itanka"|add:i tabIndex=27 MaxLength=11 %}
+                    <div class="col-lg-7">
+                        {% for i in "12345" %}
+                        <div class="form-inline">
+                            <div class="form-group">
+                                <label for="txt_itanka{{i}}" class="mr-3" tabindex="5">日まで<span class="required">*</span></label>
+                                {% include "includes/textbox.html" with class="form-control" id="txt_itanka"|add:i tabIndex=27 MaxLength=11  width="368" %}
+                            </div>
                         </div>
-                    </div>
-                    {% endfor %}
-                </div>
-            </div>
-            <div class="row">
-                <div class="form-inline">
-                    <div class="form-group">
-                        <label for="cmb_astankakbn" class="mr-3" tabindex="4">請求単価区分<span
-                                class="required">*</span></label>
-                        {% include 'includes/dropdownlist.html' with id="cmb_astankakbn" tabIndex=29 class="form-control" Title="必須入力" %}
+                        {% endfor %}
                     </div>
                 </div>
             </div>
-            <div class="row">
-                <div class="form-inline">
-                    <div class="form-group">
-                        <label for="txt_itankac" class="mr-3" tabindex="4">名古屋用加算単価</label>
-                        {% include "includes/textbox.html" with class="form-control" id="txt_itankac" tabIndex=31 MaxLength=5 LostFocus="True" Title="\12,345,678" %}
-                    </div>
+            <div class="form-group col-lg-12">
+                <div class="col-lg-9 col-sm-12 row">
+                    <label class="col-lg-3 col-sm-8 d-flex" for="cmb_astankakbn" tabindex="7">請求単価区分<span
+                        class="required">*</span></label>
+                    <div class="col-lg-3 col-sm-8 d-flex">{% include 'includes/dropdownlist.html' with id="cmb_astankakbn" width="200"  tabIndex=29 class="form-control" Title="必須入力" %}</div>
                 </div>
             </div>
-            <div class="row">
-                <div class="form-inline">
-                    <div class="form-group">
-                        <label for="cmb_afcalc" class="mr-3" tabindex="4">デマレージ計算方式<span
-                                class="required">*</span></label>
-                        {% include 'includes/dropdownlist.html' with id="cmb_afcalc" class="form-control" Title="必須入力" %}
-                    </div>
+            <div class="form-group col-lg-12">
+                <div class="col-lg-9 col-sm-12 row">
+                    <label class="col-lg-3 col-sm-8 d-flex" for="txt_itankac" tabindex="7">名古屋用加算単価<span
+                        class="required">*</span></label>
+                    <div class="col-lg-3 col-sm-8 d-flex">{% include "includes/textbox.html" with class="form-control" id="txt_itankac" tabIndex=31 MaxLength=5 LostFocus="True" Title="\12,345,678" %}</div>
+                </div>
+            </div>
+            <div class="form-group col-lg-12">
+                <div class="col-lg-9 col-sm-12 row">
+                    <label class="col-lg-3 col-sm-8 d-flex" for="cmb_afcalc" tabindex="7">デマレージ計算方式<span
+                        class="required">*</span></label>
+                    <div class="col-lg-3 col-sm-8 d-flex">{% include 'includes/dropdownlist.html' with id="cmb_afcalc" class="form-control" Title="必須入力" %}</div>
                 </div>
             </div>
             <div class="row btn-footer">

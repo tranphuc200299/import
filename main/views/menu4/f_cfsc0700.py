@@ -55,9 +55,9 @@ def f_cfsc0700(request):
 
 def Form_Load(request):
     init_form(request, CFSC07_MODE0)
-    request.context["cmd_entry_enable"] = False
-    request.context["cmd_change_enable"] = False
-    request.context["cmd_delete_enable"] = False
+    request.context["cmd_entry_enable"] = "False"
+    request.context["cmd_change_enable"] = "False"
+    request.context["cmd_delete_enable"] = "False"
 
 
 def init_form(request, intMode):
@@ -108,9 +108,9 @@ def txt_itankac_LostFocus(request):
 
 def txt_aopecd_Change(request):
     request.context["txt_aopecd"] = request.context["txt_aopecd"].upper()
-    request.context["cmd_entry_enable"] = False
-    request.context["cmd_change_enable"] = False
-    request.context["cmd_delete_enable"] = False
+    request.context["cmd_entry_enable"] = "False"
+    request.context["cmd_change_enable"] = "False"
+    request.context["cmd_delete_enable"] = "False"
     return ["txt_aopecd", "cmd_entry_enable", "cmd_change_enable", "cmd_delete_enable"]
 
 
@@ -143,7 +143,7 @@ def cmd_search_Click(request):
         sql += " FOR UPDATE NOWAIT"
         RsTbDemurg = SqlExecute(sql).all()
         if not RsTbDemurg.Rows:
-            request.context["cmd_entry_enable"] = True
+            request.context["cmd_entry_enable"] = "True"
         else:
             for i in range(1, 6):
                 if DbDataChange(RsTbDemurg.Rows[0]["rank" + str(i)]) != 0:
@@ -169,8 +169,8 @@ def cmd_search_Click(request):
                 request.context["cmb_afcalc"] = "1"
             elif DbDataChange(RsTbDemurg.Rows[0]["dcalc"]) == csDCALC_3:
                 request.context["cmb_afcalc"] = "2"
-        request.context["cmd_change_enable"] = True
-        request.context["cmd_delete_enable"] = True
+        request.context["cmd_change_enable"] = "True"
+        request.context["cmd_delete_enable"] = "True"
         request.context["gSetField"] = "txt_irank1"
     except IntegrityError as e:
         __logger.error(e)
@@ -178,64 +178,58 @@ def cmd_search_Click(request):
 
 
 def inpdatachk2(request):
-    try:
-        for i in range(1, 6):
-            if request.context["txt_irank" + str(i)] != '':
-                if not IsNumeric(request.context["txt_irank" + str(i)]):
-                    MsgDspError(request, MSG_DSP_WARN, "入力整合性エラー", "超過日数は整数(ZZ9形式)で入力して下さい。")
-                    request.context["gSetField"] = "txt_irank" + str(i)
-                    return FATAL_ERR
-                if CFSC07_RANK_MIN > float(request.context["txt_irank" + str(i)]) or CFSC07_RANK_MAX < float(
-                        request.context["txt_irank" + str(i)]):
-                    MsgDspError(request, MSG_DSP_WARN, "入力整合性エラー",
-                                "超過日数は{}から{}以内で入力して下さい。".format(CFSC07_RANK_MIN, CFSC07_RANK_MAX))
-                    request.context["gSetField"] = "txt_irank" + str(i)
-                    return FATAL_ERR
-            if request.context["txt_itanka" + str(i)] != '':
-                if not IsNumeric(request.context["txt_itanka" + str(i)]):
-                    MsgDspError(request, MSG_DSP_WARN, "入力整合性エラー", "単価は整数(\ZZ,ZZZ,ZZ9形式)で入力して下さい。")
-                    request.context["gSetField"] = "txt_itanka" + str(i)
-                    return FATAL_ERR
-                if CFSC07_RANK_MIN > float(request.context["txt_itanka" + str(i)]) or CFSC07_RANK_MAX < float(
-                        request.context["txt_itanka" + str(i)]):
-                    MsgDspError(request, MSG_DSP_WARN, "入力整合性エラー",
-                                "単価は" + f"{CFSC07_TANKA_MIN :,.1f}" + "から" + f"{CFSC07_TANKA_MAX :,.1f}" + "以内で入力して下さい。")
-                    request.context["gSetField"] = "txt_itanka" + str(i)
-                    return FATAL_ERR
-            if request.context["txt_irank" + str(i)] != '' and request.context["txt_itanka" + str(i)] == '':
-                MsgDspError(request, MSG_DSP_WARN, "整合性エラー", "超過日数と単価はセットで入力して下さい。")
+    for i in range(1, 6):
+        if request.context["txt_irank" + str(i)] != '':
+            if not IsNumeric(request.context["txt_irank" + str(i)]):
+                MsgDspError(request, MSG_DSP_WARN, "入力整合性エラー", "超過日数は整数(ZZ9形式)で入力して下さい。")
+                request.context["gSetField"] = "txt_irank" + str(i)
+                return FATAL_ERR
+            if CFSC07_RANK_MIN > float(request.context["txt_irank" + str(i)]) or CFSC07_RANK_MAX < float(
+                    request.context["txt_irank" + str(i)]):
+                MsgDspError(request, MSG_DSP_WARN, "入力整合性エラー",
+                            "超過日数は{}から{}以内で入力して下さい。".format(CFSC07_RANK_MIN, CFSC07_RANK_MAX))
+                request.context["gSetField"] = "txt_irank" + str(i)
+                return FATAL_ERR
+        if request.context["txt_itanka" + str(i)] != '':
+            if not IsNumeric(request.context["txt_itanka" + str(i)]):
+                MsgDspError(request, MSG_DSP_WARN, "入力整合性エラー", "単価は整数(\ZZ,ZZZ,ZZ9形式)で入力して下さい。")
                 request.context["gSetField"] = "txt_itanka" + str(i)
                 return FATAL_ERR
-            if i == 1:
-                if request.context["txt_irank" + str(i)] == "":
-                    MsgDspError(request, MSG_DSP_WARN, "必須入力エラー", "超過日数(1)を入力して下さい。")
-                    request.context["gSetField"] = "txt_irank1"
-                    return FATAL_ERR
-            else:
-                if request.context["txt_irank" + str(i)] != "":
-                    if request.context["txt_irank" + str(i - 1)] >= request.context["txt_irank" + str(i)]:
-                        MsgDspError(request, MSG_DSP_WARN, "整合性エラー",
-                                    "超過日数({}) < 超過日数({})の関係で入力して下さい。".format(i, i + 1))
-                        request.context["gSetField"] = "txt_irank" + str(i)
-                        return FATAL_ERR
-        if request.context["txt_itankac"] != "":
-            if not IsNumeric(request.context["txt_itankac"]):
-                MsgDspError(request, MSG_DSP_WARN, "入力整合性エラー", "名古屋用加算単価は整数(\ZZ,ZZZ,ZZ9形式)で入力して下さい。")
-                request.context["gSetField"] = "txt_itankac"
-                return FATAL_ERR
-            if CFSC07_TANKA_MIN > float(request.context["txt_itankac"]) or CFSC07_TANKA_MAX < float(
-                    request.context["txt_itankac"]):
+            if CFSC07_RANK_MIN > float(request.context["txt_itanka" + str(i)]) or CFSC07_RANK_MAX < float(
+                    request.context["txt_itanka" + str(i)]):
                 MsgDspError(request, MSG_DSP_WARN, "入力整合性エラー",
-                            "名古屋用加算単価は" + f"{CFSC07_TANKA_MIN :,.1f}" + "から" + f"{CFSC07_TANKA_MAX :,.1f}" + "以内で入力して下さい。")
-                request.context["gSetField"] = "txt_itankac"
+                            "単価は" + f"{CFSC07_TANKA_MIN :,.1f}" + "から" + f"{CFSC07_TANKA_MAX :,.1f}" + "以内で入力して下さい。")
+                request.context["gSetField"] = "txt_itanka" + str(i)
                 return FATAL_ERR
-            request.context["txt_itankac"] = f"{float(request.context['txt_itankac']) :,.1f}"
-        return NOMAL_OK
-    except Exception as e:
-        import os, sys
-        exc_type, exc_obj, exc_tb = sys.exc_info()
-        fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
-        print(exc_type, fname, exc_tb.tb_lineno)
+        if request.context["txt_irank" + str(i)] != '' and request.context["txt_itanka" + str(i)] == '':
+            MsgDspError(request, MSG_DSP_WARN, "整合性エラー", "超過日数と単価はセットで入力して下さい。")
+            request.context["gSetField"] = "txt_itanka" + str(i)
+            return FATAL_ERR
+        if i == 1:
+            if request.context["txt_irank" + str(i)] == "":
+                MsgDspError(request, MSG_DSP_WARN, "必須入力エラー", "超過日数(1)を入力して下さい。")
+                request.context["gSetField"] = "txt_irank1"
+                return FATAL_ERR
+        else:
+            if request.context["txt_irank" + str(i)] != "":
+                if request.context["txt_irank" + str(i - 1)] >= request.context["txt_irank" + str(i)]:
+                    MsgDspError(request, MSG_DSP_WARN, "整合性エラー",
+                                "超過日数({}) < 超過日数({})の関係で入力して下さい。".format(i, i + 1))
+                    request.context["gSetField"] = "txt_irank" + str(i)
+                    return FATAL_ERR
+    if request.context["txt_itankac"] != "":
+        if not IsNumeric(request.context["txt_itankac"]):
+            MsgDspError(request, MSG_DSP_WARN, "入力整合性エラー", "名古屋用加算単価は整数(\ZZ,ZZZ,ZZ9形式)で入力して下さい。")
+            request.context["gSetField"] = "txt_itankac"
+            return FATAL_ERR
+        if CFSC07_TANKA_MIN > float(request.context["txt_itankac"]) or CFSC07_TANKA_MAX < float(
+                request.context["txt_itankac"]):
+            MsgDspError(request, MSG_DSP_WARN, "入力整合性エラー",
+                        "名古屋用加算単価は" + f"{CFSC07_TANKA_MIN :,.1f}" + "から" + f"{CFSC07_TANKA_MAX :,.1f}" + "以内で入力して下さい。")
+            request.context["gSetField"] = "txt_itankac"
+            return FATAL_ERR
+        request.context["txt_itankac"] = f"{float(request.context['txt_itankac']) :,.1f}"
+    return NOMAL_OK
 
 
 def cmd_entry_Click(request):
@@ -276,7 +270,7 @@ def cmd_entry_Click(request):
         init_form(request, CFSC07_MODE0)
         request.context["gSetField"] = "txt_aopecd"
     except IntegrityError as e:
-        request.context["cmd_entry_enable"] = False
+        request.context["cmd_entry_enable"] = "False"
         __logger.error(e)
         raise PostgresException(Error=e, DbTbl="TBDEMURG" + request.cfs_ini["iniUpdTbl"], SqlStr=sql)
 
@@ -322,15 +316,15 @@ def cmd_change_Click(request):
         init_form(request, CFSC07_MODE0)
         request.context["gSetField"] = "txt_aopecd"
     except IntegrityError as e:
-        request.context["cmd_change_enable"] = False
-        request.context["cmd_delete_enable"] = False
+        request.context["cmd_change_enable"] = "False"
+        request.context["cmd_delete_enable"] = "False"
         __logger.error(e)
         raise PostgresException(Error=e, DbTbl="TBDEMURG" + request.cfs_ini["iniUpdTbl"], SqlStr=sql)
 
     except Exception as e:
         __logger.error(e)
-        request.context["cmd_change_enable"] = False
-        request.context["cmd_delete_enable"] = False
+        request.context["cmd_change_enable"] = "False"
+        request.context["cmd_delete_enable"] = "False"
         raise Exception(e)
 
 
@@ -343,21 +337,21 @@ def cmd_delete_Click(request):
         init_form(request, CFSC07_MODE0)
         request.context["gSetField"] = "txt_aopecd"
     except IntegrityError as e:
-        request.context["cmd_change_enable"] = False
-        request.context["cmd_delete_enable"] = False
+        request.context["cmd_change_enable"] = "False"
+        request.context["cmd_delete_enable"] = "False"
         __logger.error(e)
         raise PostgresException(Error=e, DbTbl="TBDEMURG" + request.cfs_ini["iniUpdTbl"], SqlStr=sql)
     except Exception as e:
         __logger.error(e)
-        request.context["cmd_change_enable"] = False
-        request.context["cmd_delete_enable"] = False
+        request.context["cmd_change_enable"] = "False"
+        request.context["cmd_delete_enable"] = "False"
         raise Exception(e)
 
 
 def cmd_cancel_Click(request):
-    request.context["cmd_entry_enable"] = False
-    request.context["cmd_change_enable"] = False
-    request.context["cmd_delete_enable"] = False
+    request.context["cmd_entry_enable"] = "False"
+    request.context["cmd_change_enable"] = "False"
+    request.context["cmd_delete_enable"] = "False"
 
     init_form(request, CFSC07_MODE0)
     request.context["gSetField"] = "txt_aopecd"
