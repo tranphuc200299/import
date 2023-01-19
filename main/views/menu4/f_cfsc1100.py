@@ -72,7 +72,7 @@ def txt_aportcd_LostFocus(request):
     if not RsTbPort.Rows:
         MsgDspError(request, MSG_DSP_ERROR, "コード未登録エラー", "Port Code Tableが存在しません。")
         request.context["gSetField"] = "txt_aportcd"
-        return request.context["gSetField"]
+        return "gSetField"
     else:
         request.context["lbl_aportnm"] = DbDataChange(RsTbPort.Rows[0]["portnm"])
         return "lbl_aportnm"
@@ -102,9 +102,9 @@ def txt_aportcd_Change(request):
 def Cm_TbPortChk(request, strPortCd):
     sql = ""
     try:
-        sql = "SELECT PORTNM "
+        sql += "SELECT PORTNM "
         sql += "FROM TBPORT" + request.cfs_ini["iniUpdTbl"] + " "
-        sql += "WHERE PORTCD = " + sqlStringConvert(strPortCd)
+        sql += "WHERE PORTCD = " + dbField(strPortCd)
         return SqlExecute(sql).all()
     except IntegrityError as e:
         raise PostgresException(Error=e, DbTbl="TBPORT" + request.cfs_ini["iniUpdTbl"], SqlStr=sql)
@@ -123,6 +123,10 @@ def inpdatachk1(request):
     elif intRtn == DB_FATAL_ERR:
         request.context["gSetField"] = "txt_aopecd"
         return FATAL_ERR
+    if not request.context["txt_asportcd"]:
+        MsgDspError(request, MSG_DSP_WARN, "必須入力エラー", "船社ポートコードを入力して下さい。")
+        request.context["gSetField"] = "txt_asportcd"
+        return FATAL_ERR
     return NOMAL_OK
 
 
@@ -132,7 +136,7 @@ def cmd_search_Click(request):
         init_form(request, CFSC11_MODE1)
         if inpdatachk1(request) != NOMAL_OK:
             return
-        sql = "SELECT * "
+        sql += "SELECT * "
         sql += "FROM TBSPORT" + request.cfs_ini["iniUpdTbl"] + " "
         sql += "WHERE OPECD = " + dbField(request.context["txt_aopecd"])
         sql += " AND SPORTCD = " + dbField(request.context["txt_asportcd"])
@@ -157,7 +161,7 @@ def inpdatachk2(request):
         MsgDspError(request, MSG_DSP_WARN, "必須入力エラー", "ポートコードを入力して下さい。")
         request.context["gSetField"] = "txt_aportcd"
         return FATAL_ERR
-    intRtn = TbPort_TableCheck(request.context["txt_aportcd"],  request.cfs_ini["iniUpdTbl"])
+    intRtn = TbPort_TableCheck(request.context["txt_aportcd"], request.cfs_ini["iniUpdTbl"])
     if intRtn == DB_NOT_FIND:
         MsgDspError(request, MSG_DSP_WARN, "コード未登録エラー", "Port Code Tableが登録されていません。")
         request.context["gSetField"] = "txt_aportcd"
@@ -173,7 +177,7 @@ def cmd_entry_Click(request):
     try:
         if inpdatachk2(request) != NOMAL_OK:
             return
-        sql = "INSERT INTO TBSPORT" + request.cfs_ini["iniUpdTbl"] + " "
+        sql += "INSERT INTO TBSPORT" + request.cfs_ini["iniUpdTbl"] + " "
         sql += "(OPECD,SPORTCD,PORTCD,UDATE,UWSID) "
         sql += "VALUES("
         sql += dbField(request.context["txt_aopecd"]) + ","
@@ -198,7 +202,7 @@ def cmd_change_Click(request):
     try:
         if inpdatachk2(request) != NOMAL_OK:
             return
-        sql = "UPDATE TBSPORT" + request.cfs_ini["iniUpdTbl"] + " "
+        sql += "UPDATE   TBSPORT" + request.cfs_ini["iniUpdTbl"] + " "
         sql += "SET PORTCD = " + dbField(request.context["txt_aportcd"]) + ","
         sql += "UDATE = CURRENT_TIMESTAMP" + ","
         sql += "UWSID = " + dbField(request.cfs_ini["iniWsNo"]) + " "

@@ -11,12 +11,12 @@
             <div class="row">
                 <div class="col-12 d-flex">
                     <div class="form-group form-group-seach">
-                        <label for="txt_aopecd" class="mr-3" tabIndex=4>オペレータコード<span
+                        <label for="txt_aopecd" class="mr-3" tabIndex=3>オペレータコード<span
                                 class="required">*</span></label>
                         {% include "includes/textbox.html" with class="form-control" id="txt_aopecd" name="txt_aopecd" tabIndex=4 width="123" MaxLength=4 Change="True" Title="必須入力・Operator Code" %}
                     </div>
                     <div class="form-group form-group-seach">
-                        <label for="txt_asportcd" tabIndex=6>船社ポートコード<span
+                        <label for="txt_asportcd" tabIndex=5>船社ポートコード<span
                                 class="required">*</span></label>
                         {% include "includes/textbox.html" with class="form-control" id="txt_asportcd" name="txt_asportcd" width="123" tabIndex=6 MaxLength=5 Change="True" Title="必須入力" %}
                     </div>
@@ -36,10 +36,10 @@
                 <div class="col-lg-12">
                     <div class="form-group">
                         <label class="control-label col-sm-12" for="txt_aportcd"
-                               tabindex="15">ポートコード<span class="required">*</span></label>
+                               tabindex="9">ポートコード<span class="required">*</span></label>
                         <div class="col-lg-9 col-sm-12 row">
                             <div class="col-lg-4 col-sm-8 d-flex">
-                                {% include "includes/textbox.html" with class="form-control col-3 mr-2" id="txt_aportcd" width="100" name="txt_aportcd" MaxLength=5 tabIndex=10 LostFocus="True" %}
+                                {% include "includes/textbox.html" with class="form-control col-3 mr-2" id="txt_aportcd" width="100" name="txt_aportcd" MaxLength=5 tabIndex=10 LostFocus="True" Change="True" %}
                                 {% include "includes/textbox.html" with class="form-control col-9" id="lbl_aportnm" name="lbl_aportnm" ReadOnly="True" tabIndex=11 %}
                             </div>
                         </div>
