@@ -41,16 +41,16 @@ def f_cfsc1300(request):
 
 def Form_Load(request):
     init_form(request, CFSC13_MODE0)
-    request.context["cmd_entry_enable"] = False
-    request.context["cmd_change_enable"] = False
-    request.context["cmd_delete_enable"] = False
+    request.context["cmd_entry_enable"] = "False"
+    request.context["cmd_change_enable"] = "False"
+    request.context["cmd_delete_enable"] = "False"
 
 
 def txt_afwdcd_Change(request):
     request.context["txt_afwdcd"] = request.context["txt_afwdcd"].upper()
-    request.context["cmd_entry_enable"] = False
-    request.context["cmd_change_enable"] = False
-    request.context["cmd_delete_enable"] = False
+    request.context["cmd_entry_enable"] = "False"
+    request.context["cmd_change_enable"] = "False"
+    request.context["cmd_delete_enable"] = "False"
     return ["txt_afwdcd", "cmd_entry_enable", "cmd_change_enable", "cmd_delete_enable"]
 
 
@@ -67,14 +67,14 @@ def cmd_search_Click(request):
 
         RsTbForward = SqlExecute(sql).all()
         if len(RsTbForward.Rows) == 0:
-            request.context["cmd_entry_enable"] = True
+            request.context["cmd_entry_enable"] = "True"
         else:
             request.context["txt_afwdnm"] = DbDataChange(RsTbForward.Rows[0]["fwdnm"])
             request.context["txt_afwdtannm"] = DbDataChange(RsTbForward.Rows[0]["fwdtannm"])
             request.context["txt_afwdtel"] = DbDataChange(RsTbForward.Rows[0]["fwdtel"])
             request.context["txt_afwdfax"] = DbDataChange(RsTbForward.Rows[0]["fwdfax"])
-            request.context["cmd_change_enable"] = True
-            request.context["cmd_delete_enable"] = True
+            request.context["cmd_change_enable"] = "True"
+            request.context["cmd_delete_enable"] = "True"
         request.context["gSetField"] = "txt_afwdnm"
     except Exception as e:
         raise PostgresException(Error=e, DbTbl="TBFORWARD" + request.cfs_ini["iniUpdTbl"], SqlStr=sql)
@@ -101,7 +101,7 @@ def cmd_entry_Click(request):
         init_form(request, CFSC13_MODE0)
         request.context["gSetField"] = "txt_afwdcd"
     except Exception as e:
-        request.context["cmd_entry_enable"] = False
+        request.context["cmd_entry_enable"] = "False"
         raise PostgresException(Error=e, DbTbl="TBFORWARD" + request.cfs_ini["iniUpdTbl"], SqlStr=sql)
 
 
@@ -122,8 +122,8 @@ def cmd_change_Click(request):
         request.context["gSetField"] = "txt_afwdcd"
 
     except Exception as e:
-        request.context["cmd_change_enable"] = False
-        request.context["cmd_delete_enable"] = False
+        request.context["cmd_change_enable"] = "False"
+        request.context["cmd_delete_enable"] = "False"
         raise PostgresException(Error=e, DbTbl="TBFORWARD" + request.cfs_ini["iniUpdTbl"], SqlStr=sql)
 
 
@@ -136,15 +136,15 @@ def cmd_delete_Click(request):
         init_form(request, CFSC13_MODE0)
         request.context["gSetField"] = "txt_afwdcd"
     except Exception as e:
-        request.context["cmd_change_enable"] = False
-        request.context["cmd_delete_enable"] = False
+        request.context["cmd_change_enable"] = "False"
+        request.context["cmd_delete_enable"] = "False"
         raise PostgresException(Error=e, DbTbl="TBFORWARD" + request.cfs_ini["iniUpdTbl"], SqlStr=sql)
 
 
 def cmd_cancel_Click(request):
-    request.context["cmd_entry_enable"] = False
-    request.context["cmd_change_enable"] = False
-    request.context["cmd_delete_enable"] = False
+    request.context["cmd_entry_enable"] = "False"
+    request.context["cmd_change_enable"] = "False"
+    request.context["cmd_delete_enable"] = "False"
 
     init_form(request, CFSC13_MODE0)
     request.context["gSetField"] = "txt_afwdcd"
