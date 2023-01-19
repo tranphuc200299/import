@@ -19,12 +19,14 @@
         <option value="0" {% if cmb_ansendflg == "0" %}selected{% endif %}>ＮＡＣＣＳ送信対象</option>
         <option value="1" {% if cmb_ansendflg == "1" %}selected{% endif %}>ＮＡＣＣＳ送信対象外</option>
 {% elif id == "cmb_afksankbn" %}
-    <select tabindex="{{ tabIndex }}" title="{{Title}}" class="{{ class }}" name="cmb_afksankbn" id="cmb_afksankbn" {% if gSetField == "cmb_afksankbn" %}autofocus{% endif %}>
+    <select tabindex="{{ tabIndex }}" title="{{Title}}" class="{{ class }}" name="cmb_afksankbn" id="cmb_afksankbn"
+            {% if gSetField == "cmb_afksankbn" %}autofocus{% endif %}>
         <option value="0" {% if cmb_afksankbn == "0" %}selected{% endif %}>搬入日起算</option>
         <option value="1" {% if cmb_afksankbn == "1" %}selected{% endif %}>搬入日翌日起算</option>
     </select>
 {% elif id == "cmb_afcalc" %}
-    <select tabindex="{{ tabIndex }}" title="{{Title}}" class="{{ class }}" name="cmb_afcalc" id="cmb_afcalc" {% if gSetField == "cmb_afcalc" %}autofocus{% endif %}>
+    <select tabindex="{{ tabIndex }}" title="{{Title}}" class="{{ class }}" name="cmb_afcalc" id="cmb_afcalc"
+            {% if gSetField == "cmb_afcalc" %}autofocus{% endif %}>
         <option value="0" {% if cmb_afcalc == "0" %}selected{% endif %}>日祝除く</option>
         <option value="1" {% if cmb_afcalc == "1" %}selected{% endif %}>土日祝除く</option>
         <option value="2" {% if cmb_afcalc == "2" %}selected{% endif %}>全て含む</option>
@@ -37,4 +39,16 @@
         <option value="3" {% if cmb_astankakbn == "3" %}selected{% endif %}>容積（Ｍ３）/1.133</option>
         <option value="4" {% if cmb_astankakbn == "4" %}selected{% endif %}>重量（ＴＯＮ）</option>
     </select>
+{% elif id == "cmb_ataxkbn" %}
+    <select tabindex="{{ tabIndex }}" title="{{Title}}" class="{{ class }}" name="cmb_ataxkbn" id="cmb_ataxkbn"
+            {% if gSetField == "cmb_ataxkbn" %}autofocus{% endif %} style="width: {{ width }}px;">
+        <option value="0" {% if cmb_ataxkbn == "0" %}selected{% endif %}>免税</option>
+        <option value="1" {% if cmb_ataxkbn == "1" %}selected{% endif %}>非課税</option>
+        <option value="2" {% if cmb_ataxkbn == "2" %}selected{% endif %}>課税 </option>
+    </select>
+{% elif id == "cmb_asyubtkbn" %}
+<select tabindex="{{ tabIndex }}" class="{{ class }} w-100" name="cmb_asyubtkbn" id="cmb_asyubtkbn">
+    <option value="0" {% if cmb_asyubtkbn == "0" %}selected{% endif %}>重量単位 </option>
+    <option value="1" {% if cmb_asyubtkbn == "1" %}selected{% endif %}>容積単位 </option>
+</select>
 {% endif %}

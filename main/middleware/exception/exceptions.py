@@ -40,7 +40,7 @@ class PostgresException(Exception):
         return message
 
     def __str__(self):
-        return f'ERROR_CODE = {self.Error}, MESSAGE = {self.get_message()}'
+        return f'ERROR_CODE = {self.Error.__cause__.pgcode}, MESSAGE = {self.get_message()}'
 
 
 class DataErrException(Exception):
