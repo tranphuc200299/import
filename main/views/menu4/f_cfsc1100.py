@@ -149,7 +149,6 @@ def cmd_search_Click(request):
         request.context["cmd_delete_enable"] = True
         request.context["gSetField"] = "txt_aportcd"
     except IntegrityError as e:
-        __logger.error(e)
         raise PostgresException(Error=e, DbTbl="TBSPORT" + request.cfs_ini["iniUpdTbl"], SqlStr=sql)
 
 
@@ -191,7 +190,6 @@ def cmd_entry_Click(request):
         __logger.error(e)
         raise PostgresException(Error=e, DbTbl="TBSPORT" + request.cfs_ini["iniUpdTbl"], SqlStr=sql)
     except Exception as e:
-        __logger.error(e)
         request.context["cmd_entry_enable"] = False
         raise Exception(e)
 
@@ -214,11 +212,9 @@ def cmd_change_Click(request):
     except IntegrityError as e:
         request.context["cmd_change_enable"] = False
         request.context["cmd_delete_enable"] = False
-        __logger.error(e)
         raise PostgresException(Error=e, DbTbl="TBSPORT" + request.cfs_ini["iniUpdTbl"], SqlStr=sql)
 
     except Exception as e:
-        __logger.error(e)
         request.context["cmd_change_enable"] = False
         request.context["cmd_delete_enable"] = False
         raise Exception(e)
@@ -236,10 +232,8 @@ def cmd_delete_Click(request):
     except IntegrityError as e:
         request.context["cmd_change_enable"] = False
         request.context["cmd_delete_enable"] = False
-        __logger.error(e)
         raise PostgresException(Error=e, DbTbl="TBSPORT" + request.cfs_ini["iniUpdTbl"], SqlStr=sql)
     except Exception as e:
-        __logger.error(e)
         request.context["cmd_change_enable"] = False
         request.context["cmd_delete_enable"] = False
         raise Exception(e)
