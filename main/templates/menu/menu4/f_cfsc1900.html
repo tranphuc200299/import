@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}数量単位コード登録{% endblock title %}
+
+{% block main %}
+    <form class="" id="f_cfsc1900" method="post">
+        {% csrf_token %}
+        <div class="card">
+            <div class="form-inline">
+                <div class="form-group form-group-seach">
+                    <label for="txt_astanicd" class="mr-3" tabindex="3">数量単位コード <span
+                            class="required">*</span></label>
+                    {% include "includes/textbox.html" with class="form-control" id="txt_astanicd" MaxLength=3 tabIndex=4 width="80" Change="True" Title="必須入力・数量単位 Code" %}
+                </div>
+                {% include "includes/button.html" with name="action" id="cmd_search" class="btn btn-primary btn-search" TabIndex=5 htmlText='<i class="fa fa-search"></i> 検索' %}
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="form-horizontal">
+                <div class="row">
+                        <div class="form-group form-inline col-md-12 col-lg-12">
+                            <label class="control-label mr-3" for="txt_astaninm" tabindex="7">数量単位名称 <span class="required">*</span></label>
+                            <div class="col-lg-8 col-sm-4">
+                                {% include "includes/textbox.html" with class="form-control" id="txt_astaninm" name="txt_astaninm" MaxLength=25 Title="必須入力" tabIndex=8 %}
+                            </div>
+                        </div>
+                </div>
+                <div class="row">
+                        <div class="form-group form-inline col-md-12 col-lg-12">
+                            <label class="control-label" for="cmb_asyubtkbn" tabindex="9">種別区分</label>
+                            <div class="col-lg-8 col-sm-4 dropdown_container">
+                                {% include 'includes/dropdownlist.html' with id="cmb_asyubtkbn" class="form-control" tabIndex=10 %}
+                            </div>
+                        </div>
+                </div>
+                 <div class="row">
+                        <div class="form-group form-inline col-md-12 col-lg-12">
+                            <label class="control-label mr-3" for="txt_iconvert" tabindex="11">換算式 <span class="required">*</span></label>
+                            <div class="col-lg-8 col-sm-4 input_container input_transfer">
+                                {% include "includes/textbox.html" with class="form-control" id="txt_iconvert" MaxLength=14 Title="必須入力・キログラムまたは立法メートルへの換算係数" tabIndex=12 LostFocus="True" %}
+                            </div>
+                        </div>
+                </div>
+                <div class="row btn-footer">
+                    <div class="col-12 d-flex">
+                        {% include "includes/button.html" with name="action" id="cmd_entry" class="btn btn-primary " Text="登録" tabIndex=13 IsEnable=cmd_entry_enable %}
+                        {% include "includes/button.html" with name="action" id="cmd_change" class="btn btn-primary" Text="変更" tabIndex=14 IsEnable=cmd_change_enable %}
+                        {% include "includes/button.html" with name="action" id="cmd_delete" class="btn btn-primary" Text="削除" tabIndex=15 IsEnable=cmd_delete_enable %}
+                        {% include "includes/button.html" with name="action" id="cmd_cancel" class="btn btn-primary" Text="取消" tabIndex=16 %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </form>
+{% endblock main %}
+
+{% block js %}
+
+{% endblock js %}

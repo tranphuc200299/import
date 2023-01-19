@@ -92,9 +92,12 @@ $(function () {
                         if (value == "False") {
                             $(`#${key}`).attr("disabled", "disabled");
                             $(`#${key}`).addClass("inactive")
+                            $(`#${key}_enable`).val("False")
+
                         } else {
                             $(`#${key}`).removeAttr("disabled");
                             $(`#${key}`).removeClass("inactive")
+                            $(`#${key}_enable`).val("True")
                         }
                     } else {
                         $(`#${key}`).val(value)
