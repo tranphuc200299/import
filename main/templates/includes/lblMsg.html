@@ -1,15 +1,17 @@
 {% if MsgDsp %}
-{% if MsgDsp.type == "Err" %}
-<DIV class="mainErrLabel">
-    {{ MsgDsp.msg }}
-</DIV>
-{% elif MsgDsp.type == "Info"  %}
-<DIV class="mainErrLabel">
-    {{ MsgDsp.msg }}
-</DIV>
-{% elif MsgDsp.type == "Warn"  %}
-<DIV class="mainErrLabel">
-    {{ MsgDsp.msg }}
-</DIV>
-{% endif %}
+<div id="modalInfo" class="modal">
+    <div class="form-inline">
+      <div class="modal-content">
+        <div class="modal-header">
+          <p>{{MsgDsp.title}}</p>
+        </div>
+        <div class="modal-body">
+          <p>{{MsgDsp.msg}}</p>
+        </div>
+        <div class="modal-footer d-flex">
+          {% include "includes/button.html" with name="action" id="btnClose" class="btn btn-primary" Text="いいえ" %}
+        </div>
+      </div>
+    </div>
+</div>
 {% endif %}
