@@ -6,7 +6,6 @@
   name="{{ name }}"
   tabindex="{{tabIndex}}"
   {% if IsEnable == 'False' %} disabled {% endif %}
-  {% if modalQuestion == 'True' %} data-toggle="modal" data-target="#modalQuestion" {% endif %}
   >
     {% if htmlText %}
         {{ htmlText }}
