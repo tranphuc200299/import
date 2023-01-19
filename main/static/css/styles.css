@@ -806,11 +806,6 @@ ul.breadcrumb li a:hover {
     text-decoration: underline;
 }
 
-/*end css*/
-.form-group input {
-    width: 40%!important;
-}
-
 .form-group select{
     width: 20%!important;
     margin:0px 42px;

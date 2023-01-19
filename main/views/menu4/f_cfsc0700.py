@@ -85,7 +85,7 @@ def txt_itanka_LostFocus(request):
             MsgDspError(request, MSG_DSP_WARN, "入力整合性エラー",
                         "単価は" + f"{CFSC07_TANKA_MIN :,.1f}" + "から" + f"{CFSC07_TANKA_MAX :,.1f}" + "以内で入力して下さい。")
             return "txt_itanka"
-        request.context["txt_itanka"] = f"{float(request.context['txt_itanka']) :,.1f}"
+        request.context["txt_itanka"] = f"{dbsingle(request.context['txt_itanka']) :,.1f}"
         return "txt_itanka"
 
 
@@ -102,7 +102,7 @@ def txt_itankac_LostFocus(request):
                         "名古屋用加算単価は" + f"{CFSC07_TANKA_MIN :,.1f}" + "から" + f"{CFSC07_TANKA_MAX :,.1f}" + "以内で入力して下さい。")
             return "txt_itankac"
 
-        request.context["txt_itankac"] = f"{float(request.context['txt_itankac']) :,.1f}"
+        request.context["txt_itankac"] = f"{dbsingle(request.context['txt_itankac']) :,.1f}"
         return "txt_itankac"
 
 
@@ -150,7 +150,7 @@ def cmd_search_Click(request):
                     request.context["txt_irank" + str(i)] = DbDataChange(RsTbDemurg.Rows[0]["rank" + str(i)])
                 if DbDataChange(RsTbDemurg.Rows[0]["tanka" + str(i)]) != 0:
                     request.context[
-                        "txt_itanka" + str(i)] = f"{float(DbDataChange(RsTbDemurg.Rows[0]['tanka' + str(i)])):,.1f}"
+                        "txt_itanka" + str(i)] = f"{dbsingle(DbDataChange(RsTbDemurg.Rows[0]['tanka' + str(i)])):,.1f}"
             if DbDataChange(RsTbDemurg.Rows[0]["stankakbn"]) == csSTANKAKBN_1:
                 request.context["cmb_astankakbn"] = "0"
             elif DbDataChange(RsTbDemurg.Rows[0]["stankakbn"]) == csSTANKAKBN_2:
@@ -184,7 +184,7 @@ def inpdatachk2(request):
                 MsgDspError(request, MSG_DSP_WARN, "入力整合性エラー", "超過日数は整数(ZZ9形式)で入力して下さい。")
                 request.context["gSetField"] = "txt_irank" + str(i)
                 return FATAL_ERR
-            if CFSC07_RANK_MIN > float(request.context["txt_irank" + str(i)]) or CFSC07_RANK_MAX < float(
+            if CFSC07_RANK_MIN > dbsingle(request.context["txt_irank" + str(i)]) or CFSC07_RANK_MAX < dbsingle(
                     request.context["txt_irank" + str(i)]):
                 MsgDspError(request, MSG_DSP_WARN, "入力整合性エラー",
                             "超過日数は{}から{}以内で入力して下さい。".format(CFSC07_RANK_MIN, CFSC07_RANK_MAX))
@@ -195,7 +195,7 @@ def inpdatachk2(request):
                 MsgDspError(request, MSG_DSP_WARN, "入力整合性エラー", "単価は整数(\ZZ,ZZZ,ZZ9形式)で入力して下さい。")
                 request.context["gSetField"] = "txt_itanka" + str(i)
                 return FATAL_ERR
-            if CFSC07_RANK_MIN > float(request.context["txt_itanka" + str(i)]) or CFSC07_RANK_MAX < float(
+            if CFSC07_RANK_MIN > dbsingle(request.context["txt_itanka" + str(i)]) or CFSC07_RANK_MAX < dbsingle(
                     request.context["txt_itanka" + str(i)]):
                 MsgDspError(request, MSG_DSP_WARN, "入力整合性エラー",
                             "単価は" + f"{CFSC07_TANKA_MIN :,.1f}" + "から" + f"{CFSC07_TANKA_MAX :,.1f}" + "以内で入力して下さい。")
@@ -222,13 +222,13 @@ def inpdatachk2(request):
             MsgDspError(request, MSG_DSP_WARN, "入力整合性エラー", "名古屋用加算単価は整数(\ZZ,ZZZ,ZZ9形式)で入力して下さい。")
             request.context["gSetField"] = "txt_itankac"
             return FATAL_ERR
-        if CFSC07_TANKA_MIN > float(request.context["txt_itankac"]) or CFSC07_TANKA_MAX < float(
+        if CFSC07_TANKA_MIN > dbsingle(request.context["txt_itankac"]) or CFSC07_TANKA_MAX < dbsingle(
                 request.context["txt_itankac"]):
             MsgDspError(request, MSG_DSP_WARN, "入力整合性エラー",
                         "名古屋用加算単価は" + f"{CFSC07_TANKA_MIN :,.1f}" + "から" + f"{CFSC07_TANKA_MAX :,.1f}" + "以内で入力して下さい。")
             request.context["gSetField"] = "txt_itankac"
             return FATAL_ERR
-        request.context["txt_itankac"] = f"{float(request.context['txt_itankac']) :,.1f}"
+        request.context["txt_itankac"] = f"{dbsingle(request.context['txt_itankac']) :,.1f}"
     return NOMAL_OK
 
 
@@ -322,7 +322,6 @@ def cmd_change_Click(request):
         raise PostgresException(Error=e, DbTbl="TBDEMURG" + request.cfs_ini["iniUpdTbl"], SqlStr=sql)
 
     except Exception as e:
-        __logger.error(e)
         request.context["cmd_change_enable"] = "False"
         request.context["cmd_delete_enable"] = "False"
         raise Exception(e)

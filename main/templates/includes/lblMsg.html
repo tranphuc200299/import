@@ -1,9 +1,15 @@
-{% if lblMsg %}
+{% if MsgDsp %}
+{% if MsgDsp.type == "Err" %}
 <DIV class="mainErrLabel">
-    {{ lblMsg }}
+    {{ MsgDsp.msg }}
 </DIV>
-{% elif message %}
+{% elif MsgDsp.type == "Info"  %}
 <DIV class="mainErrLabel">
-    {{ message }}
+    {{ MsgDsp.msg }}
 </DIV>
+{% elif MsgDsp.type == "Warn"  %}
+<DIV class="mainErrLabel">
+    {{ MsgDsp.msg }}
+</DIV>
+{% endif %}
 {% endif %}
