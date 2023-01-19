@@ -50,9 +50,9 @@ def f_cfsc0300(request):
 def Form_Load(request):
     init_form(request, CFSC03_MODE0)
 
-    request.context["cmd_entry_enable"] = False
-    request.context["cmd_change_enable"] = False
-    request.context["cmd_delete_enable"] = False
+    request.context["cmd_entry_enable"] = "False"
+    request.context["cmd_change_enable"] = "False"
+    request.context["cmd_delete_enable"] = "False"
 
 
 def txt_adelchr_LostFocus(request, index):
@@ -66,9 +66,9 @@ def txt_adelchr_LostFocus(request, index):
 
 def txt_aopecd_Change(request):
     request.context["txt_aopecd"] = request.context["txt_aopecd"].upper()
-    request.context["cmd_entry_enable"] = False
-    request.context["cmd_change_enable"] = False
-    request.context["cmd_delete_enable"] = False
+    request.context["cmd_entry_enable"] = "False"
+    request.context["cmd_change_enable"] = "False"
+    request.context["cmd_delete_enable"] = "False"
     return ["txt_aopecd", "cmd_entry_enable", "cmd_change_enable", "cmd_delete_enable"]
 
 
@@ -85,7 +85,7 @@ def cmd_search_Click(request):
 
         RsTbOpe = SqlExecute(sql).all()
         if not RsTbOpe.Rows:
-            request.context["cmd_entry_enable"] = True
+            request.context["cmd_entry_enable"] = "True"
         else:
             request.context["txt_aopenm"] = DbDataChange(RsTbOpe.Rows[0]["openm"])
             if DbDataChange(RsTbOpe.Rows[0]["nsendflg"]) == "Y":
@@ -114,8 +114,8 @@ def cmd_search_Click(request):
             elif DbDataChange(RsTbOpe.Rows[0]["arearkbn"]) == "N":
                 request.context["cmb_aarearkbn"] = "1"
 
-            request.context["cmd_change_enable"] = True
-            request.context["cmd_delete_enable"] = True
+            request.context["cmd_change_enable"] = "True"
+            request.context["cmd_delete_enable"] = "True"
         request.context["gSetField"] = "txt_aopenm"
     except Exception as e:
         raise PostgresException(Error=e, DbTbl="TBOPE" + request.cfs_ini["iniUpdTbl"], SqlStr=sql)
@@ -164,7 +164,7 @@ def cmd_entry_Click(request):
         init_form(request, CFSC03_MODE0)
         request.context["gSetField"] = "txt_aopecd"
     except Exception as e:
-        request.context["cmd_entry_enable"] = False
+        request.context["cmd_entry_enable"] = "False"
         raise PostgresException(Error=e, DbTbl="TBOPE" + request.cfs_ini["iniUpdTbl"], SqlStr=sql)
 
 
@@ -206,8 +206,8 @@ def cmd_change_Click(request):
         request.context["gSetField"] = "txt_aopecd"
 
     except Exception as e:
-        request.context["cmd_change_enable"] = False
-        request.context["cmd_delete_enable"] = False
+        request.context["cmd_change_enable"] = "False"
+        request.context["cmd_delete_enable"] = "False"
         raise PostgresException(Error=e, DbTbl="TBOPE" + request.cfs_ini["iniUpdTbl"], SqlStr=sql)
 
 
@@ -233,15 +233,15 @@ def cmd_delete_Click(request):
         init_form(request, CFSC03_MODE0)
         request.context["gSetField"] = "txt_aopecd"
     except Exception as e:
-        request.context["cmd_change_enable"] = False
-        request.context["cmd_delete_enable"] = False
+        request.context["cmd_change_enable"] = "False"
+        request.context["cmd_delete_enable"] = "False"
         raise PostgresException(Error=e, DbTbl="TBOPE" + request.cfs_ini["iniUpdTbl"], SqlStr=sql)
 
 
 def cmd_cancel_Click(request):
-    request.context["cmd_entry_enable"] = False
-    request.context["cmd_change_enable"] = False
-    request.context["cmd_delete_enable"] = False
+    request.context["cmd_entry_enable"] = "False"
+    request.context["cmd_change_enable"] = "False"
+    request.context["cmd_delete_enable"] = "False"
 
     init_form(request, CFSC03_MODE0)
     request.context["gSetField"] = "txt_aopecd"
