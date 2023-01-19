@@ -39,8 +39,8 @@
                                tabindex="15">ポートコード<span class="required">*</span></label>
                         <div class="col-lg-9 col-sm-12 row">
                             <div class="col-lg-4 col-sm-8 d-flex">
-                                {% include "includes/textbox.html" with class="form-control col-3 mr-2" id="txt_aportcd" width="100" name="txt_aportcd" MaxLength=5 tabIndex=16 LostFocus="True" %}
-                                {% include "includes/textbox.html" with class="form-control col-9" id="lbl_aportnm" name="lbl_aportnm" ReadOnly="True" tabIndex=17 %}
+                                {% include "includes/textbox.html" with class="form-control col-3 mr-2" id="txt_aportcd" width="100" name="txt_aportcd" MaxLength=5 tabIndex=10 LostFocus="True" %}
+                                {% include "includes/textbox.html" with class="form-control col-9" id="lbl_aportnm" name="lbl_aportnm" ReadOnly="True" tabIndex=11 %}
                             </div>
                         </div>
                     </div>
@@ -48,10 +48,10 @@
             </div>
             <div class="row btn-footer">
                 <div class="col-12 d-flex">
-                    {% include "includes/button.html" with name="action" id="cmd_entry" class="btn btn-primary " Text="登録" tabIndex=28 IsEnable=cmd_entry_enable %}
-                    {% include "includes/button.html" with name="action" id="cmd_change" class="btn btn-primary" Text="変更" tabIndex=29 IsEnable=cmd_change_enable %}
-                    {% include "includes/button.html" with name="action" id="cmd_delete" class="btn btn-primary" Text="削除" tabIndex=30 IsEnable=cmd_delete_enable %}
-                    {% include "includes/button.html" with name="action" id="cmd_cancel" class="btn btn-primary" Text="取消" tabIndex=31 %}
+                    {% include "includes/button.html" with name="action" id="cmd_entry" class="btn btn-primary " Text="登録" tabIndex=12 IsEnable=cmd_entry_enable %}
+                    {% include "includes/button.html" with name="action" id="cmd_change" class="btn btn-primary" Text="変更" tabIndex=13 IsEnable=cmd_change_enable %}
+                    {% include "includes/button.html" with name="action" id="cmd_delete" class="btn btn-primary" Text="削除" tabIndex=14 IsEnable=cmd_delete_enable %}
+                    {% include "includes/button.html" with name="action" id="cmd_cancel" class="btn btn-primary" Text="取消" tabIndex=15 %}
                 </div>
             </div>
         </div>
