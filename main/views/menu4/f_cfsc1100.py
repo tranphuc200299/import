@@ -201,7 +201,7 @@ def cmd_change_Click(request):
             return
         sql = "UPDATE TBSPORT" + request.cfs_ini["iniUpdTbl"] + " "
         sql += "SET PORTCD = " + dbField(request.context["txt_aportcd"]) + ","
-        sql += "UDATE = SYSDATE" + ","
+        sql += "UDATE = CURRENT_TIMESTAMP" + ","
         sql += "UWSID = " + dbField(request.cfs_ini["iniWsNo"]) + " "
         sql += "WHERE OPECD = " + dbField(request.context["txt_aopecd"])
         sql += " AND SPORTCD = " + dbField(request.context["txt_asportcd"])
