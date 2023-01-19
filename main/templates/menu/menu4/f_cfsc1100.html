@@ -6,7 +6,6 @@
 {% block main %}
     <form class="" id="f_cfsc1100" method="post">
         {% csrf_token %}
-        <div>{% include "includes/msgDspQuestion.html" with title="再確認" msg="削除してよろしいですか？" action="cmd_delete" %}</div>
         <div class="card">
             <div class="form-horizontal">
                 <div class="row">
