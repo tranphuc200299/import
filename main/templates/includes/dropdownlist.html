@@ -25,14 +25,14 @@
         <option value="1" {% if cmb_afksankbn == "1" %}selected{% endif %}>搬入日翌日起算</option>
     </select>
 {% elif id == "cmb_afcalc" %}
-    <select tabindex="{{ tabIndex }}" title="{{Title}}" class="{{ class }}" name="cmb_afcalc" id="cmb_afcalc"
+    <select tabindex="{{ tabIndex }}" title="{{Title}}" class="{{ class }}" name="cmb_afcalc" id="cmb_afcalc" style="width: {{width}}px;"
             {% if gSetField == "cmb_afcalc" %}autofocus{% endif %}>
         <option value="0" {% if cmb_afcalc == "0" %}selected{% endif %}>日祝除く</option>
         <option value="1" {% if cmb_afcalc == "1" %}selected{% endif %}>土日祝除く</option>
         <option value="2" {% if cmb_afcalc == "2" %}selected{% endif %}>全て含む</option>
     </select>
 {% elif id == "cmb_astankakbn" %}
-    <select tabindex="{{ tabIndex }}" title="{{Title}}" class="{{ class }}" name="cmb_astankakbn" id="cmb_astankakbn" {% if gSetField == "cmb_astankakbn" %}autofocus{% endif %}>
+    <select tabindex="{{ tabIndex }}" title="{{Title}}" class="{{ class }}" style="width: {{width}}px;" name="cmb_astankakbn" id="cmb_astankakbn" {% if gSetField == "cmb_astankakbn" %}autofocus{% endif %}>
         <option value="0" {% if cmb_astankakbn == "0" %}selected{% endif %}>レベニュー（関東）</option>
         <option value="1" {% if cmb_astankakbn == "1" %}selected{% endif %}>レベニュー（中部）</option>
         <option value="2" {% if cmb_astankakbn == "2" %}selected{% endif %}>容積（Ｍ３）</option>
