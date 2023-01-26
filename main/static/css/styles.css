@@ -809,3 +809,10 @@ ul.breadcrumb li a:hover {
     font-size: 16px;
 }
 /*end css*/
+
+.row-no-margin{
+    height: auto;
+    width: 100%;
+    margin: 0;
+}
+
