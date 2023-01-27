@@ -7,16 +7,16 @@
         <div class="card">
             <div class="form-group form-inline">
                 <div class="row row-no-margin">
-                    <div class="col col-lg-12 p-0">
+                    <div class="col-12 p-0">
                         <div class="row row-no-margin">
-                            <div class="col col-lg-1 p-0">
+                            <div class="col-1 p-0">
                                 <label for="txt_azworkcd" class="justify-content-start mt-3" tabindex="3">雑作業コード
                                     <span class="required">*</span></label>
                             </div>
-                            <div class="col col-lg-1 p-0">
-                                {% include "includes/textbox.html" with class="form-control" id="txt_azworkcd" name="txt_azworkcd" tabIndex=4  MaxLength=3 width="100" Change="True" Title="必須入力・雑作業 Code" %}
+                            <div class="col-1 p-0">
+                                {% include "includes/textbox.html" with class="form-control w-75" id="txt_azworkcd" name="txt_azworkcd" tabIndex=4  MaxLength=3 Change="True" Title="必須入力・雑作業 Code" %}
                             </div>
-                            <div class="col col-lg-9 p-0">
+                            <div class="col-10 p-0">
                                 {% include "includes/button.html" with name="action" id="cmd_search" class="btn btn-primary btn-search" tabIndex=5 htmlText='<i class="fa fa-search"></i> 検索' %}
                             </div>
                         </div>
@@ -27,35 +27,42 @@
         <div class="card">
             <div class="form-group form-inline">
                 <div class="row row-no-margin">
-                    <div class="col col-lg-12 p-0">
+                    <div class="col-12 p-0">
                         <div class="row row-no-margin mb-4">
-                            <div class="col-lg-1 p-0">
+                            <div class="col-1 p-0">
                                 <label for="txt_azworknm" class="justify-content-start mt-3" tabindex="7">雑作業名称
                                     <span class="required">*</span></label>
                             </div>
-                            {% include "includes/textbox.html" with class="form-control" id="txt_azworknm" name="txt_azworknm" tabIndex=8 MaxLength=25 width="300" Change="True" Title="必須入力" %}
-
+                            <div class="col-3 p-0">
+                                {% include "includes/textbox.html" with class="form-control w-75" id="txt_azworknm" name="txt_azworknm" tabIndex=8 MaxLength=25  Change="True" Title="必須入力" %}
+                            </div>
                         </div>
                         <div class="row row-no-margin mb-4">
-                            <div class="col-lg-1 p-0">
+                            <div class="col-1 p-0">
                                 <label for="txt_itanka" class="justify-content-start mt-3" tabindex="9">単価 <span
                                         class="required">*</span></label>
                             </div>
-                            {% include "includes/textbox.html" with class="form-control" id="txt_itanka" name="txt_itanka" tabIndex=10  MaxLength=11 width="300" Change="True" LostFocus="True" Title="必須入力" %}
+                            <div class="col-3 p-0">
+                                {% include "includes/textbox.html" with class="form-control w-75" id="txt_itanka" name="txt_itanka" tabIndex=10  MaxLength=11 Change="True" LostFocus="True" Title="必須入力" %}
+                            </div>
                         </div>
                         <div class="row row-no-margin mb-4">
-                            <div class="col-lg-1 p-0">
+                            <div class="col-1 p-0">
                                 <label for="cmb_ataxkbn" class="justify-content-start mt-3"
                                        tabindex="11">課税区分</label>
                             </div>
-                            {% include "includes/dropdownlist.html" with class="form-control" id="cmb_ataxkbn" name="cmb_ataxkbn" tabIndex=12 width="200" Change="True" Title="必須入力" width="100" %}
+                            <div class="col-3 p-0">
+                                {% include "includes/dropdownlist.html" with class="form-control w-50" id="cmb_ataxkbn" name="cmb_ataxkbn" tabIndex=12 Change="True" Title="必須入力" width="100" %}
+                            </div>
                         </div>
                         <div class="row row-no-margin mb-4">
-                            <div class="col-lg-1 p-0">
+                            <div class="col-1 p-0">
                                 <label for="txt_akaisu" class="justify-content-start mt-3"
                                        tabindex="13">回数表示 </label>
                             </div>
-                            {% include "includes/textbox.html" with class="form-control" id="txt_akaisu" name="txt_akaisu" tabIndex=14  MaxLength=5 width="300" Change="True" Title="必須入力" %}
+                            <div class="col-3 p-0">
+                                {% include "includes/textbox.html" with class="form-control w-75" id="txt_akaisu" name="txt_akaisu" tabIndex=14  MaxLength=5 Change="True" Title="必須入力" %}
+                            </div>
                         </div>
                     </div>
 
