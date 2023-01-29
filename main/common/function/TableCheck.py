@@ -35,7 +35,6 @@ def TbOpe_TableCheck(strOpeCd, strSelTbl):
         else:
             return DB_NOMAL_OK
     except psycopg2.OperationalError as e:
-        _logger.error(e)
         raise PostgresException(Error=e, DbTbl="TBOPE" + strSelTbl, SqlStr=sql)
 
 

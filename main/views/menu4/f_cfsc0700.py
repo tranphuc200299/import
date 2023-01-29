@@ -3,11 +3,11 @@ from django.db import IntegrityError, transaction
 from django.shortcuts import render
 from main.common.decorators import update_context, load_cfs_ini
 from main.common.function import SqlExecute
-from main.common.function.Common import DbDataChange, sqlStringConvert, dbField, IsNumeric, dbsingle
+from main.common.function.Common import DbDataChange, dbField, IsNumeric, dbsingle
 from main.common.function.DspMessage import MsgDspError
 from main.common.function.Const import NOMAL_OK, FATAL_ERR, DB_NOT_FIND, DB_FATAL_ERR, MSG_DSP_WARN, \
     csSTANKAKBN_1, csSTANKAKBN_2, csSTANKAKBN_3, csSTANKAKBN_4, csSTANKAKBN_5, csDCALC_1, csDCALC_2, csDCALC_3
-from main.common.function.TableCheck import TbOpe_TableCheck, TbPort_TableCheck
+from main.common.function.TableCheck import TbOpe_TableCheck
 from main.common.utils import Response
 from main.middleware.exception.exceptions import (
     PostgresException
@@ -42,8 +42,20 @@ def f_cfsc0700(request):
         elif action == "txt_aopecd_Change":
             id_show_data = txt_aopecd_Change(request)
             return Response(request).json_response_event_js_html(id_show_data)
-        elif action == "txt_itanka_LostFocus":
-            id_show_data = txt_itanka_LostFocus(request)
+        elif action == "txt_itanka1_LostFocus":
+            id_show_data = txt_itanka_LostFocus(request, "1")
+            return Response(request).json_response_event_js_html(id_show_data)
+        elif action == "txt_itanka2_LostFocus":
+            id_show_data = txt_itanka_LostFocus(request, "2")
+            return Response(request).json_response_event_js_html(id_show_data)
+        elif action == "txt_itanka3_LostFocus":
+            id_show_data = txt_itanka_LostFocus(request, "3")
+            return Response(request).json_response_event_js_html(id_show_data)
+        elif action == "txt_itanka4_LostFocus":
+            id_show_data = txt_itanka_LostFocus(request, "4")
+            return Response(request).json_response_event_js_html(id_show_data)
+        elif action == "txt_itanka5_LostFocus":
+            id_show_data = txt_itanka_LostFocus(request, "5")
             return Response(request).json_response_event_js_html(id_show_data)
         elif action == "txt_itankac_LostFocus":
             id_show_data = txt_itankac_LostFocus(request)
@@ -72,21 +84,21 @@ def init_form(request, intMode):
     request.context["cmb_afcalc"] = "0"
 
 
-def txt_itanka_LostFocus(request):
-    if not request.context["txt_itanka"] != "":
-        if not IsNumeric(request.context["txt_itanka"]):
-            request.context["gSetField"] = "txt_itanka"
+def txt_itanka_LostFocus(request, index):
+    if request.context["txt_itanka" + index] != "":
+        if not IsNumeric(request.context["txt_itanka" + index]):
+            request.context["gSetField"] = "txt_itanka" + index
             MsgDspError(request, MSG_DSP_WARN, "入力整合性エラー", "単価は整数(\ZZ,ZZZ,ZZ9形式)で入力して下さい。")
-            return "txt_itanka"
+            return "MsgDsp"
 
-        if CFSC07_TANKA_MIN > int(request.context["txt_itanka"]) or CFSC07_TANKA_MAX < int(
-                request.context["txt_itanka"]):
-            request.context["gSetField"] = "txt_itanka"
+        if CFSC07_TANKA_MIN > int(request.context["txt_itanka" + index]) or CFSC07_TANKA_MAX < int(
+                request.context["txt_itanka" + index]):
+            request.context["gSetField"] = "txt_itanka" + index
             MsgDspError(request, MSG_DSP_WARN, "入力整合性エラー",
                         "単価は" + f"{CFSC07_TANKA_MIN :,.1f}" + "から" + f"{CFSC07_TANKA_MAX :,.1f}" + "以内で入力して下さい。")
-            return "txt_itanka"
-        request.context["txt_itanka"] = f"{dbsingle(request.context['txt_itanka']) :,.1f}"
-        return "txt_itanka"
+            return "MsgDsp"
+        request.context["txt_itanka" + index] = f"{dbsingle(request.context['txt_itanka' + index]) :,.1f}"
+        return "txt_itanka" + index
 
 
 def txt_itankac_LostFocus(request):
@@ -94,13 +106,13 @@ def txt_itankac_LostFocus(request):
         if not IsNumeric(request.context["txt_itankac"]):
             request.context["gSetField"] = "txt_itankac"
             MsgDspError(request, MSG_DSP_WARN, "入力整合性エラー", "名古屋用加算単価は整数(\ZZ,ZZZ,ZZ9形式)で入力して下さい。")
-            return "txt_itankac"
+            return "MsgDsp"
         if CFSC07_TANKA_MIN > int(request.context["txt_itankac"]) or CFSC07_TANKA_MAX < int(
                 request.context["txt_itankac"]):
             request.context["gSetField"] = "txt_itankac"
             MsgDspError(request, MSG_DSP_WARN, "入力整合性エラー",
                         "名古屋用加算単価は" + f"{CFSC07_TANKA_MIN :,.1f}" + "から" + f"{CFSC07_TANKA_MAX :,.1f}" + "以内で入力して下さい。")
-            return "txt_itankac"
+            return "MsgDsp"
 
         request.context["txt_itankac"] = f"{dbsingle(request.context['txt_itankac']) :,.1f}"
         return "txt_itankac"
@@ -116,7 +128,6 @@ def txt_aopecd_Change(request):
 
 def inpdatachk1(request):
     if not request.context["txt_aopecd"]:
-
         MsgDspError(request, MSG_DSP_WARN, "必須入力エラー", "オペレータコードを入力して下さい。")
         request.context["gSetField"] = "txt_aopecd"
         return FATAL_ERR
@@ -137,7 +148,7 @@ def cmd_search_Click(request):
         init_form(request, CFSC07_MODE1)
         if inpdatachk1(request) != NOMAL_OK:
             return
-        sql = "SELECT * "
+        sql += "SELECT * "
         sql += "FROM TBDEMURG" + request.cfs_ini["iniUpdTbl"] + " "
         sql += "WHERE OPECD = " + dbField(request.context["txt_aopecd"])
         sql += " FOR UPDATE NOWAIT"
@@ -146,28 +157,28 @@ def cmd_search_Click(request):
             request.context["cmd_entry_enable"] = "True"
         else:
             for i in range(1, 6):
-                if DbDataChange(RsTbDemurg.Rows[0]["rank" + str(i)]) != 0:
-                    request.context["txt_irank" + str(i)] = DbDataChange(RsTbDemurg.Rows[0]["rank" + str(i)])
-                if DbDataChange(RsTbDemurg.Rows[0]["tanka" + str(i)]) != 0:
+                if RsTbDemurg.Rows[0]["rank" + str(i)] != 0:
+                    request.context["txt_irank" + str(i)] = RsTbDemurg.Rows[0]["rank" + str(i)]
+                if RsTbDemurg.Rows[0]["tanka" + str(i)] != 0:
                     request.context[
-                        "txt_itanka" + str(i)] = f"{dbsingle(DbDataChange(RsTbDemurg.Rows[0]['tanka' + str(i)])):,.1f}"
-            if DbDataChange(RsTbDemurg.Rows[0]["stankakbn"]) == csSTANKAKBN_1:
+                        "txt_itanka" + str(i)] = f"{RsTbDemurg.Rows[0]['tanka' + str(i)]:,.1f}"
+            if RsTbDemurg.Rows[0]["stankakbn"] == csSTANKAKBN_1:
                 request.context["cmb_astankakbn"] = "0"
-            elif DbDataChange(RsTbDemurg.Rows[0]["stankakbn"]) == csSTANKAKBN_2:
+            elif RsTbDemurg.Rows[0]["stankakbn"] == csSTANKAKBN_2:
                 request.context["cmb_astankakbn"] = "2"
-            elif DbDataChange(RsTbDemurg.Rows[0]["stankakbn"]) == csSTANKAKBN_3:
+            elif RsTbDemurg.Rows[0]["stankakbn"] == csSTANKAKBN_3:
                 request.context["cmb_astankakbn"] = "4"
-            elif DbDataChange(RsTbDemurg.Rows[0]["stankakbn"]) == csSTANKAKBN_4:
+            elif RsTbDemurg.Rows[0]["stankakbn"] == csSTANKAKBN_4:
                 request.context["cmb_astankakbn"] = "1"
-            elif DbDataChange(RsTbDemurg.Rows[0]["stankakbn"]) == csSTANKAKBN_5:
+            elif RsTbDemurg.Rows[0]["stankakbn"] == csSTANKAKBN_5:
                 request.context["cmb_astankakbn"] = "3"
-            if DbDataChange(RsTbDemurg.Rows[0]["tankac"]) != 0:
-                request.context["txt_itankac"] = DbDataChange(RsTbDemurg.Rows[0]["tankac"])
-            if DbDataChange(RsTbDemurg.Rows[0]["dcalc"]) == csDCALC_1:
+            if RsTbDemurg.Rows[0]["tankac"] != 0:
+                request.context["txt_itankac"] = RsTbDemurg.Rows[0]["tankac"]
+            if RsTbDemurg.Rows[0]["dcalc"] == csDCALC_1:
                 request.context["cmb_afcalc"] = "0"
-            elif DbDataChange(RsTbDemurg.Rows[0]["dcalc"]) == csDCALC_2:
+            elif RsTbDemurg.Rows[0]["dcalc"] == csDCALC_2:
                 request.context["cmb_afcalc"] = "1"
-            elif DbDataChange(RsTbDemurg.Rows[0]["dcalc"]) == csDCALC_3:
+            elif RsTbDemurg.Rows[0]["dcalc"] == csDCALC_3:
                 request.context["cmb_afcalc"] = "2"
         request.context["cmd_change_enable"] = "True"
         request.context["cmd_delete_enable"] = "True"
@@ -236,7 +247,7 @@ def cmd_entry_Click(request):
     try:
         if inpdatachk2(request) != NOMAL_OK:
             return
-        sql = "INSERT INTO TBDEMURG" + request.cfs_ini["iniUpdTbl"] + " "
+        sql += "INSERT INTO TBDEMURG" + request.cfs_ini["iniUpdTbl"] + " "
         sql += "(OPECD,RANK1,RANK2,RANK3,RANK4,RANK5,"
         sql += "TANKA1,TANKA2,TANKA3,TANKA4,TANKA5,STANKAKBN,TANKAC,DCALC,UDATE,UWSID) "
         sql += "VALUES("
