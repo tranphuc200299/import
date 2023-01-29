@@ -1,58 +1,59 @@
 {% extends 'base.html' %}
 {% load static %}
-
 {% block title %}海貨業者コード登録{% endblock title %}
-
 {% block main %}
-<form id="f_cfsc1300" method="post" action="">
-    {% csrf_token %}
-    <div class="title_content">
-        <div class="search_about">
-            <div class="search_item search_register">
-                <div class="item_search_title title_register">
-                    <h3>海貨業者コード <span style="color:red">* </span></h3>
+    <form id="f_cfsc1300" method="post" action="">
+        {% csrf_token %}
+        <div class="card">
+            <div class="form-inline">
+                <div class="form-group">
+                    <label for="txt_afwdcd" class="mr-2" tabindex="3">海貨業者コード <span
+                            class="required">*</span></label>
+                    {% include "includes/textbox.html" with class="form-control ml-5" id="txt_afwdcd" name="txt_afwdcd" tabIndex=4  MaxLength=8 width="120" Change="True" Title="必須入力・海貨業者 Code" %}
                 </div>
-                <div class="search_input input_small input_register">
-                    {% include "includes/textbox.html" with id="txt_afwdcd" class="form-control" MaxLength=8 TextChange="True" %}
-                </div>
-                <div class="content_button button_register">
-                    <img src="{% static 'images/search.svg' %}" alt="">
-                    {% include "includes/button.html" with name="action" id="cmd_search" class="btn-search" Text="検索" %}
+                <div class="ml-5">
+                    {% include "includes/button.html" with name="action" id="cmd_search" class="btn btn-primary btn-search" tabIndex=5 htmlText='<i class="fa fa-search"></i> 検索' %}
                 </div>
             </div>
         </div>
-        <!--form layout-->
-       <div class="form-container">
-            <div class="form_about">
-                <div class="form_row">
-                    <label class="form_label">海貨業者名称 <span style="color:red">* </span> </label>
-                    {% include "includes/textbox.html" with id="txt_afwdnm" class="form-control" MaxLength=60 %}
+        <div class="card">
+            <div class="form-horizontal">
+                <div class="row">
+                    <div class="col-12 d-flex mb-3">
+                        <div class="form-group">
+                            <label for="txt_afwdnm" class="mr-3" tabindex="7">海貨業者名称 <span
+                                    class="required">*</span></label>
+                            {% include "includes/textbox.html" with class="form-control" id="txt_afwdnm" name="txt_afwdnm" tabIndex=8 width="468" MaxLength=60  Change="True" Title="必須入力" %}
+                        </div>
+                        <div class="form-group ml-5">
+                            <label for="txt_afwdtannm" class="mr-3" tabindex="9">海貨業者担当者名称 </label>
+                            {% include "includes/textbox.html" with class="form-control" id="txt_afwdtannm" name="txt_afwdtannm" width="468" tabIndex=10 MaxLength=10 Change="True" %}
+                        </div>
+                    </div>
+                    <div class="col-12 d-flex">
+                        <div class="form-group">
+                            <label for="txt_afwdtel" class="mr-3" tabindex="11">海貨業者電話番号</label>
+                            {% include "includes/textbox.html" with class="form-control" id="txt_afwdtel" name="txt_afwdtel" tabIndex=12 width="468" MaxLength=14  Change="True" %}
+                        </div>
+                        <div class="form-group ml-5">
+                            <label for="txt_afwdfax" class="mr-3" tabindex="13">海貨業者FAX番号を入力</label>
+                            {% include "includes/textbox.html" with class="form-control" id="txt_afwdfax" name="txt_afwdfax" width="468" tabIndex=14 MaxLength=14 Change="True" %}
+                        </div>
+                    </div>
                 </div>
-                <div class="form_row">
-                    <label class="form_label">海貨業者担当者名称 </label>
-                    {% include "includes/textbox.html" with id="txt_afwdtannm" class="form-control" MaxLength=10 %}
-                </div>
-
-                <div class="form_row">
-                    <label class="form_label">海貨業者電話番号 </label>
-                    {% include "includes/textbox.html" with id="txt_afwdtel" class="form-control" MaxLength=14 %}
-                </div>
-                <div class="form_row">
-                    <label class="form_label">海貨業者FAX番号 </label>
-                    {% include "includes/textbox.html" with id="txt_afwdfax" class="form-control" MaxLength=14 %}
-                </div>
-                <div class="control_button">
-                    {% include "includes/button.html" with name="action" id="cmd_entry" class="btn-register" Text="登録" IsEnable=cmd_entry_enable %}
-                    {% include "includes/button.html" with name="action" id="cmd_change" class="btn-register" Text="変更" IsEnable=cmd_change_enable %}
-                    {% include "includes/button.html" with name="action" id="cmd_delete" class="btn-register" Text="削除" IsEnable=cmd_delete_enable %}
-                    {% include "includes/button.html" with name="action" id="cmd_cancel" class="btn-register" Text="取消" %}
+            </div>
+            <div class="form-inline justify-content-end">
+                <div class="row btn-footer">
+                    <div class="col-12 d-flex ">
+                        {% include "includes/button.html" with name="action" id="cmd_entry" class="btn btn-primary " Text="登録" tabIndex=15 IsEnable=cmd_entry_enable %}
+                        {% include "includes/button.html" with name="action" id="cmd_change" class="btn btn-primary" Text="変更" tabIndex=16 IsEnable=cmd_change_enable %}
+                        {% include "includes/button.html" with name="action" id="cmd_delete" class="btn btn-primary" Text="削除" tabIndex=17 IsEnable=cmd_delete_enable %}
+                        {% include "includes/button.html" with name="action" id="cmd_cancel" class="btn btn-primary" Text="取消" tabIndex=18 %}
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-</form>
+    </form>
 {% endblock main %}
-
 {% block js %}
-
 {% endblock js %}

@@ -51,9 +51,9 @@ def f_cfsc0500(request):
 def Form_Load(request):
     try:
         init_form(request, CFSC05_MODE0)
-        request.context["cmd_entry_enable"] = False
-        request.context["cmd_change_enable"] = False
-        request.context["cmd_delete_enable"] = False
+        request.context["cmd_entry_enable"] = "False"
+        request.context["cmd_change_enable"] = "False"
+        request.context["cmd_delete_enable"] = "False"
     except Exception as e:
         __logger.error(e)
 
@@ -97,7 +97,7 @@ def cmd_search_Click(request):
         sql += " FOR UPDATE NOWAIT"
         RsTbFreeTm = SqlExecute(sql).all()
         if len(RsTbFreeTm.Rows) == 0:
-            request.context["cmd_entry_enable"] = True
+            request.context["cmd_entry_enable"] = "True"
         else:
             if csFKISANKBN_1 == Common.DbDataChange(RsTbFreeTm.Rows[0]["fkisankbn"]):
                 request.context["cmb_afksankbn"] = "0"
@@ -110,8 +110,8 @@ def cmd_search_Click(request):
                 request.context["cmb_afcalc"] = "1"
             elif Common.DbDataChange(RsTbFreeTm.Rows[0]["fkisankbn"]) == csFCALC_3:
                 request.context["cmb_afcalc"] = "2"
-            request.context["cmd_change"] = True
-            request.context["cmd_delete"] = True
+            request.context["cmd_change"] = "True"
+            request.context["cmd_delete"] = "True"
 
         request.context["gSetField"] = "cmb_afksankbn"
 
@@ -148,8 +148,8 @@ def cmd_delete_Click(request):
         request.context["gSetField"] = "txt_aopecd"
 
     except Exception as e:
-        request.context["cmd_change_enable"] = False
-        request.context["cmd_delete_enable"] = False
+        request.context["cmd_change_enable"] = "False"
+        request.context["cmd_delete_enable"] = "False"
         raise PostgresException(Error=e, DbTbl="TBFREETM" + request.cfs_ini["iniUpdTbl"], SqlStr=sql)
 
 
@@ -178,8 +178,8 @@ def cmd_change_Click(request):
             init_form(request, CFSC05_MODE0)
             request.context["gSetField"] = "txt_aopecd"
     except Exception as e:
-        request.context["cmd_change_enable"] = False
-        request.context["cmd_delete_enable"] = False
+        request.context["cmd_change_enable"] = "False"
+        request.context["cmd_delete_enable"] = "False"
         raise PostgresException(Error=e, DbTbl="TBFREETM" + request.cfs_ini["iniUpdTbl"], SqlStr=sql)
 
 
@@ -213,29 +213,29 @@ def cmd_entry_Click(request):
 
     except Exception as e:
 
-        request.context["cmd_entry_enable"] = False
+        request.context["cmd_entry_enable"] = "False"
         raise PostgresException(Error=e, DbTbl="TBFREETM" + request.cfs_ini["iniUpdTbl"], SqlStr=sql)
 
 
 def cmd_cancel_Click(request):
-    request.context["cmd_entry_enable"] = False
-    request.context["cmd_change_enable"] = False
-    request.context["cmd_delete_enable"] = False
+    request.context["cmd_entry_enable"] = "False"
+    request.context["cmd_change_enable"] = "False"
+    request.context["cmd_delete_enable"] = "False"
     init_form(request, CFSC05_MODE0)
     request.context["gSetField"] = "txt_aopecd"
 
 
 def txt_aopecd_Change(request):
     request.context["txt_aopecd"] = request.context["txt_aopecd"].upper()
-    request.context["cmd_entry_enable"] = False
-    request.context["cmd_change_enable"] = False
-    request.context["cmd_delete_enable"] = False
+    request.context["cmd_entry_enable"] = "False"
+    request.context["cmd_change_enable"] = "False"
+    request.context["cmd_delete_enable"] = "False"
     return ["txt_aopecd", "cmd_entry_enable", "cmd_change_enable", "cmd_delete_enable"]
 
 
 def txt_afreekbn_Change(request):
     request.context["txt_afreekbn"] = request.context["txt_afreekbn"].upper()
-    request.context["cmd_entry_enable"] = False
-    request.context["cmd_change_enable"] = False
-    request.context["cmd_delete_enable"] = False
+    request.context["cmd_entry_enable"] = "False"
+    request.context["cmd_change_enable"] = "False"
+    request.context["cmd_delete_enable"] = "False"
     return ["txt_afreekbn", "cmd_entry_enable", "cmd_change_enable", "cmd_delete_enable"]

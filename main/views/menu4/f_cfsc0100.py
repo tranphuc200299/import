@@ -56,9 +56,9 @@ def f_cfsc0100(request):
 
 def Form_Load(request):
     init_form(request, CFSC01_MODE0)
-    request.context["cmd_entry_enable"] = False
-    request.context["cmd_change_enable"] = False
-    request.context["cmd_delete_enable"] = False
+    request.context["cmd_entry_enable"] = "False"
+    request.context["cmd_change_enable"] = "False"
+    request.context["cmd_delete_enable"] = "False"
 
 
 def txt_aopecd_LostFocus(request):
@@ -85,9 +85,9 @@ def txt_alportcd_LostFocus(request):
 
 def txt_avesselcd_Change(request):
     request.context["txt_avesselcd"] = request.context["txt_avesselcd"].upper()
-    request.context["cmd_entry_enable"] = False
-    request.context["cmd_change_enable"] = False
-    request.context["cmd_delete_enable"] = False
+    request.context["cmd_entry_enable"] = "False"
+    request.context["cmd_change_enable"] = "False"
+    request.context["cmd_delete_enable"] = "False"
     return ["txt_avesselcd", "cmd_entry_enable", "cmd_change_enable", "cmd_delete_enable"]
 
 
@@ -114,7 +114,7 @@ def cmd_search_Click(request):
 
         RsTbVessel = SqlExecute(sql).all()
         if not RsTbVessel.Rows:
-            request.context["cmd_entry_enable"] = True
+            request.context["cmd_entry_enable"] = "True"
         else:
             request.context["txt_avesselnm"] = DbDataChange(RsTbVessel.Rows[0]["vesselnm"])
             request.context["txt_acallsign"] = DbDataChange(RsTbVessel.Rows[0]["callsign"])
@@ -128,8 +128,8 @@ def cmd_search_Click(request):
                 request.context["lbl_aportnm"] = DbDataChange(RsTbPort.Rows[0]["portnm"])
             request.context["txt_aberthnm"] = DbDataChange(RsTbVessel.Rows[0]["berthnm"])
             request.context["txt_aline"] = DbDataChange(RsTbVessel.Rows[0]["line"])
-            request.context["cmd_change_enable"] = True
-            request.context["cmd_delete_enable"] = True
+            request.context["cmd_change_enable"] = "True"
+            request.context["cmd_delete_enable"] = "True"
         request.context["gSetField"] = "txt_avesselnm"
     except Exception as e:
         raise PostgresException(Error=e, DbTbl="TBVESSEL" + request.cfs_ini["iniUpdTbl"], SqlStr=sql)
@@ -158,7 +158,7 @@ def cmd_entry_Click(request):
         init_form(request, CFSC01_MODE0)
         request.context["gSetField"] = "txt_avesselcd"
     except Exception as e:
-        request.context["cmd_entry_enable"] = False
+        request.context["cmd_entry_enable"] = "False"
         raise PostgresException(Error=e, DbTbl="TBVESSEL" + request.cfs_ini["iniUpdTbl"], SqlStr=sql)
 
 
@@ -182,8 +182,8 @@ def cmd_change_Click(request):
 
     except Exception as e:
 
-        request.context["cmd_change_enable"] = False
-        request.context["cmd_delete_enable"] = False
+        request.context["cmd_change_enable"] = "False"
+        request.context["cmd_delete_enable"] = "False"
         raise PostgresException(Error=e, DbTbl="TBVESSEL" + request.cfs_ini["iniUpdTbl"], SqlStr=sql)
 
 
@@ -197,15 +197,15 @@ def cmd_delete_Click(request):
         init_form(request, CFSC01_MODE0)
         request.context["gSetField"] = "txt_aopecd"
     except Exception as e:
-        request.context["cmd_change_enable"] = False
-        request.context["cmd_delete_enable"] = False
+        request.context["cmd_change_enable"] = "False"
+        request.context["cmd_delete_enable"] = "False"
         raise PostgresException(Error=e, DbTbl="TBVESSEL" + request.cfs_ini["iniUpdTbl"], SqlStr=sql)
 
 
 def cmd_cancel_Click(request):
-    request.context["cmd_entry_enable"] = False
-    request.context["cmd_change_enable"] = False
-    request.context["cmd_delete_enable"] = False
+    request.context["cmd_entry_enable"] = "False"
+    request.context["cmd_change_enable"] = "False"
+    request.context["cmd_delete_enable"] = "False"
 
     init_form(request, CFSC01_MODE0)
     request.context["gSetField"] = "txt_avesselcd"

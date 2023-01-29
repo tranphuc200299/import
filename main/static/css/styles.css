@@ -531,22 +531,9 @@ width:100px;
 
 .mainErrLabel {
     width: 100%;
-    color: #FF3333;
-    font-family: 'Poppins';
-    font-style: normal;
-    font-size: 14px;
-    line-height: 21px;
-    height: 21px;
-}
-
-.mainWarnLabel {
-    width: 100%;
-    color: #F23A46;
-    font-style: normal;
-    font-family: 'Poppins';
-    font-size: 14px;
-    line-height: 20px;
-    background: #FEEBED;
+    color: Red;
+    font-weight: bold;
+    font-size: 20px;
 }
 
 .control_button {
