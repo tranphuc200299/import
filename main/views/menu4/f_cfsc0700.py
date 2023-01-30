@@ -3,7 +3,7 @@ from django.db import IntegrityError, transaction
 from django.shortcuts import render
 from main.common.decorators import update_context, load_cfs_ini
 from main.common.function import SqlExecute
-from main.common.function.Common import DbDataChange, dbField, IsNumeric, dbsingle
+from main.common.function.Common import dbField, IsNumeric, dbsingle
 from main.common.function.DspMessage import MsgDspError
 from main.common.function.Const import NOMAL_OK, FATAL_ERR, DB_NOT_FIND, DB_FATAL_ERR, MSG_DSP_WARN, \
     csSTANKAKBN_1, csSTANKAKBN_2, csSTANKAKBN_3, csSTANKAKBN_4, csSTANKAKBN_5, csDCALC_1, csDCALC_2, csDCALC_3
@@ -205,7 +205,7 @@ def inpdatachk2(request):
                 MsgDspError(request, MSG_DSP_WARN, "入力整合性エラー", "単価は整数(\ZZ,ZZZ,ZZ9形式)で入力して下さい。")
                 request.context["gSetField"] = "txt_itanka" + str(i)
                 return FATAL_ERR
-            if CFSC07_RANK_MIN > dbsingle(request.context["txt_itanka" + str(i)]) or CFSC07_RANK_MAX < dbsingle(
+            if CFSC07_TANKA_MIN > dbsingle(request.context["txt_itanka" + str(i)]) or CFSC07_TANKA_MAX < dbsingle(
                     request.context["txt_itanka" + str(i)]):
                 MsgDspError(request, MSG_DSP_WARN, "入力整合性エラー",
                             "単価は" + f"{CFSC07_TANKA_MIN :,.1f}" + "から" + f"{CFSC07_TANKA_MAX :,.1f}" + "以内で入力して下さい。")
