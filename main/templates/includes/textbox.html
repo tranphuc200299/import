@@ -5,7 +5,7 @@
     name="{{ id }}"
     id="{{ id }}"
     value="{{ id|id2contextvalue:request }}"
-    style="{{ style }};width: {{ width }}px"
+    style="{{ style }}; {% if width %} width: {{ width }}px {% endif %}"
     tabindex="{{ tabIndex }}"
     maxlength="{{ MaxLength }}"
     class="{{ class }}"
