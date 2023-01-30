@@ -100,7 +100,15 @@ $(function () {
                             $(`#${key}_enable`).val("True")
                         }
                     } else {
-                        $(`#${key}`).val(value)
+                        if (key == "MsgDsp") {
+                            document.getElementById("modalTitle").innerHTML = value.title;
+                            document.getElementById("modalBody").innerHTML = value.msg;
+                            $("#modalInfo").show()
+                        }
+                        else
+                        {
+                            $(`#${key}`).val(value)
+                        }
                     }
                 }
             }

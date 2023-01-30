@@ -41,7 +41,7 @@ class ConfigIni(object):
     def get_config_ini_info(self, request, cfs_menu):
         if cfs_menu:
             config = configparser.ConfigParser()
-            config.read(os.path.join(self.config_ini_dir, f"cfs_{cfs_menu}.ini"), encoding="SJIS")
+            config.read(os.path.join(self.config_ini_dir, f"cfs_{cfs_menu}.ini"), encoding="utf-8")
             request.cfs_ini["iniWsNo"] = socket.gethostname()[:10]
             if config.has_section("CONFIG"):
                 section_config = config["CONFIG"]
@@ -136,7 +136,7 @@ class ConfigIni(object):
         file_names = os.listdir(self.config_ini_dir)
         names = list()
         for filename in file_names:
-            config.read(os.path.join(self.config_ini_dir, filename), encoding="SJIS")
+            config.read(os.path.join(self.config_ini_dir, filename), encoding="utf-8")
             sections = [section for section in config.sections() if section.startswith("USER")]
             for section in sections:
                 user_section = config[section]
@@ -150,7 +150,7 @@ class ConfigIni(object):
         dict_menu_area = dict()
         for filename in file_names:
             config = configparser.ConfigParser()
-            config.read(os.path.join(self.config_ini_dir, filename), encoding="SJIS")
+            config.read(os.path.join(self.config_ini_dir, filename), encoding="utf-8")
             sections = [section for section in config.sections() if section.startswith("USER")]
             names = list()
             for section in sections:
@@ -188,7 +188,7 @@ class FileDirUtil:
         base_dir = Path(__file__).resolve().parent.parent.parent
         sider_bar_dir = os.path.join(base_dir, "config_sider_bar", "sider_bar.json")
         menu_output = OrderedDict()
-        with open(sider_bar_dir, encoding="SJIS") as json_file:
+        with open(sider_bar_dir, encoding="utf-8") as json_file:
             data = json.load(json_file)
             for menu in new_menu_list:
                 get_menu = data.get(menu, None)
@@ -201,7 +201,7 @@ class FileDirUtil:
     def get_breadcumbs_by_path_name(url_name):
         base_dir = Path(__file__).resolve().parent.parent.parent
         sider_bar_dir = os.path.join(base_dir, "config_sider_bar", "sider_bar.json")
-        with open(sider_bar_dir, encoding="SJIS") as json_file:
+        with open(sider_bar_dir, encoding="utf-8") as json_file:
             data = json.load(json_file)
             output = []
             for k, v in data.items():
