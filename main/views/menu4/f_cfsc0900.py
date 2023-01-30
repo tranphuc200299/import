@@ -46,9 +46,9 @@ def f_cfsc0900(request):
 
 def Form_Load(request):
     init_form(request, CFSC09_MODE0)
-    request.context["cmd_entry_enable"] = False
-    request.context["cmd_change_enable"] = False
-    request.context["cmd_delete_enable"] = False
+    request.context["cmd_entry_enable"] = "False"
+    request.context["cmd_change_enable"] = "False"
+    request.context["cmd_delete_enable"] = "False"
 
 
 def init_form(request, intMode):
@@ -95,8 +95,8 @@ def cmd_change_Click(request):
         init_form(request, CFSC09_MODE0)
         request.context["gSetField"] = "txt_aportcd"
     except Exception as e:
-        request.context["cmd_entry_enable"] = False
-        request.context["cmd_delete_enable"] = False
+        request.context["cmd_entry_enable"] = "False"
+        request.context["cmd_delete_enable"] = "False"
         raise PostgresException(Error=e, DbTbl="TBPORT" + request.cfs_ini["iniUpdTbl"], SqlStr=sql)
 
 
@@ -109,8 +109,8 @@ def cmd_delete_Click(request):
         init_form(request, CFSC09_MODE0)
         request.context["gSetField"] = "txt_aportcd"
     except Exception as e:
-        request.context["cmd_change_enable"] = False
-        request.context["cmd_delete_enable"] = False
+        request.context["cmd_change_enable"] = "False"
+        request.context["cmd_delete_enable"] = "False"
         raise PostgresException(Error=e, DbTbl="TBPORT" + request.cfs_ini["iniUpdTbl"], SqlStr=sql)
 
 
@@ -133,7 +133,7 @@ def cmd_entry_Click(request):
         init_form(request, CFSC09_MODE0)
         request.context["gSetField"] = "txt_aportcd"
     except Exception as e:
-        request.context["cmd_entry_enable"] = False
+        request.context["cmd_entry_enable"] = "False"
         raise PostgresException(Error=e, DbTbl="TBPORT" + request.cfs_ini["iniUpdTbl"], SqlStr=sql)
 
 
@@ -149,12 +149,12 @@ def cmd_search_Click(request):
         sql += " FOR UPDATE NOWAIT"
         RsTbPort = SqlExecute(sql).all()
         if len(RsTbPort.Rows) == 0:
-            request.context["cmd_entry_enable"] = True
+            request.context["cmd_entry_enable"] = "True"
         else:
             request.context["txt_aportnm"] = DbDataChange(RsTbPort.Rows[0]["portnm"])
             request.context["txt_aareacd"] = DbDataChange(RsTbPort.Rows[0]["areacd"])
-            request.context["cmd_change_enable"] = True
-            request.context["cmd_delete_enable"] = True
+            request.context["cmd_change_enable"] = "True"
+            request.context["cmd_delete_enable"] = "True"
 
         request.context["gSetField"] = "txt_aportnm"
     except Exception as e:
@@ -162,18 +162,18 @@ def cmd_search_Click(request):
 
 
 def cmd_cancel_Click(request):
-    request.context["cmd_entry_enable"] = False
-    request.context["cmd_change_enable"] = False
-    request.context["cmd_delete_enable"] = False
+    request.context["cmd_entry_enable"] = "False"
+    request.context["cmd_change_enable"] = "False"
+    request.context["cmd_delete_enable"] = "False"
     init_form(request, CFSC09_MODE0)
     request.context["gSetField"] = "txt_aportcd"
 
 
 def txt_aportcd_Change(request):
     request.context["txt_aportcd"] = request.context["txt_aportcd"].upper()
-    request.context["cmd_entry_enable"] = False
-    request.context["cmd_change_enable"] = False
-    request.context["cmd_delete_enable"] = False
+    request.context["cmd_entry_enable"] = "False"
+    request.context["cmd_change_enable"] = "False"
+    request.context["cmd_delete_enable"] = "False"
     return ["txt_aportcd", "cmd_entry_enable", "cmd_change_enable", "cmd_delete_enable"]
 
 

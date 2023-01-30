@@ -110,8 +110,8 @@ def cmd_search_Click(request):
                 request.context["cmb_afcalc"] = "1"
             elif Common.DbDataChange(RsTbFreeTm.Rows[0]["fkisankbn"]) == csFCALC_3:
                 request.context["cmb_afcalc"] = "2"
-            request.context["cmd_change"] = "True"
-            request.context["cmd_delete"] = "True"
+            request.context["cmd_change_enable"] = "True"
+            request.context["cmd_delete_enable"] = "True"
 
         request.context["gSetField"] = "cmb_afksankbn"
 

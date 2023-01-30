@@ -2,56 +2,51 @@
 {% load static %}
 {% block title %}フリータイムコード登録{% endblock title %}
 {% block main %}
-
     <form id="f_cfsc0500" method="post">
         {% csrf_token %}
         <div class="card">
-            <div class="form-horizontal">
-                <div class="row">
-                    <div class="col-12 d-flex">
-                        <div class="form-group">
-                            <label for="txt_aopecd" class="mr-3" tabindex="3">オペレータコード <span
-                                    class="required">*</span></label>
-                            {% include "includes/textbox.html" with class="form-control" id="txt_aopecd" name="txt_aopecd" tabIndex=4 width="122" MaxLength=4  Change="True" Title="必須入力・Operator Code" %}
-                        </div>
-                        <div class="form-group ml-3">
-                            <label for="txt_afreekbn" tabindex="5">エリアコード <span
-                                    class="required">*</span></label>
-                            {% include "includes/textbox.html" with class="form-control" id="txt_afreekbn" name="txt_afreekbn" width="84" tabIndex=6 MaxLength=1 Change="True" %}
-                        </div>
-                        <div class="pt-4 mt-3 ml-3">
-                            {% include "includes/button.html" with name="action" id="cmd_search" class="btn btn-primary btn-search" TabIndex=7 htmlText='<i class="fa fa-search"></i> 検索' %}
+            <div class="form-group form-inline">
+                <div class="row row-no-margin">
+                    <div class="col-6 p-0">
+                        <div class="row row-no-margin">
+                            <div class="col-2 p-0">
+                                <label for="txt_aopecd" class="justify-content-start mb-3" tabindex="3">オペレータコード<span
+                                        class="required">*</span></label>
+                                {% include "includes/textbox.html" with class="form-control w-100" id="txt_aopecd" name="txt_aopecd" tabIndex=4 MaxLength=4 Change="True" Title="必須入力・Operator Code" %}
+                            </div>
+                            <div class="col-2 p-0 ml-5">
+                                <label for="txt_afreekbn" class="justify-content-start mb-3"
+                                       tabindex="3">エリアコード<span
+                                        class="required">*</span></label>
+                                {% include "includes/textbox.html" with class="form-control w-75" id="txt_afreekbn" name="txt_afreekbn" tabIndex=6 MaxLength=1 Change="True" %}
+                            </div>
+                            <div class="col-2 p-0 mt-5">
+                                {% include "includes/button.html" with name="action" id="cmd_search" class="btn btn-primary btn-search p-0" TabIndex=5 htmlText='<i class="fa fa-search"></i> 検索' %}
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
         <div class="card">
-            <div class="form-horizontal">
-                <div class="row">
-                    <div class="col-lg-5 col-sm-12">
-                        <div class="form-group">
-                            <label class="control-label col-sm-5" for="cmb_afksankbn" tabindex="9">フリータイム起算日区分
-                                <span class="required">*</span></label>
-                            <div class="col-12">
-                                {% include 'includes/dropdownlist.html' with id="cmb_afksankbn" class="form-control" tabIndex=10 Title="必須入力" %}
+            <div class="form-group form-inline">
+                <div class="row row-no-margin">
+                    <div class="col-10 p-0">
+                        <div class="row row-no-margin">
+                            <div class="col-4 p-0">
+                                <label class="justify-content-start mb-3" for="cmb_afksankbn" tabindex="9">フリータイム起算日区分
+                                    <span class="required"> *</span></label>
+                                {% include 'includes/dropdownlist.html' with id="cmb_afksankbn" class="form-control w-100" tabIndex=10 Title="必須入力" %}
                             </div>
-                        </div>
-                    </div>
-                    <div class="col-lg-2 col-sm-4">
-                        <div class="form-group">
-                            <label class="control-label col-sm-12" for="txt_ifdays" tabindex="11">フリータイム日数</label>
-                            <div class="col-12">
-                                {% include "includes/textbox.html" with class="form-control" id="txt_ifdays" name="txt_ascaccd" MaxLength=4 tabIndex=12 %}
+                            <div class="col-2 p-0 ml-5">
+                                <label class="justify-content-start mb-3" for="txt_ifdays"
+                                       tabindex="11">フリータイム日数 <span class="required">*</span></label>
+                                {% include "includes/textbox.html" with class="form-control w-100" id="txt_ifdays" name="txt_ascaccd" MaxLength=4 tabIndex=12 %}
                             </div>
-                        </div>
-                    </div>
-                    <div class="col-lg-5 col-sm-12">
-                        <div class="form-group">
-                            <label class="control-label col-sm-12" for="cmb_afcalc" tabindex="13">フリータイム計算方式
-                                <span class="required">*</span></label>
-                            <div class="col-12">
-                                {% include 'includes/dropdownlist.html' with id="cmb_afcalc" class="form-control" tabIndex=14 Title="必須入力" %}
+                            <div class="col-4 p-0 ml-5">
+                                <label class="justify-content-start mb-3" for="cmb_afcalc" tabindex="13">フリータイム計算方式
+                                    <span class="required">*</span></label>
+                                {% include 'includes/dropdownlist.html' with id="cmb_afcalc" class="form-control w-100" tabIndex=14 Title="必須入力" %}
                             </div>
                         </div>
                     </div>
@@ -60,17 +55,15 @@
             <div class="form-inline justify-content-end">
                 <div class="row btn-footer">
                     <div class="col-12 d-flex ">
-                        {% include "includes/button.html" with name="action" id="cmd_entry" class="btn btn-primary " Text="登録" tabIndex=15 IsEnable=cmd_entry_enable %}
-                        {% include "includes/button.html" with name="action" id="cmd_change" class="btn btn-primary" Text="変更" tabIndex=16 IsEnable=cmd_change_enable %}
-                        {% include "includes/button.html" with name="action" id="cmd_delete" class="btn btn-primary" Text="削除" tabIndex=17 IsEnable=cmd_delete_enable %}
-                        {% include "includes/button.html" with name="action" id="cmd_cancel" class="btn btn-primary" Text="取消" tabIndex=18 %}
+                        {% include "includes/button.html" with name="action" id="cmd_entry" class="btn btn-primary " Text="登録" tabIndex=11 IsEnable=cmd_entry_enable %}
+                        {% include "includes/button.html" with name="action" id="cmd_change" class="btn btn-primary" Text="変更" tabIndex=12 IsEnable=cmd_change_enable %}
+                        {% include "includes/button.html" with name="action" id="cmd_delete" class="btn btn-primary" Text="削除" tabIndex=13 IsEnable=cmd_delete_enable %}
+                        {% include "includes/button.html" with name="action" id="cmd_cancel" class="btn btn-primary" Text="取消" tabIndex=14 %}
                     </div>
                 </div>
             </div>
         </div>
     </form>
 {% endblock main %}
-
 {% block js %}
-
 {% endblock js %}

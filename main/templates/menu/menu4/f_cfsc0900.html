@@ -1,44 +1,50 @@
 {% extends 'base.html' %}
 {% load static %}
-
 {% block title %}ポートコード登録{% endblock title %}
-
 {% block main %}
     <form id="f_cfsc0900" method="post">
         {% csrf_token %}
         <div class="card">
-            <div class="form-inline">
-                <div class="form-group form-group-seach">
-                    <label for="txt_aportcd" class="mr-3" tabindex="4">ポートコード <span
-                            class="required">*</span></label>
-                    {% include "includes/textbox.html" with class="form-control" id="txt_aportcd" tabIndex=4 MaxLength=5 Change="True" Title="必須入力・Port Code" %}
-                </div>
-                {% include "includes/button.html" with name="action" id="cmd_search" class="btn btn-primary btn-search" TabIndex=5 htmlText='<i class="fa fa-search"></i> 検索' %}
-            </div>
-        </div>
-        <div class="card">
-            <div class="form-horizontal">
-                <div class="row">
-                    <div class="col-6 d-flex">
-                        <div class="col-6 col-sm-6">
-                            <div class="form-group">
-                                <label class="control-label" for="txt_aopenm" tabindex="8">ポート名称 <span
+            <div class="form-group form-inline">
+                <div class="row row-no-margin">
+                    <div class="col-12 p-0 mt-3">
+                        <div class="row row-no-margin">
+                            <div class="col-1 p-0 mt-3">
+                                <label for="txt_aportcd" class="justify-content-start" tabindex="4">ポートコード <span
                                         class="required">*</span></label>
-                                <div class="">
-                                    {% include "includes/textbox.html" with class="form-control col-12" id="txt_aportnm" name="txt_aportnm" MaxLength=25 tabIndex=8 Title="必須入力" %}
-                                </div>
                             </div>
-                        </div>
-                        <div class="form-group">
-                            <label class="control-label" for="txt_aareacd" tabindex="1">エリアコード <span
-                                    class="required">*</span></label>
-                                {% include "includes/textbox.html" with class="form-control col-3" id="txt_aareacd" name="txt_aareacd" tabIndex=10 MaxLength=1  %}
-
+                            <div class="col-1 p-0">
+                                {% include "includes/textbox.html" with class="form-control w-75" id="txt_aportcd" tabIndex=4 MaxLength=5 Change="True" Title="必須入力・Port Code" %}
+                            </div>
+                            <div class="col-10 p-0">
+                                {% include "includes/button.html" with name="action" id="cmd_search" class="btn btn-primary btn-search" TabIndex=5 htmlText='<i class="fa fa-search"></i> 検索' %}
+                            </div>
                         </div>
                     </div>
                 </div>
+            </div>
+        </div>
+        <div class="card">
+            <div class="form-group form-inline">
+                <div class="row row-no-margin">
+                    <div class="col-12 p-0">
+                        <div class="row row-no-margin">
+                            <div class="col-2 p-0">
+                                <label class="justify-content-start mb-3" for="txt_aopenm" tabindex="8">ポート名称 <span
+                                        class="required">*</span></label>
+                                {% include "includes/textbox.html" with class="form-control w-100" id="txt_aportnm" name="txt_aportnm" MaxLength=25 tabIndex=8 Title="必須入力" %}
+                            </div>
+                            <div class="col-2 p-0 ml-5">
+                                <label class="justify-content-start mb-3" for="txt_aareacd" tabindex="1">エリアコード </label>
+                                {% include "includes/textbox.html" with class="form-control" width="50" id="txt_aareacd" name="txt_aareacd" tabIndex=10 MaxLength=1 %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-inline justify-content-end">
                 <div class="row btn-footer">
-                    <div class="col-12 d-flex">
+                    <div class="col-12 d-flex ">
                         {% include "includes/button.html" with name="action" id="cmd_entry" class="btn btn-primary " Text="登録" tabIndex=11 IsEnable=cmd_entry_enable %}
                         {% include "includes/button.html" with name="action" id="cmd_change" class="btn btn-primary" Text="変更" tabIndex=12 IsEnable=cmd_change_enable %}
                         {% include "includes/button.html" with name="action" id="cmd_delete" class="btn btn-primary" Text="削除" tabIndex=13 IsEnable=cmd_delete_enable %}
@@ -46,10 +52,9 @@
                     </div>
                 </div>
             </div>
+
         </div>
     </form>
 {% endblock main %}
-
 {% block js %}
-
 {% endblock js %}
