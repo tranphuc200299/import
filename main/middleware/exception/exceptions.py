@@ -30,7 +30,7 @@ class PostgresException(Exception):
     def __init__(self, *args, **kwargs):
         self.DbTbl = kwargs.pop('DbTbl', '')
         self.SqlStr = kwargs.pop('SqlStr', '')
-        self.Error = kwargs.pop('Error ', '')
+        self.Error = kwargs.pop('Error', '')
 
     def get_message(self):
         if self.Error.__cause__.pgcode == "55P03":
